@@ -9,6 +9,7 @@ Download Pro Swapper for the latest version of Fortnite [here](https://linkverti
 
 
 Other links:
+Pro Swapper uses our own [API](https://github.com/Pro-Swapper/api/blob/main/latest.json) for fetching cosmetics, news & more.
 
 Pro Swapper uses [Bunifu Framework](https://bunifuframework.com/)
 
