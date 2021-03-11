@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-
 namespace Pro_Swapper
 {
     public partial class Error : Form
@@ -18,6 +17,6 @@ namespace Pro_Swapper
             if (e.Button == MouseButtons.Left)
                 Main.FormMove(Handle);
         }
-        private void button1_Click(object sender, EventArgs e) => Environment.Exit(0);
+        private void button1_Click(object sender, EventArgs e) => Main.Cleanup();
     }
 }

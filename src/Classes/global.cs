@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Net;
-using System.Security.Cryptography;
 using System.Reflection;
 using System.IO.Compression;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
+
 namespace Pro_Swapper
 {
     public class global
@@ -22,8 +23,6 @@ namespace Pro_Swapper
                 //Downloads image if doesnt exists
                 start:  if (!File.Exists(path))
                     new WebClient().DownloadFile(imageurl, path);
-
-            
             try
             {
                 Image img;
@@ -40,8 +39,6 @@ namespace Pro_Swapper
                         img.Dispose();
                         throw new Exception();
                     }
-                        
-                
             }
             catch
             {
@@ -62,6 +59,20 @@ namespace Pro_Swapper
             catch
             {
                 return false;
+            }
+        }
+        public static byte[] ReadBytes(string filename, int numberOfBytes, long offset)
+        {
+            using (Stream stream = File.Open(filename, FileMode.Open, FileAccess.ReadWrite))
+            {
+                List<byte> array = new List<byte>();
+                stream.Position = offset;
+                for (int i = 0; i < numberOfBytes; i++)
+                    array.Add((byte)stream.ReadByte());
+
+                stream.Close();
+                stream.Dispose();
+                return array.ToArray();
             }
         }
 
@@ -109,8 +120,6 @@ namespace Pro_Swapper
                 }
             }
         }
-
-
         private static void lineChanger(string newText, string fileName, int line_to_edit)
         {
             string[] arrLine = File.ReadAllLines(fileName);
@@ -158,90 +167,14 @@ namespace Pro_Swapper
                 }
             }
         }
-        public static string md5(string filepath)
+
+        public static Items.Root items { get; set; }
+        public static byte[] HexToByte(string hex)
         {
-            if (File.Exists(filepath))
-            {
-                using (var md5 = MD5.Create())
-                {
-                    using (var stream = File.OpenRead(filepath))
-                    {
-                        return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
-                    }
-                }
-            }
-            else
-            {
-                return "0";
-            }
-        }
-        public class Swap
-        {
-            public  string[] Search { get; set; }
-            public string[] Replace { get; set; }
-            public  string[] File { get; set; }
-            public long[] Offset { get; set; }
-
-            public Swap(string[] search, string[] replace, string[] file, long[] offset)
-            {
-                Search = search;
-                Replace = replace;
-                File = file;
-                Offset = offset;
-            }
-        }
-        public static List<Item> ItemList = new List<Item>();
-        public class Item
-        {
-            public int ID { get; set; }
-            public string SwapsFrom { get; set; }
-            public string SwapsTo { get; set; }
-            public string SwapsFromIcon { get; set; }
-            public string SwapsToIcon { get; set; }
-            public string Note { get; set; }
-            public Swap Swap { get; set; }
-            public Item(int id, string swapsFrom, string swapsTo, string fromicon, string toicon, Swap swap, string note = "")
-            {
-                ID = id;
-                SwapsFrom = swapsFrom;
-                SwapsTo = swapsTo;
-
-                SwapsFromIcon = fromicon;
-                SwapsToIcon = toicon;
-
-                Swap = swap;
-                Note = note;
-
-            }
-        }
-
-
-
-        //Researcher
-        public static long FindPosition(Stream stream, int searchPosition, long startIndex, byte[] searchPattern)
-        {
-            long searchResults = 0;
-            stream.Position = startIndex;
-            while (true)
-            {
-                if (stream.Position == stream.Length)
-                    return searchResults;
-
-                var latestbyte = stream.ReadByte();
-                if (latestbyte == -1)
-                    break;
-
-                if (latestbyte == searchPattern[searchPosition])
-                {
-                    searchPosition++;
-                    if (searchPosition == searchPattern.Length)
-                        return stream.Position - searchPattern.Length;
-                }
-                else
-                    searchPosition = 0;
-            }
-
-            return searchResults;
+            return Enumerable.Range(0, hex.Length)
+                             .Where(x => x % 2 == 0)
+                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                             .ToArray();
         }
     }
 }

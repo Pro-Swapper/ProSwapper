@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.IO;
 using System.Diagnostics;
 using System.Threading;
 namespace Pro_Swapper
@@ -11,7 +10,7 @@ namespace Pro_Swapper
         public Settings()
         {
             InitializeComponent();
-            Main.RPC("Settings");
+            RPC.SetState("Settings", true);
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
             Icon = Main.appIcon;
 

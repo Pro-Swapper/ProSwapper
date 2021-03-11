@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Web.Script.Serialization;
-using System.Windows.Forms;
 using System.Net;
+using Newtonsoft.Json;
 namespace Pro_Swapper
 {
     public partial class Dashboard : System.Windows.Forms.UserControl
@@ -29,9 +28,17 @@ namespace Pro_Swapper
             newstext.Text = Program.apidata.newstext;
             try
             {
-                news.ImageLocation = Convert.ToString(new JavaScriptSerializer().Deserialize<dynamic>(new WebClient().DownloadString("https://fortnite-api.com/v2/news/br"))["data"]["image"]);
+                news.ImageLocation = JsonConvert.DeserializeObject<fnapi>(new WebClient().DownloadString("https://fortnite-api.com/v2/news/br")).data.image;
             }
             catch { }
+        }
+        public class Data
+        {
+            public string image { get; set; }
+        }
+        public class fnapi
+        {
+            public Data data { get; set; }
         }
     }
 }

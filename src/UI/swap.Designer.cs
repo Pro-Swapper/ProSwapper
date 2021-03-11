@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.label3 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             this.logbox = new System.Windows.Forms.RichTextBox();
             this.image = new System.Windows.Forms.PictureBox();
             this.ConvertB = new Bunifu.Framework.UI.BunifuFlatButton();
@@ -43,27 +42,11 @@
             this.label3.BackColor = System.Drawing.Color.Transparent;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(274, 75);
+            this.label3.Location = new System.Drawing.Point(328, 75);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(58, 17);
+            this.label3.Size = new System.Drawing.Size(28, 17);
             this.label3.TabIndex = 4;
-            this.label3.Text = "ON/OFF";
-            // 
-            // button1
-            // 
-            this.button1.BackColor = System.Drawing.Color.White;
-            this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Font = new System.Drawing.Font("Segoe UI Semibold", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.button1.Location = new System.Drawing.Point(351, 69);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(98, 37);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Reset Config (This item only)";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click_2);
+            this.label3.Text = "ON";
             // 
             // logbox
             // 
@@ -173,7 +156,6 @@
             this.Controls.Add(this.RevertB);
             this.Controls.Add(this.ConvertB);
             this.Controls.Add(this.logbox);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.image);
             this.DoubleBuffered = true;
@@ -192,7 +174,6 @@
         #endregion
         private System.Windows.Forms.PictureBox image;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.RichTextBox logbox;
         private Bunifu.Framework.UI.BunifuFlatButton ConvertB;
         private Bunifu.Framework.UI.BunifuFlatButton RevertB;

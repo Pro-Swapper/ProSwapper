@@ -1,62 +1,35 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Web.Script.Serialization;
-using System.Threading;
 namespace Pro_Swapper
 {
     public partial class UserControl : System.Windows.Forms.UserControl
     {
-        private static dynamic jsontable { get; set; }
         public UserControl(string tab)
         {
             InitializeComponent();
+            int itemcount = 0;//Define the number of items in this form.
+            for (int i = 0; i < global.items.Items.Count; i++)//not using foreach coz like we don't need the i var outside of it and ye i felt like it
+            {
+                if (global.items.Items[i].Type == tab)
+                {
+                    AddItem(i, global.items.Items[i], numberButton_Click);//add item onto form
+                    itemcount++;//add item count
+                }
+            }
+            if (itemcount == 0) MessageBox.Show(tab + " are currently disabled, this is due to Fortnite patching them. There is no estimated time to when " + tab + " will be available again.", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             HorizontalScroll.Enabled = false;
             skinsflowlayout.BackColor = global.ItemsBG;
-            Thread.CurrentThread.Priority = ThreadPriority.Highest;
-            int buttonx = 134;
-            int buttony = 141;
-            jsontable = new JavaScriptSerializer().Deserialize<dynamic>(Program.decompresseditems);
-            ushort i = 1;
-            global.ItemList.Clear();
-                foreach (var jsondata in jsontable["Database"][tab])
-                {
-                    if (Convert.ToString(jsondata).Contains("SwapsFromImage"))
-                    {
-                        string[] search = { GetObject(tab, i + "SwapS1"), GetObject(tab, i + "SwapS2"), GetObject(tab, i + "SwapS3"), GetObject(tab, i + "SwapS4") };
-                        string[] replace = { GetObject(tab, i + "SwapR1"), GetObject(tab, i + "SwapR2"), GetObject(tab, i + "SwapR3"), GetObject(tab, i + "SwapR4") };
-                        string[] file = { GetObject(tab, i + "Swap1File"), GetObject(tab, i + "Swap2File"), GetObject(tab, i + "Swap3File"), GetObject(tab, i + "Swap4File") };
-                        long[] offset = { Convert.ToInt64(GetObject(tab, i + "Swap1Offset")), Convert.ToInt64(GetObject(tab, i + "Swap2Offset")), Convert.ToInt64(GetObject(tab, i + "Swap3Offset")), Convert.ToInt64(GetObject(tab, i + "Swap4Offset")) };
-                        global.Item item = new global.Item(i, GetObject(tab, i + "SwapsFrom"), GetObject(tab, i + "SwapsTo"), GetObject(tab, i + "SwapsFromImage"), GetObject(tab, i + "SwapsToImage"), new global.Swap(search, replace, file, offset), GetObject(tab, i + "Note"));
-                        global.ItemList.Add(item);
-                        AddItem(i, buttonx, buttony, item, numberButton_Click);
-                        i++;
-                    }
-                }
-                if (i == 1)
-                    MessageBox.Show(tab + " are currently disabled", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         void numberButton_Click(object sender, EventArgs e)=> new swap((int)((PictureBox)sender).Tag).Show();
-        private static string GetObject(string itemtype, string objectname)
+        void AddItem(int i,Items.Item item, EventHandler type)
         {
-            try
-            {
-                return Convert.ToString(jsontable["Database"][itemtype][objectname]);
-            }
-            catch
-            {
-                return "0";
-            }
-
-        }
-
-        //void option_Click(object sender, EventArgs e) => new bkswap().Show();
-        void AddItem(int i, int buttonx, int buttony,global.Item item, EventHandler type)
-        {
+            int buttonx = 134;
+            int buttony = 141;
             PictureBox picturebox = new PictureBox
             {
-                Image = global.ItemIcon(item.SwapsToIcon),
+                Image = global.ItemIcon(item.ToImage),
                 SizeMode = PictureBoxSizeMode.Zoom,
                 Tag = i,
                 Size = new Size(buttonx, buttony),

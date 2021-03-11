@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.IO;
 using System.Net;
 using System.Diagnostics;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 namespace Pro_Swapper
 {
     static class Program
@@ -12,51 +11,25 @@ namespace Pro_Swapper
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        static void Main()
         {
-
-            string[] dlls = { "Bunifu_UI_v1.52.dll", "DiscordRPC.dll" };
-            string discordurll = "https://cdn.discordapp.com/attachments/777053390009925643/";
-            string[] urls = { discordurll + "797387747769450537/Bunifu_UI_v1.52.dll_compress", discordurll + "797368599937155072/DiscordRPC.dll_compress" };
-            if (global.md5(dlls[0]) + global.md5(dlls[1]) != "3764580D568E4FC506048E04DB90562CA1C35901AD26A30C5B7836771B6BADFF")
-            {
-                using (WebClient web = new WebClient())
-                {
-                    File.WriteAllBytes(dlls[0], global.Decompress(web.DownloadData(urls[0])));
-                    File.WriteAllBytes(dlls[1], global.Decompress(web.DownloadData(urls[1])));
-                }
-            }
             global.CreateDir(global.ProSwapperFolder);
-            string filename = AppDomain.CurrentDomain.FriendlyName;
-            if (!filename.Contains("Pro") && !filename.Contains("Swapper"))
-                ThrowError("This version of Pro Swapper has been modified (renamed) " + filename + " , please download the original Pro Swapper at https://proswapper.xyz/download");
-
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            //with args(user open file with the program)
-            if (args.Length > 0 && File.Exists(args[0]) && args[0].Contains(".pro"))
-            {
-                    string fileName = args[0];
-                    Application.Run(new Plugins(fileName));
-            }
-            //without args
-            else
-            {
                 #region Checks
                 try
                 {
                     using (WebClient web = new WebClient())
                     {
                         string endpoint = "/latest.json";
+                        string apidownloaded = string.Empty;
                         try
                         {
-                            apidata = new JavaScriptSerializer().Deserialize<api>(web.DownloadString("https://pro-swapper.github.io/api" + endpoint));
+                            apidownloaded = web.DownloadString("https://pro-swapper.github.io/api" + endpoint);
                         }
                         catch
                         {
-                            apidata = new JavaScriptSerializer().Deserialize<api>(web.DownloadString("https://raw.githubusercontent.com/Pro-Swapper/api/main" + endpoint));
+                            apidownloaded = web.DownloadString("https://raw.githubusercontent.com/Pro-Swapper/api/main" + endpoint);
                         }
-                        
+                        apidata = JsonConvert.DeserializeObject<api>(apidownloaded);
                     }
                 }
                 catch (Exception ex)
@@ -64,7 +37,7 @@ namespace Pro_Swapper
                     ThrowError("Pro Swapper needs an internet connection to run, if you are already connected to the internet Pro Swapper severs may be blocked in your country, please use a VPN or try disabling your firewall, if you are already doing this please refer to this error: \n\n" + ex);
                 }
                 string apiversion = apidata.version;
-                decompresseditems = global.Decompress(apidata.items);
+                decompresseditems = global.Decompress(apidata.items2);
                    
                     string thishr = DateTime.Now.ToString("MMddHH");
 
@@ -83,11 +56,17 @@ namespace Pro_Swapper
                         Environment.Exit(0);
                     }
 
-                    if (apiversion.Contains("OFFLINE"))
+                    string filename = AppDomain.CurrentDomain.FriendlyName;
+                    if (!filename.Contains("Pro") && !filename.Contains("Swapper"))
+                        ThrowError("This version of Pro Swapper has been modified (renamed) " + filename + " , please download the original Pro Swapper on the Discord server");
+
+
+            if (apiversion.Contains("OFFLINE"))
                         ThrowError("Pro Swapper is currently not working. Take a look at our Discord for any announcments");
-                #endregion
-                Application.Run(new Main());
-            }
+            #endregion
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Main());
         }
 
 
@@ -98,10 +77,9 @@ namespace Pro_Swapper
             public string patchnotes { get; set; }
             public string version { get; set; }
             public string discordurl { get; set; }
-            public string items { get; set; }
+            public string items2 { get; set; }
         }
         public static api apidata;
-
         public static string decompresseditems { get; set; }
         public static void ThrowError(string ex)=> new Error(ex).ShowDialog();
     }

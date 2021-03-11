@@ -7,16 +7,13 @@ using System.Threading;
 using System.Diagnostics;
 using System.Reflection;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
-
+using DiscordRPC;
+using Newtonsoft.Json;
+using Bunifu.Framework.UI;
 namespace Pro_Swapper
 {
     public partial class Main : Form
     {
-        private static DiscordRpc.RichPresence presence;
-
-        public static DiscordRpc.EventHandlers handlers;
-
         #region RoundedCorners
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
         public static extern IntPtr CreateRoundRectRgn
@@ -30,7 +27,6 @@ namespace Pro_Swapper
         );
         #endregion
         public static Icon appIcon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
-        private static long opened { get; set; }
         public Main()
         {
             InitializeComponent();
@@ -44,22 +40,20 @@ namespace Pro_Swapper
             global.Button = Color.FromArgb(255, int.Parse(panel3d[0]), int.Parse(panel3d[1]), int.Parse(panel3d[2]));
             global.TextColor = Color.FromArgb(255, int.Parse(panel4d[0]), int.Parse(panel4d[1]), int.Parse(panel4d[2]));
 
-            InitializeDiscord("697579712653819985");
+            RPC.rpctimestamp = Timestamps.Now;
+            RPC.InitializeRPC();
             new Thread(LoadIcons).Start();
             new Thread(detectfn).Start();
             new Thread(CloseFN).Start();
             Icon = appIcon;
-            opened = DateTimeToTimestamp(DateTime.UtcNow);
-            Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 30, 30));            
+            Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             versionlabel.Text = global.version;
             if (!File.Exists(global.ReadSetting(global.Setting.Paks) + @"\pakchunk0-WindowsClient.sig"))
                 FindPakFiles();
 
-
-            RPC("Dashboard");
+            global.items = JsonConvert.DeserializeObject<Items.Root>(Program.decompresseditems);
             panelContainer.Controls.Add(Dashboard.Instance);
-            panelContainer.Controls.Add(OtherTab.Instance);
             BackColor = global.MainMenu;
             panel1.BackColor = global.MainMenu;
             bunifuFlatButton1.BackColor = global.Button;
@@ -126,7 +120,6 @@ namespace Pro_Swapper
             bunifuFlatButton6.Iconimage = global.ItemIcon("CueE0Wg.png");
         }
         #endregion
-
         #region FormMoveable
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
@@ -165,62 +158,24 @@ namespace Pro_Swapper
             {}    
         }
         #endregion
-        #region DiscordRPC
-        private static void InitializeDiscord(string clientid)
-        {
-            handlers = new DiscordRpc.EventHandlers();
-            DiscordRpc.Initialize(clientid, ref handlers, true, null);
-        }
-        public static void RPC(string Tab)
-        {
-            presence.details = "Pro Swapper " + global.version;
-            presence.state = Convert.ToString(Program.apidata.discordurl).Replace("https://", "")   + "| Watching " + Tab;
-            presence.startTimestamp = opened;
-            presence.largeImageKey = "logo";
-            presence.largeImageText = "Pro Swapper";
-            presence.smallImageKey = "kyenew";
-            presence.smallImageText = "Made by Kye#5000";
-
-            DiscordRpc.UpdatePresence(ref presence);
-        }
-
-        private long DateTimeToTimestamp(DateTime dt)
-        {
-            return (dt.Ticks - 621355968000000000) / 10000000;
-        }
-        #endregion
         private void NewPanel(string tab)
         {
-            RPC(tab);
+            RPC.SetState(tab, true);
             panelContainer.Controls.Clear();
-            panelContainer.Controls.Add(new UserControl(tab));
+            if (tab == "Other")
+                panelContainer.Controls.Add(new OtherTab());
+            else 
+                panelContainer.Controls.Add(new UserControl(tab));//If not other tab use this one
         }
         private void Main_FormClosing(object sender, FormClosingEventArgs e) => Cleanup();
-        private void bunifuFlatButton1_Click(object sender, EventArgs e) => NewPanel("Skins");
-        private void bunifuFlatButton2_Click(object sender, EventArgs e) => NewPanel("Backblings");
-        private void bunifuFlatButton3_Click(object sender, EventArgs e)=> NewPanel("Pickaxes");
-        private void bunifuFlatButton4_Click(object sender, EventArgs e)=> NewPanel("Emotes");
-
-        private void bunifuFlatButton5_Click(object sender, EventArgs e)
-        {
-            RPC("Other");
-            panelContainer.Controls.Clear();
-            if (!panelContainer.Controls.Contains(OtherTab.Instance))
-                panelContainer.Controls.Add(OtherTab.Instance);
-
-            OtherTab.Instance.BringToFront();
-        }
-
+        private void UserControlPanelClick(object sender, EventArgs e)=> NewPanel(((BunifuFlatButton)sender).Text);//Uses textbox name for usercontrol
         private void bunifuFlatButton6_Click(object sender, EventArgs e) => new Settings().Show();
         private void button1_Click(object sender, EventArgs e) => Cleanup();
         private void button2_Click(object sender, EventArgs e) => WindowState = FormWindowState.Minimized;
-
-
         public class InstallationList
         {
             public string InstallLocation { get; set; }
             public string AppName { get; set; }
-         //   public string AppVersion { get; set; }
         }
 
         public class Root
@@ -229,7 +184,6 @@ namespace Pro_Swapper
         }
         private void FindPakFiles()
         {
-            
             string datfile = "";
             string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Epic\UnrealEngineLauncher\LauncherInstalled.dat";
             if (File.Exists(path))
@@ -242,7 +196,8 @@ namespace Pro_Swapper
             {
                 try
                 {
-                    foreach (var d in new JavaScriptSerializer().Deserialize<Root>(File.ReadAllText(datfile)).InstallationList)
+                    Root launcherdata = JsonConvert.DeserializeObject<Root>(File.ReadAllText(datfile));
+                    foreach (var d in launcherdata.InstallationList)
                     {
                         if (d.AppName == "Fortnite")
                             global.WriteSetting(d.InstallLocation + @"\FortniteGame\Content\Paks", global.Setting.Paks);
@@ -250,7 +205,6 @@ namespace Pro_Swapper
                 }
                 catch
                 {
-                    
                     MessageBox.Show(error, "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -262,31 +216,25 @@ namespace Pro_Swapper
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            RPC("Dashboard");
+            RPC.SetState("Dashboard", true);
             if (!panelContainer.Controls.Contains(Dashboard.Instance))
                 panelContainer.Controls.Add(Dashboard.Instance);
-
             Dashboard.Instance.BringToFront();
         }
         public static void Cleanup()
         {
-            DiscordRpc.Shutdown();
-            Application.Exit();
-            Environment.Exit(0);
+            RPC.client.Dispose();
+            Process.GetCurrentProcess().Kill();
         }
         private void detectfn()
         {
             while (true)
             {
                 Thread.Sleep(10000);
-                foreach (Process a in Process.GetProcessesByName("FortniteClient-Win64-Shipping"))
+                if (Process.GetProcessesByName("FortniteClient-Win64-Shipping").Length > 0)
                 {
-                    if (a.ProcessName == "FortniteClient-Win64-Shipping")
-                    {
                         MessageBox.Show("Fortnite has been detected as opened! Closing Pro Swapper as it can be closed while playing Fortnite!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         Cleanup();
-                        break;
-                    }
                 }
             }
         }

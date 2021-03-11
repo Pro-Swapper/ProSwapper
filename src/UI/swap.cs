@@ -5,14 +5,17 @@ using System.Diagnostics;
 using System.Text;
 using System.Drawing;
 using System.Threading;
+using System.Linq;
+
 namespace Pro_Swapper
 {
     public partial class swap : Form
     {
-        private static global.Item ThisItem { get; set; }
-        public swap(int selecteditem)
+        private static Items.Item ThisItem { get; set; }
+        public swap(int item)
         {
             InitializeComponent();
+            ThisItem = global.items.Items[item];
             BackColor = global.ItemsBG;
             logbox.BackColor = global.ItemsBG;
 
@@ -28,47 +31,27 @@ namespace Pro_Swapper
             RevertB.Normalcolor = global.Button;
 
             logbox.ForeColor = global.TextColor;
-
-            button1.BackColor = global.Button;
-            button1.ForeColor = global.TextColor;
-
-
-
-            ThisItem = global.ItemList[selecteditem - 1];
             if (global.ReadSetting(global.Setting.swaplogs).Contains(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ","))
             {
              label3.ForeColor = Color.Lime;
              label3.Text = "ON";
-                RevertB.Enabled = true;
-                ConvertB.Enabled = false;
-                ConvertB.Cursor = Cursors.No;
-                RevertB.Cursor = Cursors.Hand;
             }
              else
              {
              label3.ForeColor = Color.Red;
              label3.Text = "OFF";
-                RevertB.Enabled = false;
-                ConvertB.Enabled = true;
-                RevertB.Cursor = Cursors.No;
-                ConvertB.Cursor = Cursors.Hand;
-
-
-                if (ThisItem.Note.Length > 3)
-                    MessageBox.Show("Warning for " + ThisItem.SwapsTo + ": "+ ThisItem.Note, ThisItem.SwapsFrom + " - " + ThisItem.SwapsTo, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
+                if (ThisItem.Note != null) MessageBox.Show("Warning for " + ThisItem.SwapsTo + ": "+ ThisItem.Note, ThisItem.SwapsFrom + " - " + ThisItem.SwapsTo, MessageBoxButtons.OK, MessageBoxIcon.Warning);
              }
             Text = ThisItem.SwapsFrom + " --> " + ThisItem.SwapsTo;
-            image.Image = global.ItemIcon(ThisItem.SwapsFromIcon);
+            image.Image = global.ItemIcon(ThisItem.FromImage);
         }
-        
         private void SwapWork(bool Converting)
         {
             new Thread(() =>
             {
                 CheckForIllegalCrossThreadCalls = false;
                 Thread.CurrentThread.IsBackground = true;
-            Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                Thread.CurrentThread.Priority = ThreadPriority.Highest;
             try
                 {
                     logbox.Clear();
@@ -76,43 +59,71 @@ namespace Pro_Swapper
                     Stopwatch s = new Stopwatch();
                     s.Start();
                     string pakslocation = global.ReadSetting(global.Setting.Paks) + "\\";
-
-
-                    if (Converting)
+                    foreach (Items.Swap swap in ThisItem.Swaps)
                     {
-                        for (int i = 0; i < 4; i++)
+                        //Checking if file is readonly coz we wouldn't be able to do shit with it
+                        string filepath = pakslocation + swap.File;
+                        bool IsReadOnly = File.GetAttributes(filepath).ToString().Contains("ReadOnly");
+                        if (IsReadOnly)
+                            File.SetAttributes(filepath, FileAttributes.Normal);
+                        
+                        //Make it support hex as well coz fuck it
+                        byte[] searchbyte, replacebyte;
+                        if (swap.Search.StartsWith("hex=") && swap.Replace.StartsWith("hex="))
                         {
-                            if (ThisItem.Swap.File[i].Length > 3)
-                            {
-                                ReplaceBytes(pakslocation + ThisItem.Swap.File[i], ThisItem.Swap.Search[i], ThisItem.Swap.Replace[i], ThisItem.Swap.Offset[i]);
-                                Log("Replaced " + ThisItem.Swap.Search[i] + " in " + ThisItem.Swap.File[i].Replace("-WindowsClient.ucas", ""));
-                            }
+                            searchbyte = global.HexToByte(swap.Search.Replace("hex=", ""));
+                            replacebyte = global.HexToByte(swap.Replace.Replace("hex=", ""));
+                        }
+                        else//eww using text but atleast we can read it
+                        {
+                            searchbyte = Encoding.Default.GetBytes(swap.Search);
+                            replacebyte = Encoding.Default.GetBytes(swap.Replace);
+                        }
+                        
+
+                        //Checks if the ucas file is at right offset
+                        byte[] currentfile = global.ReadBytes(filepath, searchbyte.Length, swap.Offset);
+                        bool rightoffset = false;
+                        if (currentfile.SequenceEqual(searchbyte))
+                            rightoffset = true;
+                        else if (currentfile.SequenceEqual(replacebyte))
+                            rightoffset = true;
+                        else
+                            rightoffset = false;
+
+                        if (rightoffset == false)
+                        {
+                            MessageBox.Show("Error! Pro Swapper has not been updated for the most recent update. Please wait for Kye to update it! Join the Discord server for more information. You can also try verifying Fortnite if you were using another swapper or modifying Fortnite beforehand", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
                         }
 
+                        //Decides to either Convert/Revert
+                        byte[] towrite = searchbyte;
+                        if (Converting) towrite = replacebyte;
+
+
+                        if (!currentfile.SequenceEqual(towrite))//If already swapped skip coz we don't want the 9yo cpu to blow for unnessary shit
+                            ReplaceBytes(filepath, swap.Offset, towrite);
+                    }
+                    s.Stop();
+                    string logtext = "+] Converted";
+                    if (Converting) logtext = "-] Reverted";
+                    if (Converting)
+                    {
                         label3.Text = "ON";
                         label3.ForeColor = Color.Lime;
                         s.Stop();
-                        Log("====");
-                        Log("[+] Converted item in " + s.Elapsed.TotalMilliseconds + "ms");
                         global.WriteSetting(global.ReadSetting(global.Setting.swaplogs) + ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",", global.Setting.swaplogs);
                     }
                     else
                     {
-                        for (int i = 0; i < 4; i++)
-                        {
-                            if (ThisItem.Swap.File[i].Length > 3)
-                            {
-                                ReplaceBytes(pakslocation + ThisItem.Swap.File[i], ThisItem.Swap.Replace[i], ThisItem.Swap.Search[i], ThisItem.Swap.Offset[i]);
-                                Log("Replaced " + ThisItem.Swap.Search[i] + " in " + ThisItem.Swap.File[i].Replace("-WindowsClient.ucas", ""));
-                            }  
-                        }
                         label3.Text = "OFF";
                         label3.ForeColor = Color.Red;
-                        s.Stop();
-                        Log("====");
-                        Log("[-] Reverted item in " + s.Elapsed.TotalMilliseconds + "ms");
                         global.WriteSetting(global.ReadSetting(global.Setting.swaplogs).Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",", ""), global.Setting.swaplogs);
                     }
+                    Log("====");
+                    Log($"[{logtext} item in " + s.Elapsed.TotalMilliseconds + "ms");
+                    Log("====");
                 }
                 catch (Exception ex)
                 {
@@ -121,7 +132,7 @@ namespace Pro_Swapper
             }).Start();
 
         }
-        private void Log(string text) => logbox.Text += text + Environment.NewLine;
+        private void Log(string text) => logbox.Text += $"{text}{Environment.NewLine}";
         private void SwapButton_Click(object sender, EventArgs e)
         {
             string path = global.ReadSetting(global.Setting.Paks) + @"\pakchunk0-WindowsClient.sig";
@@ -133,47 +144,20 @@ namespace Pro_Swapper
             logbox.Clear();
             Log("Starting...");
             if (((Bunifu.Framework.UI.BunifuFlatButton)sender).Text == "Convert")
-            {
-                RevertB.Enabled = true;
-                ConvertB.Enabled = false;
-                ConvertB.Cursor = Cursors.No;
-                RevertB.Cursor = Cursors.Hand;
                 SwapWork(true);
-            }
             else //Revert
-            {
-                RevertB.Enabled = false;
-                ConvertB.Enabled = true;
-                RevertB.Cursor = Cursors.No;
-                ConvertB.Cursor = Cursors.Hand;
                 SwapWork(false);
-            }
         }
-        private void button1_Click_2(object sender, EventArgs e)
+
+
+        public void ReplaceBytes(string file, long Offset, byte[] towrite)
         {
-            label3.Text = "???";
-            label3.ForeColor = Color.White;
-            ConvertB.Enabled = true;
-            RevertB.Enabled = true;
-            RevertB.Cursor = Cursors.Hand;
-            ConvertB.Cursor = Cursors.Hand;
-            logbox.Clear();
-            MessageBox.Show("Config Reset! (Now you can either convert or revert for this item)", "Pro Swapper");
-        }
-        public void ReplaceBytes(string path, string searchtxt, string replacetxt, long startoffset)
-        {
-            byte[] search = Encoding.UTF8.GetBytes(searchtxt);
-            byte[] replace = Encoding.UTF8.GetBytes(replacetxt);
-            Stream stream = File.OpenRead(path);
-            long offset = global.FindPosition(stream, 0, startoffset, search);
-            stream.Dispose();
-            using (BinaryWriter binaryWriter = new BinaryWriter(File.Open(path, FileMode.Open, FileAccess.ReadWrite)))
+            using (BinaryWriter writer = new BinaryWriter(File.Open(file, FileMode.Open, FileAccess.ReadWrite)))
             {
-                    binaryWriter.BaseStream.Seek(offset, SeekOrigin.Begin);
-                    binaryWriter.Write(replace);
-                    binaryWriter.Close();
+                writer.BaseStream.Seek(Offset, SeekOrigin.Begin);
+                writer.Write(towrite);
+                writer.Close();
             }
-            
         }
     }
 }
