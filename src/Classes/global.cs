@@ -47,6 +47,13 @@ namespace Pro_Swapper
             }
         }
         public static Color MainMenu, Button, TextColor, ItemsBG;
+
+
+        public static FileAttributes RemoveAttribute(FileAttributes attributes, FileAttributes attributesToRemove)
+        {
+            return attributes & ~attributesToRemove;
+        }
+
         private static bool IsImage(Image imagevar)
         {
             try

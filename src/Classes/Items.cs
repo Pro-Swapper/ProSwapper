@@ -19,6 +19,7 @@ namespace Pro_Swapper
             public string FromImage { get; set; }
             public string ToImage { get; set; }
             public string Note { get; set; }
+            public int New { get; set; }
             public List<Swap> Swaps { get; set; }
         }
 

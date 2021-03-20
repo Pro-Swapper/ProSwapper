@@ -43,7 +43,6 @@ namespace Pro_Swapper
             RPC.rpctimestamp = Timestamps.Now;
             RPC.InitializeRPC();
             new Thread(LoadIcons).Start();
-            new Thread(detectfn).Start();
             new Thread(CloseFN).Start();
             Icon = appIcon;
             Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
@@ -53,6 +52,7 @@ namespace Pro_Swapper
                 FindPakFiles();
 
             global.items = JsonConvert.DeserializeObject<Items.Root>(Program.decompresseditems);
+            //global.items = JsonConvert.DeserializeObject<Items.Root>(File.ReadAllText(@"C:\Users\ProMa\source\repos\OffsetDumper\bin\Debug\item.json"));
             panelContainer.Controls.Add(Dashboard.Instance);
             BackColor = global.MainMenu;
             panel1.BackColor = global.MainMenu;
@@ -139,23 +139,24 @@ namespace Pro_Swapper
         #region CloseFN
         public static void CloseFN()
         {
-            try
+            while (true)
             {
-                foreach (Process a in Process.GetProcesses())
+                try
                 {
-                    string b = a.ProcessName.ToLower();
-                    if (b.Contains("easyanticheat") | b.StartsWith("fortniteclient") | b.StartsWith("epicgameslauncher") | a.ProcessName.Contains("UnrealCEFSubProcess") | a.ProcessName.Equals("umodel") | a.ProcessName.Equals("FModel"))
+                    foreach (Process a in Process.GetProcesses())
                     {
+                        string b = a.ProcessName.ToLower();
+                        if (b.StartsWith("easyanticheat") | b.StartsWith("fortnite") |  b.StartsWith("epicgameslauncher") |b.Contains("unrealcefsubprocess") | b.Equals("umodel") | b.Equals("fmodel"))
+                            a.Kill();
                         if (a.ProcessName == "FortniteClient-Win64-Shipping")
-                        {
                             MessageBox.Show("Closed Fortnite (Fortnite needs to be closed to use Pro Swapper)!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        a.Kill();
                     }
                 }
+                catch
+                { }
+                Thread.Sleep(1500);
             }
-            catch
-            {}    
+               
         }
         #endregion
         private void NewPanel(string tab)
@@ -225,18 +226,6 @@ namespace Pro_Swapper
         {
             RPC.client.Dispose();
             Process.GetCurrentProcess().Kill();
-        }
-        private void detectfn()
-        {
-            while (true)
-            {
-                Thread.Sleep(10000);
-                if (Process.GetProcessesByName("FortniteClient-Win64-Shipping").Length > 0)
-                {
-                        MessageBox.Show("Fortnite has been detected as opened! Closing Pro Swapper as it can be closed while playing Fortnite!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        Cleanup();
-                }
-            }
         }
     }
 }

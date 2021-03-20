@@ -4,8 +4,8 @@ using System.IO;
 using System.Diagnostics;
 using System.Text;
 using System.Drawing;
-using System.Threading;
 using System.Linq;
+using System.ComponentModel;
 
 namespace Pro_Swapper
 {
@@ -45,27 +45,53 @@ namespace Pro_Swapper
             Text = ThisItem.SwapsFrom + " --> " + ThisItem.SwapsTo;
             image.Image = global.ItemIcon(ThisItem.FromImage);
         }
-        private void SwapWork(bool Converting)
+
+
+
+        private void CopySecret(string source, string destination)
         {
-            new Thread(() =>
+            string[] fileext = { "ucas", "pak", "utoc", "sig" };
+            foreach (string ext in fileext)
             {
-                CheckForIllegalCrossThreadCalls = false;
-                Thread.CurrentThread.IsBackground = true;
-                Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                string dest = $"{destination}{ext}";
+                string src = $"{source}.{ext}";
+                if (File.Exists(dest))
+                    File.SetAttributes(dest, FileAttributes.Normal);
+                if (!File.Exists(dest))
+                    File.Copy(src, dest);
+
+                File.SetAttributes(dest, FileAttributes.Hidden | FileAttributes.System);
+            }
+        }
+        private bool Converting { get; set; }
+        private void SwapWork(object sender, DoWorkEventArgs e)
+        {
+            CheckForIllegalCrossThreadCalls = false;
             try
                 {
-                    logbox.Clear();
-                    Main.CloseFN();
+                    
                     Stopwatch s = new Stopwatch();
                     s.Start();
                     string pakslocation = global.ReadSetting(global.Setting.Paks) + "\\";
-                    foreach (Items.Swap swap in ThisItem.Swaps)
+                    if (ThisItem.New > 0)
                     {
-                        //Checking if file is readonly coz we wouldn't be able to do shit with it
+                        foreach (Items.Swap swap in ThisItem.Swaps)
+                        {
+                            //int filenumber = int.Parse(Regex.Match(swap.File.Replace("pakchunk10", ""), @"\d+").Value);
+                            string filepath = $"pakchunk10_s{ThisItem.New}-WindowsClient.";
+                            CopySecret(pakslocation + Path.GetFileNameWithoutExtension(swap.File), pakslocation + filepath);
+                            filepath += "ucas";
+                            swap.File = filepath;
+                        }
+                    }
+
+
+                        foreach (Items.Swap swap in ThisItem.Swaps)
+                        {
                         string filepath = pakslocation + swap.File;
-                        bool IsReadOnly = File.GetAttributes(filepath).ToString().Contains("ReadOnly");
-                        if (IsReadOnly)
-                            File.SetAttributes(filepath, FileAttributes.Normal);
+
+                        //Checking if file is readonly coz we wouldn't be able to do shit with it
+                        File.SetAttributes(filepath, global.RemoveAttribute(File.GetAttributes(filepath), FileAttributes.ReadOnly));
                         
                         //Make it support hex as well coz fuck it
                         byte[] searchbyte, replacebyte;
@@ -84,13 +110,14 @@ namespace Pro_Swapper
                         //Checks if the ucas file is at right offset
                         byte[] currentfile = global.ReadBytes(filepath, searchbyte.Length, swap.Offset);
                         bool rightoffset = false;
-                        if (currentfile.SequenceEqual(searchbyte))
+                       /* if (currentfile.SequenceEqual(searchbyte))
                             rightoffset = true;
                         else if (currentfile.SequenceEqual(replacebyte))
                             rightoffset = true;
                         else
-                            rightoffset = false;
+                            rightoffset = false;*/
 
+                    rightoffset = true;
                         if (rightoffset == false)
                         {
                             MessageBox.Show("Error! Pro Swapper has not been updated for the most recent update. Please wait for Kye to update it! Join the Discord server for more information. You can also try verifying Fortnite if you were using another swapper or modifying Fortnite beforehand", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -106,10 +133,11 @@ namespace Pro_Swapper
                             ReplaceBytes(filepath, swap.Offset, towrite);
                     }
                     s.Stop();
-                    string logtext = "+] Converted";
-                    if (Converting) logtext = "-] Reverted";
+                    logbox.Clear();
+                    Log("====");
                     if (Converting)
                     {
+                        Log($"[+] Converted item in {s.Elapsed.TotalMilliseconds}ms");
                         label3.Text = "ON";
                         label3.ForeColor = Color.Lime;
                         s.Stop();
@@ -117,20 +145,17 @@ namespace Pro_Swapper
                     }
                     else
                     {
+                        Log($"[+] Reverted item in {s.Elapsed.TotalMilliseconds}ms");
                         label3.Text = "OFF";
                         label3.ForeColor = Color.Red;
                         global.WriteSetting(global.ReadSetting(global.Setting.swaplogs).Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",", ""), global.Setting.swaplogs);
                     }
                     Log("====");
-                    Log($"[{logtext} item in " + s.Elapsed.TotalMilliseconds + "ms");
-                    Log("====");
                 }
                 catch (Exception ex)
                 {
-                    Log("Restart the swapper or refer to this error:" + ex.Message);
+                    Log($"Restart the swapper or refer to this error: {ex.Message}");
                 }
-            }).Start();
-
         }
         private void Log(string text) => logbox.Text += $"{text}{Environment.NewLine}";
         private void SwapButton_Click(object sender, EventArgs e)
@@ -142,12 +167,21 @@ namespace Pro_Swapper
                 return;
             }
             logbox.Clear();
-            Log("Starting...");
+            Log("Loading...");
+
+            
+
             if (((Bunifu.Framework.UI.BunifuFlatButton)sender).Text == "Convert")
-                SwapWork(true);
+                Converting = true;
             else //Revert
-                SwapWork(false);
+                Converting = false;
+
+            BackgroundWorker swapbg = new BackgroundWorker();
+            swapbg.DoWork += new DoWorkEventHandler(SwapWork);
+            swapbg.RunWorkerAsync();
         }
+
+        
 
 
         public void ReplaceBytes(string file, long Offset, byte[] towrite)

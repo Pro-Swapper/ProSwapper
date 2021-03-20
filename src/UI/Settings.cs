@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
+using System.IO;
 namespace Pro_Swapper
 {
     public partial class Settings : Form
@@ -25,8 +26,6 @@ namespace Pro_Swapper
                 pictureBox2.Image = global.ItemIcon("EHbHFjp.png");
                 discord.Image = global.ItemIcon("ECo8w6F.png");
             }).Start();
-
-               
         }
         private void button1_Click(object sender, EventArgs e) => this.Close();
         private void SettingsForm_MouseDown(object sender, MouseEventArgs e)
@@ -90,20 +89,36 @@ namespace Pro_Swapper
             DialogResult result = MessageBox.Show("Do you want to verify Fortnite and revert your files to how they were before you used the swapper?", "Fortnite Verification", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
             if (result == DialogResult.Yes)
             {
-                Main.CloseFN();
+                somerandommethodkek();
                 Process.Start(epicfnpath + "verify");
                 global.WriteSetting("", global.Setting.swaplogs);
                 Main.Cleanup();
             }            
         }
 
+        void somerandommethodkek()
+        {
+            string pakslocation = global.ReadSetting(global.Setting.Paks) + "\\";
+            string[] fileext = { "ucas", "pak", "utoc", "sig" };
+            foreach (Items.Item item in global.items.Items)
+            {
+                if (item.New > 0)
+                {
+                    foreach (string ext in fileext)
+                    {
+                        File.Delete(pakslocation + $"pakchunk10_s{item.New}-WindowsClient.{ext}");
+                    }
+                }
+            }
+        }
         private void button3_Click_1(object sender, EventArgs e)
         {
+            somerandommethodkek();
             global.WriteSetting("", global.Setting.swaplogs);
             MessageBox.Show("All configs for item reset! Now all items will show as OFF (This button should be used after verifying Fortnite)", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         private void button4_Click(object sender, EventArgs e) => ConvertedItemsList();
-        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) => MessageBox.Show("Pro Swapper made by Kye#5000. https://github.com/kyeondiscord", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) => MessageBox.Show("Pro Swapper made by Kye#5000. https://github.com/kyeondiscord. Credit to Tamely & Smoonthie for new Fortnite Swapping Method(s)", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
         private void button10_Click(object sender, EventArgs e) => new ThemeCreator().ShowDialog();
         private void pictureBox1_Click(object sender, EventArgs e)=> Process.Start("https://youtube.com/proswapperofficial");
         private void pictureBox2_Click(object sender, EventArgs e)=> Process.Start("https://twitter.com/Pro_Swapper");

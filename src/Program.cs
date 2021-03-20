@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using System.Net.Cache;
 namespace Pro_Swapper
 {
     static class Program
@@ -19,7 +20,8 @@ namespace Pro_Swapper
                 {
                     using (WebClient web = new WebClient())
                     {
-                        string endpoint = "/latest.json";
+                        web.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+                        string endpoint = "/cool.json";
                         string apidownloaded = string.Empty;
                         try
                         {
@@ -37,7 +39,7 @@ namespace Pro_Swapper
                     ThrowError("Pro Swapper needs an internet connection to run, if you are already connected to the internet Pro Swapper severs may be blocked in your country, please use a VPN or try disabling your firewall, if you are already doing this please refer to this error: \n\n" + ex);
                 }
                 string apiversion = apidata.version;
-                decompresseditems = global.Decompress(apidata.items2);
+                decompresseditems = global.Decompress(apidata.items);
                    
                     string thishr = DateTime.Now.ToString("MMddHH");
 
@@ -77,7 +79,7 @@ namespace Pro_Swapper
             public string patchnotes { get; set; }
             public string version { get; set; }
             public string discordurl { get; set; }
-            public string items2 { get; set; }
+            public string items { get; set; }
         }
         public static api apidata;
         public static string decompresseditems { get; set; }
