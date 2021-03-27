@@ -38,12 +38,12 @@
             this.button7 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.button10 = new System.Windows.Forms.Button();
             this.pictureBox7 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.discord = new System.Windows.Forms.PictureBox();
+            this.button5 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -182,7 +182,7 @@
             this.button4.TabIndex = 99;
             this.button4.Text = "Get Converted Items List";
             this.button4.UseVisualStyleBackColor = false;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.button4.Click += new System.EventHandler(this.ConvertedItemsList);
             // 
             // button3
             // 
@@ -200,19 +200,6 @@
             this.button3.Text = "Mark items as OFF";
             this.button3.UseVisualStyleBackColor = false;
             this.button3.Click += new System.EventHandler(this.button3_Click_1);
-            // 
-            // linkLabel2
-            // 
-            this.linkLabel2.AutoSize = true;
-            this.linkLabel2.Font = new System.Drawing.Font("Century Gothic", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel2.LinkColor = System.Drawing.Color.RoyalBlue;
-            this.linkLabel2.Location = new System.Drawing.Point(460, 182);
-            this.linkLabel2.Name = "linkLabel2";
-            this.linkLabel2.Size = new System.Drawing.Size(79, 24);
-            this.linkLabel2.TabIndex = 110;
-            this.linkLabel2.TabStop = true;
-            this.linkLabel2.Text = "Credits";
-            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
             // button10
             // 
@@ -252,7 +239,7 @@
             this.pictureBox1.ErrorImage = null;
             this.pictureBox1.ImageLocation = "";
             this.pictureBox1.InitialImage = null;
-            this.pictureBox1.Location = new System.Drawing.Point(412, 209);
+            this.pictureBox1.Location = new System.Drawing.Point(217, 238);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(67, 43);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -266,7 +253,7 @@
             this.pictureBox2.ErrorImage = null;
             this.pictureBox2.ImageLocation = "";
             this.pictureBox2.InitialImage = null;
-            this.pictureBox2.Location = new System.Drawing.Point(485, 209);
+            this.pictureBox2.Location = new System.Drawing.Point(290, 238);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(67, 43);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -280,7 +267,7 @@
             this.discord.ErrorImage = null;
             this.discord.ImageLocation = "";
             this.discord.InitialImage = null;
-            this.discord.Location = new System.Drawing.Point(558, 209);
+            this.discord.Location = new System.Drawing.Point(363, 238);
             this.discord.Name = "discord";
             this.discord.Size = new System.Drawing.Size(67, 43);
             this.discord.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -288,18 +275,35 @@
             this.discord.TabStop = false;
             this.discord.Click += new System.EventHandler(this.discord_Click);
             // 
+            // button5
+            // 
+            this.button5.BackColor = System.Drawing.Color.RoyalBlue;
+            this.button5.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button5.FlatAppearance.BorderSize = 0;
+            this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button5.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button5.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.button5.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button5.Location = new System.Drawing.Point(413, 182);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(189, 50);
+            this.button5.TabIndex = 117;
+            this.button5.Text = "Credits And About";
+            this.button5.UseVisualStyleBackColor = false;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(33)))), ((int)(((byte)(113)))));
             this.ClientSize = new System.Drawing.Size(652, 308);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.discord);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.button10);
-            this.Controls.Add(this.linkLabel2);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button9);
@@ -341,10 +345,10 @@
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.LinkLabel linkLabel2;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.PictureBox discord;
+        private System.Windows.Forms.Button button5;
     }
 }

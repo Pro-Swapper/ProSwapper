@@ -24,8 +24,8 @@ namespace Pro_Swapper
             newstext.ForeColor = global.TextColor;
             label2.ForeColor = global.TextColor;
             label3.ForeColor = global.TextColor;
-            patchnotes.Text = "Update " + global.version + Environment.NewLine + Program.apidata.patchnotes;
-            newstext.Text = Program.apidata.newstext;
+            patchnotes.Text = "Update " + global.version + Environment.NewLine + api.apidata.patchnotes;
+            newstext.Text = api.apidata.newstext;
             try
             {
                 news.ImageLocation = JsonConvert.DeserializeObject<fnapi>(new WebClient().DownloadString("https://fortnite-api.com/v2/news/br")).data.image;

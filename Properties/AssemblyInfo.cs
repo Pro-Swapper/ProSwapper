@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Pro Swapper")]
-[assembly: AssemblyDescription("The best FREE Fortnite Skin Swapper!")]
+[assembly: AssemblyDescription("Pro Swapper THE Fortnite skin swapper!")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Pro Swapper")]
 [assembly: AssemblyProduct("Pro Swapper")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5588B875-CC36-44D6-910B-3D45EEBB5252")]
+[assembly: Guid("86AF1618-1D79-488A-9FAB-117435F25E7E")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.0.7.9")]
-[assembly: AssemblyFileVersion("0.0.7.9")]
+[assembly: AssemblyVersion("0.0.8.0")]
+[assembly: AssemblyFileVersion("0.0.8.0")]
 [assembly: NeutralResourcesLanguage("en")]
 

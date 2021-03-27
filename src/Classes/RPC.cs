@@ -15,7 +15,7 @@ namespace Pro_Swapper
 
 		public static void SetState(string state, bool watching)
 		{
-			string discordurl = Convert.ToString(Program.apidata.discordurl);
+			string discordurl = Convert.ToString(api.apidata.discordurl);
 			Button[] buttons = new Button[] { new Button() { Label = "Discord", Url = discordurl } };
 			if (watching) state = "Watching " + state;
 			client.SetPresence(new RichPresence()

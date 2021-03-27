@@ -8,6 +8,7 @@ using System.IO.Compression;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace Pro_Swapper
 {
@@ -182,6 +183,15 @@ namespace Pro_Swapper
                              .Where(x => x % 2 == 0)
                              .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                              .ToArray();
+        }
+
+
+        public static string FileToMd5(string filename)
+        {
+            if (File.Exists(filename))
+                        return BitConverter.ToString(MD5.Create().ComputeHash(File.OpenRead(filename))).Replace("-", "").ToLowerInvariant();
+            else
+                return string.Empty;
         }
     }
 }

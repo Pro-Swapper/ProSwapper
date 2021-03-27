@@ -27,7 +27,7 @@ namespace Pro_Swapper
                 discord.Image = global.ItemIcon("ECo8w6F.png");
             }).Start();
         }
-        private void button1_Click(object sender, EventArgs e) => this.Close();
+        private void button1_Click(object sender, EventArgs e) => Close();
         private void SettingsForm_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -89,14 +89,13 @@ namespace Pro_Swapper
             DialogResult result = MessageBox.Show("Do you want to verify Fortnite and revert your files to how they were before you used the swapper?", "Fortnite Verification", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
             if (result == DialogResult.Yes)
             {
-                somerandommethodkek();
                 Process.Start(epicfnpath + "verify");
                 global.WriteSetting("", global.Setting.swaplogs);
                 Main.Cleanup();
             }            
         }
 
-        void somerandommethodkek()
+        void CleanupFiles()
         {
             string pakslocation = global.ReadSetting(global.Setting.Paks) + "\\";
             string[] fileext = { "ucas", "pak", "utoc", "sig" };
@@ -113,16 +112,14 @@ namespace Pro_Swapper
         }
         private void button3_Click_1(object sender, EventArgs e)
         {
-            somerandommethodkek();
+            CleanupFiles();
             global.WriteSetting("", global.Setting.swaplogs);
             MessageBox.Show("All configs for item reset! Now all items will show as OFF (This button should be used after verifying Fortnite)", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-        private void button4_Click(object sender, EventArgs e) => ConvertedItemsList();
-        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) => MessageBox.Show("Pro Swapper made by Kye#5000. https://github.com/kyeondiscord. Credit to Tamely & Smoonthie for new Fortnite Swapping Method(s)", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
         private void button10_Click(object sender, EventArgs e) => new ThemeCreator().ShowDialog();
         private void pictureBox1_Click(object sender, EventArgs e)=> Process.Start("https://youtube.com/proswapperofficial");
         private void pictureBox2_Click(object sender, EventArgs e)=> Process.Start("https://twitter.com/Pro_Swapper");
-        private static void ConvertedItemsList()
+        private void ConvertedItemsList(object sender, EventArgs e)
         {
             int converteditemno = global.ReadSetting(global.Setting.swaplogs).Length - global.ReadSetting(global.Setting.swaplogs).Replace(",", "").Length;
             if (converteditemno > 0)
@@ -130,6 +127,59 @@ namespace Pro_Swapper
             else
                 MessageBox.Show("You have no items converted!", "Converted Items List", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-        private void discord_Click(object sender, EventArgs e)=> Process.Start(Convert.ToString(Program.apidata.discordurl));
+        private void discord_Click(object sender, EventArgs e)=> Process.Start(Convert.ToString(api.apidata.discordurl));
+        private void button5_Click(object sender, EventArgs e)
+        {
+            new Message("Credits And About", $"Pro Swapper made by Kye#5000. https://github.com/kyeondiscord. Credit to Tamely & Smoonthie for new Fortnite Swapping Method(s) \n\n\n\nProduct Information:\nLicense: MIT\nVersion: {global.version}\nMD5: {global.FileToMd5(AppDomain.CurrentDomain.FriendlyName)}\nLast Update: {CalculateTimeSpan(UnixTimeStampToDateTime(long.Parse(api.apidata.timestamp)))}", false).ShowDialog();
+        }
+
+        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            // Unix timestamp is seconds past epoch
+            DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            return dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+        }
+
+        private static string CalculateTimeSpan(DateTime dt)
+        {
+            var ts = new TimeSpan(DateTime.UtcNow.Ticks - dt.Ticks);
+            double delta = Math.Abs(ts.TotalSeconds);
+
+            if (delta < 60)
+            {
+                return ts.Seconds == 1 ? "one second ago" : ts.Seconds + " seconds ago";
+            }
+            if (delta < 60 * 2)
+            {
+                return "a minute ago";
+            }
+            if (delta < 45 * 60)
+            {
+                return ts.Minutes + " minutes ago";
+            }
+            if (delta < 90 * 60)
+            {
+                return "an hour ago";
+            }
+            if (delta < 24 * 60 * 60)
+            {
+                return ts.Hours + " hours ago";
+            }
+            if (delta < 48 * 60 * 60)
+            {
+                return "yesterday";
+            }
+            if (delta < 30 * 24 * 60 * 60)
+            {
+                return ts.Days + " days ago";
+            }
+            if (delta < 12 * 30 * 24 * 60 * 60)
+            {
+                int months = Convert.ToInt32(Math.Floor((double)ts.Days / 30));
+                return months <= 1 ? "one month ago" : months + " months ago";
+            }
+            int years = Convert.ToInt32(Math.Floor((double)ts.Days / 365));
+            return years <= 1 ? "one year ago" : years + " years ago";
+        }
     }
 }
