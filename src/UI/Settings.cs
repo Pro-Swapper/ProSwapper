@@ -135,9 +135,7 @@ namespace Pro_Swapper
 
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
-            // Unix timestamp is seconds past epoch
-            DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            return dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(unixTimeStamp).ToUniversalTime();
         }
 
         private static string CalculateTimeSpan(DateTime dt)

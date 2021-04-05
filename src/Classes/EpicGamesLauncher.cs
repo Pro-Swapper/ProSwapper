@@ -12,6 +12,7 @@ namespace Pro_Swapper
         {
             public string InstallLocation { get; set; }
             public string AppName { get; set; }
+            public string AppVersion { get; set; }
         }
 
         private class Root
@@ -41,6 +42,27 @@ namespace Pro_Swapper
                 }
             }
             error: MessageBox.Show("Could not find your pak files! Please select them manually!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        public static string InstalledFortniteVersion()
+        {
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Epic\UnrealEngineLauncher\LauncherInstalled.dat";
+            if (File.Exists(path))
+            {
+                try
+                {
+                    Root launcherdata = JsonConvert.DeserializeObject<Root>(File.ReadAllText(path));
+                    foreach (var d in launcherdata.InstallationList)
+                    {
+                        if (d.AppName == "Fortnite")
+                            return d.AppVersion;
+                    }
+                }
+                catch
+                {
+                    return "";
+                }
+            }
+            return "";
         }
     }
 }

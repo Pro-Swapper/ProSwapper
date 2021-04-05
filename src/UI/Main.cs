@@ -201,6 +201,11 @@ namespace Pro_Swapper
                 bunifuFlatButton6.IconZoom = 85;
                 versionlabel.ForeColor = global.TextColor;
                 #endregion
+
+                if (api.apidata.fnver != EpicGamesLauncher.InstalledFortniteVersion())
+                {
+                    new Message("Hold Up!", "Looks like there has recently been a Fortnite update and Pro Swapper hasn't been updated for that new version. Please check again later, also don't delete this program because it'll auto update :)", true).ShowDialog();
+                }
             }
             catch (Exception ex)
             {
