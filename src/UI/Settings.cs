@@ -81,7 +81,7 @@ namespace Pro_Swapper
         private const string epicfnpath = "com.epicgames.launcher://apps/Fortnite?action=";
         private void button9_Click(object sender, EventArgs e)
         {
-            Process.Start(epicfnpath + "launch");
+            Process.Start($"{epicfnpath}launch");
             Main.Cleanup();
         }
         private void button7_Click(object sender, EventArgs e)
@@ -89,30 +89,13 @@ namespace Pro_Swapper
             DialogResult result = MessageBox.Show("Do you want to verify Fortnite and revert your files to how they were before you used the swapper?", "Fortnite Verification", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
             if (result == DialogResult.Yes)
             {
-                Process.Start(epicfnpath + "verify");
+                Process.Start($"{epicfnpath}verify");
                 global.WriteSetting("", global.Setting.swaplogs);
                 Main.Cleanup();
             }            
         }
-
-        void CleanupFiles()
-        {
-            string pakslocation = global.ReadSetting(global.Setting.Paks) + "\\";
-            string[] fileext = { "ucas", "pak", "utoc", "sig" };
-            foreach (Items.Item item in global.items.Items)
-            {
-                if (item.New > 0)
-                {
-                    foreach (string ext in fileext)
-                    {
-                        File.Delete(pakslocation + $"pakchunk10_s{item.New}-WindowsClient.{ext}");
-                    }
-                }
-            }
-        }
         private void button3_Click_1(object sender, EventArgs e)
         {
-            CleanupFiles();
             global.WriteSetting("", global.Setting.swaplogs);
             MessageBox.Show("All configs for item reset! Now all items will show as OFF (This button should be used after verifying Fortnite)", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }

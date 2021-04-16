@@ -12,7 +12,6 @@ namespace Pro_Swapper
 			client.Initialize();
 			SetState("Idle", false);
 		}
-
 		public static void SetState(string state, bool watching)
 		{
 			string discordurl = Convert.ToString(api.apidata.discordurl);

@@ -23,7 +23,6 @@ namespace Pro_Swapper
             int nLeftRect, int nTopRect, int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse
         );
         #endregion
-
         #region LoadIcons
         private void LoadIcons()
         {
@@ -99,7 +98,6 @@ namespace Pro_Swapper
             RPC.client.Dispose();
             Process.GetCurrentProcess().Kill();
         }
-        
         private void Main_Load(object sender, EventArgs e)
         {
             try
@@ -122,7 +120,7 @@ namespace Pro_Swapper
                     Process.Start("https://linkvertise.com/86737/proswapper");
                     Cleanup();
                 }
-
+                
                 string filename = AppDomain.CurrentDomain.FriendlyName;
                 if (!filename.Contains("Pro") && !filename.Contains("Swapper"))
                     ThrowError("This version of Pro Swapper has been modified (renamed) " + filename + " , please download the original Pro Swapper on the Discord server");
@@ -201,10 +199,9 @@ namespace Pro_Swapper
                 bunifuFlatButton6.IconZoom = 85;
                 versionlabel.ForeColor = global.TextColor;
                 #endregion
-
-                if (api.apidata.fnver != EpicGamesLauncher.InstalledFortniteVersion())
+                if (!EpicGamesLauncher.InstalledFortniteVersion().Contains(api.apidata.fnver))
                 {
-                    new Message("Hold Up!", "Looks like there has recently been a Fortnite update and Pro Swapper hasn't been updated for that new version. Please check again later, also don't delete this program because it'll auto update :)", true).ShowDialog();
+                    new Message("Hold Up!", $"Looks like there has recently been a Fortnite update and Pro Swapper hasn't been updated for that new version. Please check again later, also don't delete this program because it'll auto update :)\n\nDebug Info:\nInstalled Version: {EpicGamesLauncher.InstalledFortniteVersion()}\nAPI Version:{api.apidata.fnver}", true).ShowDialog();
                 }
             }
             catch (Exception ex)

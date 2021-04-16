@@ -63,9 +63,29 @@ namespace Pro_Swapper.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] Ref {
+        internal static byte[] Bunifu_UI_v1_52 {
             get {
-                object obj = ResourceManager.GetObject("Ref", resourceCulture);
+                object obj = ResourceManager.GetObject("Bunifu_UI_v1_52", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] DiscordRPC {
+            get {
+                object obj = ResourceManager.GetObject("DiscordRPC", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Newtonsoft_Json {
+            get {
+                object obj = ResourceManager.GetObject("Newtonsoft_Json", resourceCulture);
                 return ((byte[])(obj));
             }
         }

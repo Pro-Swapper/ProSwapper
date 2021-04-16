@@ -2,20 +2,21 @@
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
-using System.Text;
 using System.Drawing;
 using System.Linq;
 using System.ComponentModel;
+using System.Text;
+using System.Collections.Generic;
 
 namespace Pro_Swapper
 {
-    public partial class swap : Form
+    public partial class cp : Form
     {
-        private static Items.Item ThisItem { get; set; }
-        public swap(int item)
+        private static Items.CPSwap ThisItem { get; set; }
+        public cp(Items.CPSwap item)
         {
             InitializeComponent();
-            ThisItem = global.items.Items[item];
+            ThisItem = item;
             BackColor = global.MainMenu;
             logbox.BackColor = global.MainMenu;
            
@@ -31,7 +32,7 @@ namespace Pro_Swapper
             RevertB.Normalcolor = global.Button;
 
             logbox.ForeColor = global.TextColor;
-            if (global.ReadSetting(global.Setting.swaplogs).Contains(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ","))
+            if (global.ReadSetting(global.Setting.swaplogs).Contains("Default To " + ThisItem.SwapsTo + ","))
             {
              label3.ForeColor = Color.Lime;
              label3.Text = "ON";
@@ -40,12 +41,11 @@ namespace Pro_Swapper
              {
              label3.ForeColor = Color.Red;
              label3.Text = "OFF";
-                if (ThisItem.Note != null) MessageBox.Show("Warning for " + ThisItem.SwapsTo + ": "+ ThisItem.Note, ThisItem.SwapsFrom + " - " + ThisItem.SwapsTo, MessageBoxButtons.OK, MessageBoxIcon.Warning);
              }
-            string swaptext = ThisItem.SwapsFrom + " --> " + ThisItem.SwapsTo;
+            string swaptext = "Default --> " + ThisItem.SwapsTo;
             Text = swaptext;
             label1.Text = swaptext;
-            image.Image = global.ItemIcon(ThisItem.FromImage);
+            image.Image = global.ItemIcon("nQ05Fa0.png");
             swapsfrom.Image = global.ItemIcon(ThisItem.ToImage);
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
         }
@@ -58,54 +58,29 @@ namespace Pro_Swapper
                     Stopwatch s = new Stopwatch();
                     s.Start();
                     string pakslocation = global.ReadSetting(global.Setting.Paks) + "\\";
-                        foreach (Items.Swap swap in ThisItem.Swaps)
-                        {
-                        string filepath = pakslocation + swap.File;
-
-                        //Checking if file is readonly coz we wouldn't be able to do shit with it
-                        File.SetAttributes(filepath, global.RemoveAttribute(File.GetAttributes(filepath), FileAttributes.ReadOnly));
-                        
-                        //Make it support hex as well coz fuck it
-                        byte[] searchbyte, replacebyte;
-                        if (swap.Search.StartsWith("hex=") && swap.Replace.StartsWith("hex="))
-                        {
-                            searchbyte = global.HexToByte(swap.Search);
-                            replacebyte = global.HexToByte(swap.Replace);
-                        }
-                        else//eww using text but atleast we can read it
-                        {
-                            searchbyte = Encoding.Default.GetBytes(swap.Search);
-                            replacebyte = Encoding.Default.GetBytes(swap.Replace);
-                        }
-                        
-
-                        //Checks if the ucas file is at right offset
-                        byte[] currentfile = global.ReadBytes(filepath, searchbyte.Length, swap.Offset);
-                       
-                    
-                    //Checks to see if the next bytes are the same as api
-                    /* bool rightoffset = false;
-                        if (currentfile.SequenceEqual(searchbyte))
-                            rightoffset = true;
-                        else if (currentfile.SequenceEqual(replacebyte))
-                            rightoffset = true;
-                        else
-                            rightoffset = false;
-
-                        if (rightoffset == false)
-                        {
-                            MessageBox.Show("Error! Pro Swapper has not been updated for the most recent update. Please wait for Kye to update it! Join the Discord server for more information. You can also try verifying Fortnite if you were using another swapper or modifying Fortnite beforehand", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
-                        }*/
-
-                        //Decides to either Convert/Revert
-                        byte[] towrite = searchbyte;
-                        if (Converting) towrite = replacebyte;
-
+                    string filepath = pakslocation + global.items.CPPak;
+                    File.SetAttributes(filepath, global.RemoveAttribute(File.GetAttributes(filepath), FileAttributes.ReadOnly));
+                    byte[] searchbyte = global.HexToByte(global.items.CPSearch);
+                    byte[] replacebyte = global.HexToByte(ThisItem.Replace);
+                    byte[] currentfile = global.ReadBytes(filepath, searchbyte.Length, global.items.CPOffset);
+                    //Decides to either Convert/Revert
+                    byte[] towrite = searchbyte;
+                    if (Converting)
+                    {
+                    towrite = replacebyte;
+                    ChangeDefault(true);
+                    }
+                    else
+                    {
+                    ChangeDefault(false);
+                    }
+                
 
                         if (!currentfile.SequenceEqual(towrite))//If already swapped skip coz we don't want the 9yo cpu to blow for unnessary shit
-                            ReplaceBytes(filepath, swap.Offset, towrite);
-                    }
+                            ReplaceBytes(filepath, global.items.CPOffset, towrite);
+
+
+                    
                     s.Stop();
                     logbox.Clear();
                     Log("====");
@@ -115,14 +90,14 @@ namespace Pro_Swapper
                         label3.Text = "ON";
                         label3.ForeColor = Color.Lime;
                         s.Stop();
-                        global.WriteSetting(global.ReadSetting(global.Setting.swaplogs) + ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",", global.Setting.swaplogs);
+                        global.WriteSetting(global.ReadSetting(global.Setting.swaplogs) + "Default To " + ThisItem.SwapsTo + ",", global.Setting.swaplogs);
                     }
                     else
                     {
                         Log($"[+] Reverted item in {s.Elapsed.TotalMilliseconds}ms");
                         label3.Text = "OFF";
                         label3.ForeColor = Color.Red;
-                        global.WriteSetting(global.ReadSetting(global.Setting.swaplogs).Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",", ""), global.Setting.swaplogs);
+                        global.WriteSetting(global.ReadSetting(global.Setting.swaplogs).Replace("Default To " + ThisItem.SwapsTo + ",", ""), global.Setting.swaplogs);
                     }
                     Log("====");
                 }
@@ -165,15 +140,32 @@ namespace Pro_Swapper
                 writer.Close();
             }
         }
-
+        public void ChangeDefault(bool Invalidate)
+        {
+            string filepath = global.ReadSetting(global.Setting.Paks) + "\\" + global.items.CPPak;
+            if (Invalidate)
+            {
+                foreach (Items.InvalidSwap item in global.items.InvalidSwaps)
+                {
+                    ReplaceBytes(filepath, item.Offset, global.HexToByte(item.Replace));
+                }
+               
+               // Items.InvalidSwap item = global.items.InvalidSwaps[0];
+                //ReplaceBytes(filepath, item.Offset, global.HexToByte(item.Replace));
+            }
+            else
+            {
+                foreach (Items.InvalidSwap item in global.items.InvalidSwaps)
+                {
+                    ReplaceBytes(filepath, item.Offset, global.HexToByte(item.Search));
+                }
+            }
+        }
         private void ExitButton_Click(object sender, EventArgs e) => Close();
-
         private void button2_Click(object sender, EventArgs e) => WindowState = FormWindowState.Minimized;
-
         private void swap_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left) Main.FormMove(Handle);
-
             button2.Focus();
         }
     }

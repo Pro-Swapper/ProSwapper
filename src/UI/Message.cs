@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 namespace Pro_Swapper
 {
@@ -22,9 +23,11 @@ namespace Pro_Swapper
         private void ExitButton_Click(object sender, System.EventArgs e)
         {
             if (CloseOnExit)
-                Main.Cleanup();
-            else
-                Close();
+            {
+                RPC.client.Dispose();
+                Process.GetCurrentProcess().Kill();
+            }
+            else Close();
         }
     }
 }
