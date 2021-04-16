@@ -4,7 +4,7 @@ namespace Pro_Swapper
     public static class api
     {
         private static string endpoint = $"/{global.version}.json";
-        private static readonly string[] hosturls = {"https://pro-swapper.github.io/api","https://raw.githubusercontent.com/Pro-Swapper/api/main" };
+        private static readonly string[] hosturls = {""};
         public class APIRoot
         {
             public string newstext { get; set; }
