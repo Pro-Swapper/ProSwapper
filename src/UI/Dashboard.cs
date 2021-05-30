@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 namespace Pro_Swapper
 {
     public partial class Dashboard : System.Windows.Forms.UserControl
@@ -24,21 +25,13 @@ namespace Pro_Swapper
             newstext.ForeColor = global.TextColor;
             label2.ForeColor = global.TextColor;
             label3.ForeColor = global.TextColor;
-            patchnotes.Text = "Update " + global.version + Environment.NewLine + api.apidata.patchnotes;
-            newstext.Text = api.apidata.newstext;
+            patchnotes.Text = "Update " + global.version + Environment.NewLine + API.api.apidata.patchnotes;
+            newstext.Text = API.api.apidata.newstext;
             try
             {
-                news.ImageLocation = JsonConvert.DeserializeObject<fnapi>(new WebClient().DownloadString("https://fortnite-api.com/v2/news/br")).data.image;
+                news.ImageLocation = ((dynamic)JObject.Parse(new WebClient().DownloadString($"{API.api.FNAPIEndpoint}news/br"))).data.image;
             }
             catch { }
-        }
-        public class Data
-        {
-            public string image { get; set; }
-        }
-        public class fnapi
-        {
-            public Data data { get; set; }
         }
     }
 }

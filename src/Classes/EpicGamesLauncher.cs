@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using System.Windows.Forms;
@@ -17,7 +16,7 @@ namespace Pro_Swapper
 
         private class Root
         {
-            public List<InstallationList> InstallationList { get; set; }
+            public InstallationList[] InstallationList { get; set; }
         }
         public static void FindPakFiles()
         {
@@ -31,7 +30,8 @@ namespace Pro_Swapper
                     {
                         if (d.AppName == "Fortnite")
                         {
-                            global.WriteSetting(d.InstallLocation + @"\FortniteGame\Content\Paks", global.Setting.Paks);
+                            global.CurrentConfig.Paks = d.InstallLocation + @"\FortniteGame\Content\Paks";
+                            global.SaveConfig();
                             return;
                         }
                     }
@@ -43,6 +43,7 @@ namespace Pro_Swapper
             }
             error: MessageBox.Show("Could not find your pak files! Please select them manually!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+        /*
         public static string InstalledFortniteVersion()
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Epic\UnrealEngineLauncher\LauncherInstalled.dat";
@@ -63,6 +64,6 @@ namespace Pro_Swapper
                 }
             }
             return "";
-        }
+        }*/
     }
 }

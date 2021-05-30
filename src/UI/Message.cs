@@ -5,7 +5,7 @@ namespace Pro_Swapper
 {
     public partial class Message : Form
     {
-        public static bool CloseOnExit { get; set; }
+        private bool CloseOnExit { get; set; }
         public Message(string title, string error, bool close)
         {
             InitializeComponent();
@@ -17,16 +17,11 @@ namespace Pro_Swapper
         }
         private void ThemeCreator_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-                Main.FormMove(Handle);
+            if (e.Button == MouseButtons.Left) global.FormMove(Handle);
         }
         private void ExitButton_Click(object sender, System.EventArgs e)
         {
-            if (CloseOnExit)
-            {
-                RPC.client.Dispose();
-                Process.GetCurrentProcess().Kill();
-            }
+            if (CloseOnExit) Process.GetCurrentProcess().Kill();
             else Close();
         }
     }

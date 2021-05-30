@@ -1,0 +1,89 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>Pro_Swapper</AssemblyName>
+    <RootNamespace>Pro_Swapper</RootNamespace>
+    <StartupObject>Pro_Swapper.Program</StartupObject>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+ <OutputType>WinExe</OutputType>
+ <TargetFramework>netcoreapp3.1</TargetFramework>
+ <Version>0.0.8.3</Version>
+ <Company>Pro Swapper</Company>
+ <Authors>Pro Swapper</Authors>
+ <Product>Pro Swapper</Product>
+ <Description />
+ <Copyright>Copyright © 2019 - 2021</Copyright>
+ <SignAssembly>false</SignAssembly>
+</PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\</OutputPath>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\</OutputPath>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="src\Classes\Items.cs" />
+    <Compile Remove="src\Classes\Oodle\Utils\CompressionType.cs" />
+    <Compile Remove="src\UI\swap.cs" />
+    <Compile Remove="src\UI\swap.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Bunifu_UI_v1.52.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="src\Classes\Oodle\Utils\CompressionType.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DiscordRichPresence" Version="1.0.175" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Bunifu_UI_v1.52">
+      <HintPath>Bunifu_UI_v1.52.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="src\UI\OodleSwap.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="oo2core_6_win64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Umodel\oo2core_5_win32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Umodel\oo2core_6_win64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Umodel\SDL2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Umodel\umodel.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="bin\" />
+  </ItemGroup>
+
+</Project>

@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Net;
 using System.Reflection;
-using System.IO.Compression;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Collections;
-
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using Newtonsoft.Json;
 namespace Pro_Swapper
 {
     public class global
@@ -48,13 +47,20 @@ namespace Pro_Swapper
                 goto start;
             }
         }
+        public static bool IsNameModified()=> FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).OriginalFilename.Replace(".dll", "") != Process.GetCurrentProcess().ProcessName;
         public static Color MainMenu, Button, TextColor, ItemsBG;
 
-
-        public static FileAttributes RemoveAttribute(FileAttributes attributes, FileAttributes attributesToRemove)
+        public static void OpenUrl(string url)
         {
-            return attributes & ~attributesToRemove;
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            };
+            Process.Start(psi);
         }
+
+        public static FileAttributes RemoveAttribute(FileAttributes attributes, FileAttributes attributesToRemove) => attributes & ~attributesToRemove;
 
         private static bool IsImage(Image imagevar)
         {
@@ -70,6 +76,10 @@ namespace Pro_Swapper
                 return false;
             }
         }
+
+
+        
+        /* Deprecated
         public static byte[] ReadBytes(string filename, int numberOfBytes, long offset)
         {
             using (Stream stream = File.Open(filename, FileMode.Open, FileAccess.ReadWrite))
@@ -83,117 +93,79 @@ namespace Pro_Swapper
                 stream.Dispose();
                 return array.ToArray();
             }
-        }
-
-        //Settings Writer
+        }*/
 
         public static string ProSwapperFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Pro_Swapper\";
-        public static string settingspath()
-        {
-            string path = ProSwapperFolder + @"Config\" + version + "_config.txt";
-            CreateDir(ProSwapperFolder + @"Config\");
-            if (!File.Exists(path))
-            {
-                using (StreamWriter a = new StreamWriter(path))
-                {
-                    foreach (Setting foo in Enum.GetValues(typeof(Setting)))
-                    {
-                        a.WriteLine(foo + "=");
-                    }
-                }
-                WriteSetting("0,33,113;64,85,170;65,105,255;255,255,255", Setting.theme);
-            }
-            return path;
-        }
-
         public static void CreateDir(string dir)
         {
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
         }
-        public static void WriteSetting(string newText, Setting value)
-        {
-            string line;
-            int counter = 1;
-            string text = File.ReadAllText(settingspath());
-            using (StringReader reader = new StringReader(text))
+        #region Config Handler
+        private static string ConfigPath
             {
-                while ((line = reader.ReadLine()) != null)
+                get
                 {
-                    if (line.StartsWith(value + "="))
-                    {
-                        lineChanger(value + "=" + newText, settingspath(), counter);
-                        break;
-                    }
-                    counter++;
+                    string path = ProSwapperFolder + @"Config\" + version + "_config.txt";
+                    CreateDir(ProSwapperFolder + @"Config\");
+                    return path;
                 }
             }
-        }
-        private static void lineChanger(string newText, string fileName, int line_to_edit)
-        {
-            string[] arrLine = File.ReadAllLines(fileName);
-            arrLine[line_to_edit - 1] = newText;
-            File.WriteAllLines(fileName, arrLine);
-        }
-        public static string ReadSetting(Setting value)
-        {
-            string line;
-            using (StreamReader file = new StreamReader(settingspath()))
-            {
-                for (int counter = 0; (line = file.ReadLine()) != null; counter++)
-                {
-                    if (line.StartsWith(value + "="))
-                        return line.Replace(value + "=", "");
-                }
-                return null;
-            }
-        }
-        public enum Setting
-        {
-            Paks,
-            theme,
-            lastopened,
-            swaplogs
-        }
-        public static string Decompress(string input)
-        {
-            return Encoding.UTF8.GetString(Decompress(Convert.FromBase64String(input)));
-        }
-        public static byte[] Decompress(byte[] input)
-        {
-            using (var source = new MemoryStream(input))
-            {
-                byte[] lengthBytes = new byte[4];
-                source.Read(lengthBytes, 0, 4);
 
-                var length = BitConverter.ToInt32(lengthBytes, 0);
-                using (var decompressionStream = new GZipStream(source,
-                    CompressionMode.Decompress))
-                {
-                    var result = new byte[length];
-                    decompressionStream.Read(result, 0, length);
-                    return result;
-                }
-            }
-        }
+            public static ConfigObj CurrentConfig;
+            public static void InitConfig()
+            {
+                if (!File.Exists(ConfigPath))
+                    File.WriteAllText(ConfigPath, ToJson(new ConfigObj()));
 
-        public static Items.Root items { get; set; }
+                CurrentConfig = FromJSON<ConfigObj>(File.ReadAllText(ConfigPath));
+            }
+            public static void SaveConfig()
+            {
+                File.WriteAllText(ConfigPath, ToJson(CurrentConfig));
+            }
+
+            public static T FromJSON<T>(string json)//Make a json string to obj
+            {
+                return JsonConvert.DeserializeObject<T>(json);
+            }
+            public static string ToJson(Object config)//Make obj to json string
+            {
+                return JsonConvert.SerializeObject(config);
+            }
+
+            public class ConfigObj
+            {
+            public string Paks { get; set; } = "";
+            public Color[] theme { get; set; } = new Color[4] { Color.FromArgb(0, 33, 113), Color.FromArgb(64, 85, 170), Color.FromArgb(65,105,255), Color.FromArgb(255,255,255) };//0,33,113;    64,85,170;    65,105,255;   255,255,255
+            public string lastopened { get; set; } = "";
+            public string swaplogs { get; set; } = "";
+            }
+        #endregion
+
+
         public static byte[] HexToByte(string hex)
         {
             hex = hex.Replace(" ", "").Replace("hex=", "");
-            return Enumerable.Range(0, hex.Length)
-                             .Where(x => x % 2 == 0)
-                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
-                             .ToArray();
+            return Enumerable.Range(0, hex.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(hex.Substring(x, 2), 16)).ToArray();
         }
         public static string FileToMd5(string filename)
         {
-            if (File.Exists(filename))
-                        return BitConverter.ToString(MD5.Create().ComputeHash(File.OpenRead(filename))).Replace("-", "").ToLowerInvariant();
-            else
-                return string.Empty;
+            if (File.Exists(filename)) return BitConverter.ToString(MD5.Create().ComputeHash(File.OpenRead(filename))).Replace("-", "").ToLowerInvariant();
+            else return string.Empty;
         }
-
+        #region FormMoveable
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImport("user32.dll")]
+        public static extern bool ReleaseCapture();
+        public static void FormMove(IntPtr Handle)
+        {
+            ReleaseCapture();
+            SendMessage(Handle, 0xA1, 0x2, 0);
+        }
+        #endregion
+        #region BoyerMoore
         public class BoyerMoore
         {
             readonly byte[] needle;
@@ -307,5 +279,6 @@ namespace Pro_Swapper
                 this.Idx = idx;
             }
         }
+        #endregion
     }
 }

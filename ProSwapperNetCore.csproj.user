@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ShowAllFiles>false</ShowAllFiles>
+    <_LastSelectedProfileId>C:\Users\ProMa\source\repos\ProSwapperNetCore\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="src\UI\Dashboard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UI\Main.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\UI\Message.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\UI\Other.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UI\Settings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\UI\ThemeCreator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\UI\UserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>

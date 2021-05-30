@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
-using System.IO;
 namespace Pro_Swapper
 {
     public partial class Settings : Form
@@ -14,7 +13,6 @@ namespace Pro_Swapper
             RPC.SetState("Settings", true);
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
             Icon = Main.appIcon;
-
             new Thread(() =>
             {
                 CheckForIllegalCrossThreadCalls = false;
@@ -30,8 +28,7 @@ namespace Pro_Swapper
         private void button1_Click(object sender, EventArgs e) => Close();
         private void SettingsForm_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-                Main.FormMove(Handle);
+            if (e.Button == MouseButtons.Left) global.FormMove(Handle);
         }
         private void pictureBox7_Click(object sender, EventArgs e)
         {
@@ -42,12 +39,13 @@ namespace Pro_Swapper
                 paks.ShowNewFolderButton = false;
                 paks.ShowDialog();
                 paksBox.Text = paks.SelectedPath;
-                global.WriteSetting(paks.SelectedPath, global.Setting.Paks);
+                global.CurrentConfig.Paks = paks.SelectedPath;
+                global.SaveConfig();
             }
         }
         private void SettingsForm_Load(object sender, EventArgs e)
         {
-            paksBox.Text = global.ReadSetting(global.Setting.Paks);
+            paksBox.Text = global.CurrentConfig.Paks;
             BackColor = global.MainMenu;
             button2.BackColor = global.Button;
             button2.ForeColor = global.TextColor;
@@ -64,6 +62,9 @@ namespace Pro_Swapper
             button9.BackColor = global.Button;
             button9.ForeColor = global.TextColor;
 
+            button5.BackColor = global.Button;
+            button5.ForeColor = global.TextColor;
+
             button7.BackColor = global.Button;
             button7.ForeColor = global.TextColor;
             Restart.BackColor = global.Button;
@@ -72,7 +73,7 @@ namespace Pro_Swapper
             label1.ForeColor = global.TextColor;
         }
 
-        private void button2_Click(object sender, EventArgs e) => Process.Start(paksBox.Text);
+        private void button2_Click(object sender, EventArgs e) => global.OpenUrl(paksBox.Text);
         private void Restart_Click(object sender, EventArgs e)
         {
             Process.Start(AppDomain.CurrentDomain.FriendlyName);
@@ -81,7 +82,7 @@ namespace Pro_Swapper
         private const string epicfnpath = "com.epicgames.launcher://apps/Fortnite?action=";
         private void button9_Click(object sender, EventArgs e)
         {
-            Process.Start($"{epicfnpath}launch");
+            global.OpenUrl($"{epicfnpath}launch");
             Main.Cleanup();
         }
         private void button7_Click(object sender, EventArgs e)
@@ -89,38 +90,33 @@ namespace Pro_Swapper
             DialogResult result = MessageBox.Show("Do you want to verify Fortnite and revert your files to how they were before you used the swapper?", "Fortnite Verification", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
             if (result == DialogResult.Yes)
             {
-                Process.Start($"{epicfnpath}verify");
-                global.WriteSetting("", global.Setting.swaplogs);
+                global.OpenUrl($"{epicfnpath}verify");
+                global.CurrentConfig.swaplogs = "";
+                global.SaveConfig();
                 Main.Cleanup();
             }            
         }
         private void button3_Click_1(object sender, EventArgs e)
         {
-            global.WriteSetting("", global.Setting.swaplogs);
+            global.CurrentConfig.swaplogs = "";
+            global.SaveConfig();
             MessageBox.Show("All configs for item reset! Now all items will show as OFF (This button should be used after verifying Fortnite)", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         private void button10_Click(object sender, EventArgs e) => new ThemeCreator().ShowDialog();
-        private void pictureBox1_Click(object sender, EventArgs e)=> Process.Start("https://youtube.com/proswapperofficial");
-        private void pictureBox2_Click(object sender, EventArgs e)=> Process.Start("https://twitter.com/Pro_Swapper");
+        private void pictureBox1_Click(object sender, EventArgs e)=> global.OpenUrl("https://youtube.com/proswapperofficial");
+        private void pictureBox2_Click(object sender, EventArgs e)=> global.OpenUrl("https://twitter.com/Pro_Swapper");
+        private void discord_Click(object sender, EventArgs e) => global.OpenUrl(API.api.apidata.discordurl);
+        private void button5_Click(object sender, EventArgs e) => new Message("Credits And About", $"Pro Swapper made by Kye#5000. https://github.com/kyeondiscord. Credit to Tamely & Smoonthie for new Fortnite Swapping Method(s) \n\n\n\nProduct Information:\nLicense: MIT\nVersion: {global.version}\nMD5: {global.FileToMd5(AppDomain.CurrentDomain.FriendlyName)}\nLast Update: {CalculateTimeSpan(UnixTimeStampToDateTime(long.Parse(API.api.apidata.timestamp)))}", false).ShowDialog();
+        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp) => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(unixTimeStamp).ToUniversalTime();
         private void ConvertedItemsList(object sender, EventArgs e)
         {
-            int converteditemno = global.ReadSetting(global.Setting.swaplogs).Length - global.ReadSetting(global.Setting.swaplogs).Replace(",", "").Length;
+            string swaplogs = global.CurrentConfig.swaplogs;
+            int converteditemno = swaplogs.Length - swaplogs.Replace(",", "").Length;
             if (converteditemno > 0)
-                MessageBox.Show("You currently have " + converteditemno + " item(s) converted. The items you have converted are: " + global.ReadSetting(global.Setting.swaplogs), "Converted Items List", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("You currently have " + converteditemno + " item(s) converted. The items you have converted are: " + swaplogs, "Converted Items List", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
                 MessageBox.Show("You have no items converted!", "Converted Items List", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-        private void discord_Click(object sender, EventArgs e)=> Process.Start(Convert.ToString(api.apidata.discordurl));
-        private void button5_Click(object sender, EventArgs e)
-        {
-            new Message("Credits And About", $"Pro Swapper made by Kye#5000. https://github.com/kyeondiscord. Credit to Tamely & Smoonthie for new Fortnite Swapping Method(s) \n\n\n\nProduct Information:\nLicense: MIT\nVersion: {global.version}\nMD5: {global.FileToMd5(AppDomain.CurrentDomain.FriendlyName)}\nLast Update: {CalculateTimeSpan(UnixTimeStampToDateTime(long.Parse(api.apidata.timestamp)))}", false).ShowDialog();
-        }
-
-        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
-        {
-            return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(unixTimeStamp).ToUniversalTime();
-        }
-
         private static string CalculateTimeSpan(DateTime dt)
         {
             var ts = new TimeSpan(DateTime.UtcNow.Ticks - dt.Ticks);
