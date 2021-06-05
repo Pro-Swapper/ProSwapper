@@ -53,6 +53,32 @@ namespace Pro_Swapper.Oodle.Utils
             return sourceArray;
         }
 
+        public static byte[] Prepare(byte[] Bytes)
+        {
+            placeholderOffset2 = 0;
+            placeholderOffset1 = 13;
+            //sourceArray = null;
+            sourceArray = Bytes;
+            Array.Copy(sourceArray, destinationArray, 4);
+            destEncodedString = Encoding.ASCII.GetString(destinationArray);
+            if (destEncodedString == "OODL")
+            {
+                placeholderOffset2 = 1;
+            }
+            Array.Copy(sourceArray, 12, destinationArray, 0, 4);
+            string_1 = Encoding.ASCII.GetString(destinationArray);
+            if (string_1 == "KRKN")
+            {
+                placeholderOffset1 = 8;
+                placeholderOffset3 = (int)BitConverter.ToUInt32(sourceArray, 16);
+                targetLength = (int)BitConverter.ToUInt32(sourceArray, 20);
+                targetArray = new byte[targetLength];
+                Array.Copy(sourceArray, 24, targetArray, 0, targetLength);
+            }
+            sourceLength = sourceArray.Length;
+            return sourceArray;
+        }
+
 
         private byte[] Writer(string fileName)
         {

@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using Newtonsoft.Json.Linq;
-
+using Pro_Swapper.API;
 namespace Pro_Swapper
 {
     public partial class Dashboard : System.Windows.Forms.UserControl
@@ -25,8 +26,14 @@ namespace Pro_Swapper
             newstext.ForeColor = global.TextColor;
             label2.ForeColor = global.TextColor;
             label3.ForeColor = global.TextColor;
-            patchnotes.Text = "Update " + global.version + Environment.NewLine + API.api.apidata.patchnotes;
-            newstext.Text = API.api.apidata.newstext;
+            patchnotes.Text = "Update " + global.version + Environment.NewLine;
+            newstext.Text = api.apidata.newstext;
+            string AutoPatchNotes = string.Empty;
+            foreach (api.Item item in api.apidata.items.Skip(11))
+            {
+                AutoPatchNotes += $"Added {item.SwapsFrom} to {item.SwapsTo}\n";
+            }
+            patchnotes.Text += api.apidata.patchnotes + Environment.NewLine + AutoPatchNotes;
             try
             {
                 news.ImageLocation = ((dynamic)JObject.Parse(new WebClient().DownloadString($"{API.api.FNAPIEndpoint}news/br"))).data.image;

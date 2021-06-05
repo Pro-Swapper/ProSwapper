@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
@@ -47,7 +46,19 @@ namespace Pro_Swapper
                 goto start;
             }
         }
-        public static bool IsNameModified()=> FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).OriginalFilename.Replace(".dll", "") != Process.GetCurrentProcess().ProcessName;
+
+        public static double GetEpochTime() => (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+
+
+        public static bool IsNameModified()
+        {
+            if (Process.GetCurrentProcess().ProcessName.Contains("Pro_Swapper"))
+            {
+                return false;
+            }
+            else return true;
+        }
+            
         public static Color MainMenu, Button, TextColor, ItemsBG;
 
         public static void OpenUrl(string url)
@@ -66,9 +77,8 @@ namespace Pro_Swapper
         {
             try
             {
-                Image imgInput = imagevar;
-                Graphics gInput = Graphics.FromImage(imgInput);
-                ImageFormat thisFormat = imgInput.RawFormat;
+                Graphics gInput = Graphics.FromImage(imagevar);
+                ImageFormat thisFormat = imagevar.RawFormat;
                 return true;
             }
             catch
@@ -76,25 +86,6 @@ namespace Pro_Swapper
                 return false;
             }
         }
-
-
-        
-        /* Deprecated
-        public static byte[] ReadBytes(string filename, int numberOfBytes, long offset)
-        {
-            using (Stream stream = File.Open(filename, FileMode.Open, FileAccess.ReadWrite))
-            {
-                List<byte> array = new List<byte>();
-                stream.Position = offset;
-                for (int i = 0; i < numberOfBytes; i++)
-                    array.Add((byte)stream.ReadByte());
-
-                stream.Close();
-                stream.Dispose();
-                return array.ToArray();
-            }
-        }*/
-
         public static string ProSwapperFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Pro_Swapper\";
         public static void CreateDir(string dir)
         {
@@ -138,7 +129,7 @@ namespace Pro_Swapper
             {
             public string Paks { get; set; } = "";
             public Color[] theme { get; set; } = new Color[4] { Color.FromArgb(0, 33, 113), Color.FromArgb(64, 85, 170), Color.FromArgb(65,105,255), Color.FromArgb(255,255,255) };//0,33,113;    64,85,170;    65,105,255;   255,255,255
-            public string lastopened { get; set; } = "";
+            public double lastopened { get; set; }
             public string swaplogs { get; set; } = "";
             }
         #endregion
@@ -163,121 +154,6 @@ namespace Pro_Swapper
         {
             ReleaseCapture();
             SendMessage(Handle, 0xA1, 0x2, 0);
-        }
-        #endregion
-        #region BoyerMoore
-        public class BoyerMoore
-        {
-            readonly byte[] needle;
-            readonly int[] charTable;
-            readonly int[] offsetTable;
-            ArrayList foundAL;
-            int[] foundIdxArray;
-            bool found = false;
-
-            public BoyerMoore(byte[] needle)
-            {
-                this.needle = needle;
-                this.charTable = makeByteTable(needle);
-                this.offsetTable = makeOffsetTable(needle);
-                this.foundAL = new ArrayList();
-                this.found = false;
-            }
-
-            public int[] Search(byte[] haystack, bool onlyFirst = false)
-            {
-                if (needle.Length == 0)
-                    return new int[0];
-
-                for (int i = needle.Length - 1; i < haystack.Length;)
-                {
-                    int j;
-
-                    for (j = needle.Length - 1; needle[j] == haystack[i]; --i, --j)
-                    {
-                        if (j != 0)
-                            continue;
-                        foundAL.Add(new FoundIndex(i));
-                        found = true;
-                        i += needle.Length - 1;
-                        break;
-                    }
-
-                    i += Math.Max(offsetTable[needle.Length - 1 - j], charTable[haystack[i]]);
-                    if (onlyFirst && found)
-                    { break; }
-                }
-
-                foundIdxArray = new int[foundAL.Count];
-                for (int i = 0; i < foundAL.Count; i++)
-                {
-                    foundIdxArray[i] = ((FoundIndex)foundAL[i]).Idx;
-                }
-                return foundIdxArray;
-            }
-
-            static int[] makeByteTable(byte[] needle)
-            {
-                const int ALPHABET_SIZE = 256;
-                int[] table = new int[ALPHABET_SIZE];
-
-                for (int i = 0; i < table.Length; ++i)
-                    table[i] = needle.Length;
-
-                for (int i = 0; i < needle.Length - 1; ++i)
-                    table[needle[i]] = needle.Length - 1 - i;
-
-                return table;
-            }
-
-            static int[] makeOffsetTable(byte[] needle)
-            {
-                int[] table = new int[needle.Length];
-                int lastPrefixPosition = needle.Length;
-
-                for (int i = needle.Length - 1; i >= 0; --i)
-                {
-                    if (isPrefix(needle, i + 1))
-                        lastPrefixPosition = i + 1;
-
-                    table[needle.Length - 1 - i] = lastPrefixPosition - i + needle.Length - 1;
-                }
-
-                for (int i = 0; i < needle.Length - 1; ++i)
-                {
-                    int slen = suffixLength(needle, i);
-                    table[slen] = needle.Length - 1 - i + slen;
-                }
-
-                return table;
-            }
-
-            static bool isPrefix(byte[] needle, int p)
-            {
-                for (int i = p, j = 0; i < needle.Length; ++i, ++j)
-                    if (needle[i] != needle[j])
-                        return false;
-
-                return true;
-            }
-
-            static int suffixLength(byte[] needle, int p)
-            {
-                int len = 0;
-
-                for (int i = p, j = needle.Length - 1; i >= 0 && needle[i] == needle[j]; --i, --j)
-                    ++len;
-
-                return len;
-            }
-        }
-        public class FoundIndex
-        {
-            public int Idx { get; private set; }
-            public FoundIndex(int idx)
-            {
-                this.Idx = idx;
-            }
         }
         #endregion
     }

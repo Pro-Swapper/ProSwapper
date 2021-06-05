@@ -46,6 +46,22 @@ namespace Pro_Swapper.Oodle
             return OodleStream.OodleCompress(Utils.Oodle.sourceArray, Utils.Oodle.sourceLength, (OodleFormat)oodleFormat_, OodleCompressionLevel.Normal, uint_);
         }
 
+        public static byte[] Compress(byte[] bytearray)
+        {
+            Utils.Oodle.Prepare(bytearray);
+            int oodleFormat_ = 8;
+            uint uint_;
+            try
+            {
+                uint_ = OodleStream.GetCompressedLength(Utils.Oodle.sourceArray, Utils.Oodle.sourceLength, (OodleFormat)oodleFormat_, OodleCompressionLevel.Normal);
+            }
+            catch (AccessViolationException)
+            {
+                uint_ = 64U;
+            }
+            return OodleStream.OodleCompress(Utils.Oodle.sourceArray, Utils.Oodle.sourceLength, (OodleFormat)oodleFormat_, OodleCompressionLevel.Normal, uint_);
+        }
+
         public static byte[] OverrideBytes(byte[] original, byte[] tooverride)
         {
             for (int i = 0; i < tooverride.Length; i++)

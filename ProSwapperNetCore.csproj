@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
+    <LangVersion>preview</LangVersion>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
@@ -10,9 +11,9 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
- <OutputType>WinExe</OutputType>
- <TargetFramework>netcoreapp3.1</TargetFramework>
- <Version>0.0.8.3</Version>
+ <OutputType>Exe</OutputType>
+ <TargetFramework>net5.0-windows</TargetFramework>
+ <Version>0.0.8.4</Version>
  <Company>Pro Swapper</Company>
  <Authors>Pro Swapper</Authors>
  <Product>Pro Swapper</Product>
@@ -25,12 +26,15 @@
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\</OutputPath>
     <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\</OutputPath>
     <Optimize>false</Optimize>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,15 +45,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Bunifu_UI_v1.52.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <None Include="bin\net5.0-windows\oo2core_6_win64.dll" />
+    <None Include="bin\net5.0-windows\oo2core_8_win64.dll" />
     <None Include="src\Classes\Oodle\Utils\CompressionType.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="DiscordRichPresence" Version="1.0.175" />
+    <PackageReference Include="DotNetZip" Version="1.15.0" />
+    <PackageReference Include="LZMA-SDK" Version="19.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,6 +63,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Update="src\UI\OodleSwap.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -66,24 +75,20 @@
 
   <ItemGroup>
     <None Update="oo2core_6_win64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Umodel\oo2core_5_win32.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Umodel\oo2core_6_win64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Umodel\SDL2.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Umodel\umodel.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="bin\" />
+    <Folder Include="CUE4Parse\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
 
 </Project>

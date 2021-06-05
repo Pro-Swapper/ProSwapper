@@ -2,9 +2,7 @@
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
-using System.Text;
 using System.Drawing;
-using System.Linq;
 using System.ComponentModel;
 using Pro_Swapper.API;
 namespace Pro_Swapper
@@ -57,7 +55,8 @@ namespace Pro_Swapper
                 {
                     Stopwatch s = new Stopwatch();
                     s.Start();
-                    Umodel.SwapItem(ThisItem, Converting);
+                
+                    Swap.SwapItem(ThisItem, out bool Converting);
                     s.Stop();
                     logbox.Clear();
                     Log("====");

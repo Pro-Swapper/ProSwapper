@@ -48,7 +48,7 @@ namespace Pro_Swapper
                 try
                 {
                     Process[] procs = Process.GetProcesses();
-                    string[] killdeez = { "easyanticheat", "fortnite", "epicgameslauncher", "unrealcefsubprocess", "fmodel"};
+                    string[] killdeez = { "easyanticheat", "fortnite", "epicgameslauncher", "unrealcefsubprocess"};
                     if (asked == false)
                     {
                         asked = true;
@@ -100,16 +100,14 @@ namespace Pro_Swapper
                 
                 global.CreateDir(global.ProSwapperFolder);
                 api.UpdateAPI();
-
-                Console.WriteLine(Process.GetCurrentProcess().ProcessName);
-                Console.WriteLine(Process.GetCurrentProcess().MainModule);
                 string apiversion = api.apidata.version;
-                string thishr = DateTime.Now.ToString("MMddHH");
+                
+                double TimeNow = global.GetEpochTime();
 
-                if (global.CurrentConfig.lastopened != thishr)
+                if (global.CurrentConfig.lastopened + 3600 < TimeNow)
                 {
                     global.OpenUrl(api.apidata.discordurl);
-                    global.CurrentConfig.lastopened = thishr;
+                    global.CurrentConfig.lastopened = TimeNow;
                 }
 
                 if (!apiversion.Contains(global.version)) //if outdated
