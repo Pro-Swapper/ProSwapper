@@ -9,13 +9,16 @@ Download Pro Swapper for the latest version of Fortnite [here](https://linkverti
 
 
 Other Links:
+
+Huge thanks to [@Fabian](https://github.com/FabianFG)'s [CUE4Parse](https://github.com/FabianFG/CUE4Parse) which Pro Swapper massively uses.
+
 Pro Swapper uses our own [API](https://github.com/Pro-Swapper/api) for fetching cosmetics, news & more.
 
 Pro Swapper uses [Bunifu Framework](https://bunifuframework.com/)
 
 Pro Swapper uses [Discord Rich Presence](https://github.com/discord/discord-rpc)
 
-Pro Swapper uses [Microsoft's .NET Framework 4.6.1](https://dotnet.microsoft.com/download/dotnet-framework/net461)
+Pro Swapper uses [.NET 5](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.6-windows-x64-installer)
 <br>
 <br>
 <a href="https://discord.gg/X3Bg3JwPTC"><img src="https://i.imgur.com/UVuAt9A.jpg"></a>
