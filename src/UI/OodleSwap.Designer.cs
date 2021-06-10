@@ -38,6 +38,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.swapsfrom = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.swapbg = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.image)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.swapsfrom)).BeginInit();
             this.SuspendLayout();
@@ -224,6 +225,10 @@
             this.label2.Text = "-->";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // swapbg
+            // 
+            this.swapbg.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.swapbg_RunWorkerCompleted);
+            // 
             // OodleSwap
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -267,6 +272,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox swapsfrom;
         private System.Windows.Forms.Label label2;
+        private System.ComponentModel.BackgroundWorker swapbg;
     }
 }
 

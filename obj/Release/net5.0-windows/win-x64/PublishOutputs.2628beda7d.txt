@@ -1,0 +1,2 @@
+C:\Users\ProMa\source\repos\ProSwapperNetCore\bin\Publish\Pro_Swapper.pdb
+C:\Users\ProMa\source\repos\ProSwapperNetCore\bin\Publish\Pro_Swapper.exe

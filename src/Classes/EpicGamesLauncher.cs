@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 using System.Windows.Forms;
 namespace Pro_Swapper
@@ -42,6 +43,31 @@ namespace Pro_Swapper
                 }
             }
             error: MessageBox.Show("Could not find your pak files! Please select them manually!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+
+        public static string GetOodleDll()
+        {
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Epic\UnrealEngineLauncher\LauncherInstalled.dat";
+            if (File.Exists(path))
+            {
+                foreach (InstallationList d in JsonConvert.DeserializeObject<Root>(File.ReadAllText(path)).InstallationList)
+                    {
+                        if (d.AppName == "Fortnite")
+                        {
+                            string oodledll = d.InstallLocation + @"\FortniteGame\Binaries\Win64\oo2core_5_win64.dll";
+                            if (File.Exists(oodledll))
+                            return oodledll;
+                            else
+                            return "";
+                        }
+                    }
+                return "";
+            }
+            else
+            {
+                return "";
+            }
         }
         /*
         public static string InstalledFortniteVersion()

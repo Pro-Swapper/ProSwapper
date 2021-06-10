@@ -14,7 +14,7 @@ namespace Pro_Swapper.Algorithms
         /// <param name="s">The input stream</param>
         /// <param name="pattern">The pattern</param>
         /// <returns>The index of the first occurrence, or -1 if the pattern has not been found</returns>
-        public static long IndexOf(Stream s, byte[] pattern, long StartIndex = 0)
+        public static long IndexOf(Stream s, byte[] pattern)
         {
             // Prepare the bad character array is done once in a separate step
             var badCharacters = MakeBadCharArray(pattern);

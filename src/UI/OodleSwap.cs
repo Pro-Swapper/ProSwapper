@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.ComponentModel;
 using Pro_Swapper.API;
+using Bunifu.Framework.UI;
 namespace Pro_Swapper
 {
     public partial class OodleSwap : Form
@@ -47,44 +48,8 @@ namespace Pro_Swapper
             swapsfrom.Image = global.ItemIcon(ThisItem.ToImage);
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
         }
-        private bool Converting { get; set; }
-        private void SwapWork(object sender, DoWorkEventArgs e)
-        {
-            CheckForIllegalCrossThreadCalls = false;
-            try
-                {
-                    Stopwatch s = new Stopwatch();
-                    s.Start();
-                
-                    Swap.SwapItem(ThisItem, out bool Converting);
-                    s.Stop();
-                    logbox.Clear();
-                    Log("====");
-                    string swaplogs = global.CurrentConfig.swaplogs;
-                    if (Converting)
-                    {
-                        Log($"[+] Converted item in {s.Elapsed.TotalMilliseconds}ms");
-                        label3.Text = "ON";
-                        label3.ForeColor = Color.Lime;
-                        s.Stop();
-                        global.CurrentConfig.swaplogs += ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",";
-                    }
-                    else
-                    {
-                        Log($"[+] Reverted item in {s.Elapsed.TotalMilliseconds}ms");
-                        label3.Text = "OFF";
-                        label3.ForeColor = Color.Red;
-                        global.CurrentConfig.swaplogs = swaplogs.Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",", "");
-                    }
-                    Log("====");
-                    global.SaveConfig();
-                }
-                catch (Exception ex)
-                {
-                    Log($"Restart the swapper or refer to this error: {ex.Message} | {ex.StackTrace}");
-                }
-            
-        }
+        private bool Converting = false;
+       
         private void Log(string text)
         {
             logbox.Text += $"{text}{Environment.NewLine}";
@@ -101,24 +66,63 @@ namespace Pro_Swapper
             logbox.Clear();
             Log("Loading...");
 
+            Converting = ((BunifuFlatButton)(sender)).Text == "Convert";
+
             
-
-            if (((Bunifu.Framework.UI.BunifuFlatButton)sender).Text == "Convert")
-                Converting = true;
-            else //Revert
-                Converting = false;
-
-            using (BackgroundWorker swapbg = new BackgroundWorker())
-            {
-                swapbg.DoWork += new DoWorkEventHandler(SwapWork);
-                swapbg.RunWorkerAsync();
-            }
+            swapbg.DoWork += new DoWorkEventHandler(SwapWork);
+            swapbg.RunWorkerAsync();
+            ConvertB.Enabled = false;
+            RevertB.Enabled = false;
+            label3.Text = "Loading...";
+            label3.ForeColor = Color.White;
         }
         private void ExitButton_Click(object sender, EventArgs e) => Close();
         private void button2_Click(object sender, EventArgs e) => WindowState = FormWindowState.Minimized;
         private void swap_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left) global.FormMove(Handle);
+        }
+        Stopwatch s = new Stopwatch();
+        private void SwapWork(object sender, DoWorkEventArgs e)
+        {
+            CheckForIllegalCrossThreadCalls = false;
+            try
+            {
+                s.Start();
+                Swap.SwapItem(ThisItem, Converting);
+
+            }
+            catch (Exception ex)
+            {
+                Log($"Restart the swapper or refer to this error: {ex.Message} | {ex.StackTrace}");
+            }
+        }
+
+        private void swapbg_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            ConvertB.Enabled = true;
+            RevertB.Enabled = true;
+            s.Stop();
+            logbox.Clear();
+            Log("====");
+            string swaplogs = global.CurrentConfig.swaplogs;
+            if (Converting)
+            {
+                Log($"[+] Converted item in {s.Elapsed.TotalMilliseconds}ms");
+                label3.Text = "ON";
+                label3.ForeColor = Color.Lime;
+                s.Stop();
+                global.CurrentConfig.swaplogs += ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",";
+            }
+            else
+            {
+                Log($"[-] Reverted item in {s.Elapsed.TotalMilliseconds}ms");
+                label3.Text = "OFF";
+                label3.ForeColor = Color.Red;
+                global.CurrentConfig.swaplogs = swaplogs.Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",", "");
+            }
+            Log("====");
+            global.SaveConfig();
         }
     }
 }

@@ -110,17 +110,19 @@ namespace Pro_Swapper
                     global.CurrentConfig.lastopened = TimeNow;
                 }
 
-                if (!apiversion.Contains(global.version)) //if outdated
+                int thisVer = int.Parse(global.version.Replace(".", ""));
+                int apiVer = int.Parse(api.apidata.version.Replace(".", ""));
+                
+                if (apiVer > thisVer)
                 {
                     MessageBox.Show("New Pro Swapper Update found! Redirecting you to the new download!", "Pro Swapper Update", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     global.OpenUrl("https://linkvertise.com/86737/proswapper");
                     Cleanup();
                 }
 
-
                 if (global.IsNameModified())
                 {
-                    ThrowError($"This Pro Swapper version has been renamed, this means you have not downloaded it from the official source. Please redownload it on the Discord server at {API.api.apidata.discordurl}");
+                    ThrowError($"This Pro Swapper version has been renamed, this means you have not downloaded it from the official source. Please redownload it on the Discord server at {api.apidata.discordurl}");
                     global.OpenUrl("https://linkvertise.com/86737/proswapper");
                 }
 

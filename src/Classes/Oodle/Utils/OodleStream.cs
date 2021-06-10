@@ -8,7 +8,8 @@ namespace Pro_Swapper.Oodle.Utils
 	{
 		//oo2core_8_win64.dll
 
-		private const string oodledll = "oo2core_6_win64.dll";
+
+		private const string oodledll = "oo2core_5_win64.dll";
 		[DllImport(oodledll)]
 		public static extern int OodleLZ_Compress(OodleFormat format, byte[] decompressedBuffer, long decompressedSize, byte[] compressedBuffer, OodleCompressionLevel compressionLevel, uint uint_0, uint uint_1, uint uint_2, BaseEnum genum);
 

@@ -57,7 +57,7 @@ namespace Pro_Swapper.Oodle.Utils
         {
             placeholderOffset2 = 0;
             placeholderOffset1 = 13;
-            //sourceArray = null;
+            sourceArray = null;
             sourceArray = Bytes;
             Array.Copy(sourceArray, destinationArray, 4);
             destEncodedString = Encoding.ASCII.GetString(destinationArray);

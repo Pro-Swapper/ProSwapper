@@ -51,6 +51,9 @@ namespace Pro_Swapper.Oodle
             Utils.Oodle.Prepare(bytearray);
             int oodleFormat_ = 8;
             uint uint_;
+
+
+            //Kraken
             try
             {
                 uint_ = OodleStream.GetCompressedLength(Utils.Oodle.sourceArray, Utils.Oodle.sourceLength, (OodleFormat)oodleFormat_, OodleCompressionLevel.Normal);
@@ -59,6 +62,7 @@ namespace Pro_Swapper.Oodle
             {
                 uint_ = 64U;
             }
+
             return OodleStream.OodleCompress(Utils.Oodle.sourceArray, Utils.Oodle.sourceLength, (OodleFormat)oodleFormat_, OodleCompressionLevel.Normal, uint_);
         }
 

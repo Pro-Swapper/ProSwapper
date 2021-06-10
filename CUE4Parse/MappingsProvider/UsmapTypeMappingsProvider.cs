@@ -71,7 +71,7 @@ namespace CUE4Parse.MappingsProvider
                     Ar.Read(data, 0, (int) compSize);
                     break;
                 case ECompressionMethod.Oodle:
-                    Oodle.Decompress(Ar.ReadBytes((int) compSize), 0, (int) compSize, data, 0, (int) decompSize);
+                    Compression.Oodle.Decompress(Ar.ReadBytes((int) compSize), 0, (int) compSize, data, 0, (int) decompSize);
                     break;
                 case ECompressionMethod.Brotli:
                     throw new NotImplementedException();

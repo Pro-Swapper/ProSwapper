@@ -22,16 +22,16 @@ namespace Pro_Swapper.Fortnite
             foreach (IAesVfsReader file in vfs)
                     Provider.SubmitKey(file.EncryptionKeyGuid, new FAesKey(aes));
 
-
-            if (Provider.TrySaveAsset(Asset, out byte[] asset))
+            try
             {
+                byte[] asset = Provider.SaveAsset(Asset);
                 Provider.Dispose();
                 return asset;
             }
-            else
+            catch (Exception ex)
             {
                 Provider.Dispose();
-                throw new Exception($"Asset {asset} in {filename} could not be exported");
+                throw new Exception($"Asset {Asset} in {filename} could not be exported: {ex.Message}");
             }
         }
     }

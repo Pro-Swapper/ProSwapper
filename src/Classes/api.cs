@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Net;
+using System.Collections.Generic;
 namespace Pro_Swapper.API
 {
     public static class api
@@ -74,8 +75,16 @@ namespace Pro_Swapper.API
             public string FromImage { get; set; }
             public string ToImage { get; set; }
             public Asset[] Asset { get; set; }
-            public string Note { get; set; }
+            public string Note { get; set; } = null;
+            public bool ShowMain { get; set; } = true;
         }
+        public class Swapoption
+        {
+            public string Type { get; set; }
+            public List<int> ItemIndexs { get; set; }
+            public string Title { get; set; }
+        }
+
 
         public class Status
         {
@@ -94,6 +103,7 @@ namespace Pro_Swapper.API
             public string aes { get; set; }
             public Item[] items { get; set; }
             public Status[] status { get; set; }
+            public Swapoption[] swapoptions { get; set; }
         }
     }
 }
