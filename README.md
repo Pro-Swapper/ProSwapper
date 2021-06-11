@@ -7,7 +7,11 @@
 
 Download Pro Swapper for the latest version of Fortnite [here](https://linkvertise.com/86737/proswapper)
 
+If you have any questions about Pro Swapper, please read our [FAQ](https://github.com/Pro-Swapper/faq/blob/main/README.md)
 
+
+
+<br>
 Other Links:
 
 Huge thanks to [@Fabian](https://github.com/FabianFG)'s [CUE4Parse](https://github.com/FabianFG/CUE4Parse) which Pro Swapper massively uses.
