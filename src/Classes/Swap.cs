@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using Pro_Swapper.API;
+using System.Threading.Tasks;
 namespace Pro_Swapper
 {
     public static class Swap
     {
         private static string PaksLocation = global.CurrentConfig.Paks;
-        public static void SwapItem(api.Item item, bool Converting)
+        public static async Task SwapItem(api.Item item, bool Converting)
         {
             List<FinalPastes> finalPastes = new List<FinalPastes>();
             foreach (api.Asset asset in item.Asset)
@@ -47,9 +48,12 @@ namespace Pro_Swapper
                 finalPastes.Add(new FinalPastes(ucasfile, towrite, RawExported));
             }
 
+            List<Task> tasklist = new List<Task>();
             //Actually put into game files:
             foreach (FinalPastes pastes in finalPastes)
-                PasteInLocationBytes(pastes);
+                tasklist.Add(Task.Run(() => PasteInLocationBytes(pastes)));
+
+            await Task.WhenAll(tasklist);
         }
 
         public class FinalPastes
