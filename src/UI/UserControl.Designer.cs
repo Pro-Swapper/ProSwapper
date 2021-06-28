@@ -49,6 +49,7 @@
             this.DoubleBuffered = true;
             this.Name = "UserControl";
             this.Size = new System.Drawing.Size(995, 606);
+            this.Load += new System.EventHandler(this.UserControl_Load);
             this.ResumeLayout(false);
 
         }

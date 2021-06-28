@@ -14,37 +14,38 @@ namespace Pro_Swapper
     public class global
     {
         public static string version = Assembly.GetExecutingAssembly().GetName().Version.ToString().Substring(2, 5);
+
+        public static WebClient web;
+        
+        
         public static Image ItemIcon(string url)
         {
-                string rawpath = ProSwapperFolder + @"Images\";
-                CreateDir(rawpath);
-                string path = rawpath + url;
+                string path = ProSwapperFolder + @"Images\" + url;
                 string imageurl = "https://i.imgur.com/" + url;
-                //Downloads image if doesnt exists
-                start:  if (!File.Exists(path))
-                    new WebClient().DownloadFile(imageurl, path);
-            try
+            //Downloads image if doesnt exists
+            if (!File.Exists(path))
+                return SaveImage(imageurl, path, ImageFormat.Png);
+            else
+                return Image.FromFile(path);
+        }
+
+
+        private static Image SaveImage(string imageUrl, string filename, ImageFormat format)
+        {
+            WebClient client = new WebClient();
+            client.Proxy = null;
+            Stream stream = client.OpenRead(imageUrl);
+            Bitmap bitmap; bitmap = new Bitmap(stream);
+
+            if (bitmap != null)
             {
-                Image img;
-                using (Bitmap bmpTemp = new Bitmap(path))
-                {
-                    img = new Bitmap(bmpTemp);
-                }
-                    if (IsImage(img))
-                    {
-                        return img;
-                    }
-                    else
-                    {
-                        img.Dispose();
-                        throw new Exception();
-                    }
+                bitmap.Save(filename, format);
             }
-            catch
-            {
-                File.Delete(path);
-                goto start;
-            }
+            
+            stream.Flush();
+            stream.Close();
+            client.Dispose();
+            return bitmap;
         }
 
         public static double GetEpochTime() => (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
@@ -72,21 +73,7 @@ namespace Pro_Swapper
         }
 
         public static FileAttributes RemoveAttribute(FileAttributes attributes, FileAttributes attributesToRemove) => attributes & ~attributesToRemove;
-
-        private static bool IsImage(Image imagevar)
-        {
-            try
-            {
-                Graphics gInput = Graphics.FromImage(imagevar);
-                ImageFormat thisFormat = imagevar.RawFormat;
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-        public static string ProSwapperFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Pro_Swapper\";
+        public static readonly string ProSwapperFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Pro_Swapper\";
         public static void CreateDir(string dir)
         {
             if (!Directory.Exists(dir))

@@ -3,3 +3,4 @@
 bin/
 .vs/
 obj/
+Properties/PublishProfiles/FolderProfile.pubxml

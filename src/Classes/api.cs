@@ -18,7 +18,7 @@ namespace Pro_Swapper.API
             {
                 try
                 {
-                    return ((dynamic)JObject.Parse(new WebClient().DownloadString($"{FNAPIEndpoint}aes"))).data.mainKey;
+                    return ((dynamic)JObject.Parse(global.web.DownloadString($"{FNAPIEndpoint}aes"))).data.mainKey;
                 }
                 catch (Exception ex)
                 {
@@ -35,15 +35,20 @@ namespace Pro_Swapper.API
             #if DEBUG
             apidata = JsonConvert.DeserializeObject<APIRoot>(File.ReadAllText("api.json"));
             apidata.timestamp = global.GetEpochTime();
-            File.WriteAllText($"{global.version}.json", StringCompression.Compress(JsonConvert.SerializeObject(apidata)));
+
+            string json = JsonConvert.SerializeObject(apidata, Formatting.None, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore//Makes filesize smaller hehe
+            });
+
+            File.WriteAllText($"{global.version}.json", StringCompression.Compress(json));
             #else
             Exception exception = null;
-            WebClient web = new WebClient();
             foreach (string url in hosturls)
             {
                 try
                 {
-                    string apidatas = StringCompression.Decompress(web.DownloadString($"{url}{endpoint}"));
+                    string apidatas = StringCompression.Decompress(global.web.DownloadString($"{url}{endpoint}"));
                     apidata = JsonConvert.DeserializeObject<APIRoot>(apidatas);
                     Console.WriteLine(apidatas);
                 }
@@ -78,10 +83,12 @@ namespace Pro_Swapper.API
             public string Note { get; set; } = null;
             public bool ShowMain { get; set; } = true;
         }
-        public class Swapoption
+        public class OptionMenu
         {
             public string Type { get; set; }
-            public List<int> ItemIndexs { get; set; }
+            public string MainIcon { get; set; }
+            public bool IsSwapOption { get; set; }
+            public int[] ItemIndexs { get; set; }
             public string Title { get; set; }
         }
 
@@ -103,7 +110,7 @@ namespace Pro_Swapper.API
             public string aes { get; set; }
             public Item[] items { get; set; }
             public Status[] status { get; set; }
-            public Swapoption[] swapoptions { get; set; }
+            public OptionMenu[] OptionMenu { get; set; }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 namespace Pro_Swapper
 {
@@ -10,6 +11,7 @@ namespace Pro_Swapper
             InitializeComponent();
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             BackColor = global.ItemsBG;
+
             pictureBox8.Image = global.ItemIcon("EzIhXbh.png");
             StretchRes.Image = global.ItemIcon("npHpZes.png");
             Music.Image = global.ItemIcon("pnjMa2G.png");

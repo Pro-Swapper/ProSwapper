@@ -50,6 +50,7 @@
             // 
             // flowLayoutPanel1
             // 
+            this.flowLayoutPanel1.AutoScroll = true;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(12, 37);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(707, 318);
@@ -65,6 +66,7 @@
             this.label1.Size = new System.Drawing.Size(52, 19);
             this.label1.TabIndex = 9;
             this.label1.Text = "label1";
+            this.label1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ThemeCreator_MouseDown);
             // 
             // SwapOption
             // 

@@ -9,6 +9,9 @@ using DiscordRPC;
 using System.Linq;
 using Bunifu.Framework.UI;
 using Pro_Swapper.API;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace Pro_Swapper
 {
     public partial class Main : Form
@@ -27,45 +30,44 @@ namespace Pro_Swapper
         );
         #endregion
         #region LoadIcons
-        private void LoadIcons()
+        private async void LoadIcons()
         {
             CheckForIllegalCrossThreadCalls = false;
-            pictureBox1.Image = global.ItemIcon("RKZPOXV.png");
-            bunifuFlatButton1.Iconimage = global.ItemIcon("JCYJliG.png");
-            bunifuFlatButton2.Iconimage = global.ItemIcon("0YAShwW.png");
-            bunifuFlatButton3.Iconimage = global.ItemIcon("3kJgylm.png");
-            bunifuFlatButton4.Iconimage = global.ItemIcon("s1uLZkY.png");
-            bunifuFlatButton5.Iconimage = global.ItemIcon("frbu3Qj.png");
-            bunifuFlatButton6.Iconimage = global.ItemIcon("CueE0Wg.png");
+            List<Task> loadicons = new List<Task>();
+            loadicons.Add(Task.Run(() => pictureBox1.Image = global.ItemIcon("RKZPOXV.png")));
+            loadicons.Add(Task.Run(() => bunifuFlatButton1.Iconimage = global.ItemIcon("JCYJliG.png")));
+            loadicons.Add(Task.Run(() => bunifuFlatButton2.Iconimage = global.ItemIcon("0YAShwW.png")));
+            loadicons.Add(Task.Run(() => bunifuFlatButton3.Iconimage = global.ItemIcon("3kJgylm.png")));
+            loadicons.Add(Task.Run(() => bunifuFlatButton4.Iconimage = global.ItemIcon("s1uLZkY.png")));
+            loadicons.Add(Task.Run(() => bunifuFlatButton5.Iconimage = global.ItemIcon("frbu3Qj.png")));
+            loadicons.Add(Task.Run(() => bunifuFlatButton6.Iconimage = global.ItemIcon("CueE0Wg.png")));
+
+            await Task.WhenAll(loadicons);
         }
         #endregion
         #region CloseFN
-        private static void CloseFN()
+        private void CloseFN()
         {
             bool asked = false;
-            for(;;)
+            for (; ; )
             {
                 try
                 {
                     Process[] procs = Process.GetProcesses();
-                    string[] killdeez = { "easyanticheat", "fortnite", "epicgameslauncher", "unrealcefsubprocess"};
+                    string[] killdeez = { "easyanticheat", "fortnite", "epicgameslauncher", "unrealcefsubprocess" };
                     if (asked == false)
                     {
                         asked = true;
-                        new Thread(() =>
+                        procs.Where(x => killdeez.Any(x.ProcessName.ToLower().StartsWith)).All(a => { a.Kill(); return true; });
+                        foreach (Process a in procs)
                         {
-                            Thread.CurrentThread.IsBackground = true;
-                            foreach (Process a in procs)
-                            {
-                                if (a.ProcessName == "FortniteClient-Win64-Shipping")
-                                    MessageBox.Show("Fortnite needs to be closed to use Pro Swapper!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                if (a.ProcessName == "EpicGamesLauncher")
-                                    MessageBox.Show("Epic Games Launcher cannot be opened with Pro Swapper for safety measures. Close Pro Swapper to access Epic Games Launcher", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
-                        }).Start();
+                            if (a.ProcessName == "FortniteClient-Win64-Shipping")
+                                MessageBox.Show("Fortnite needs to be closed to use Pro Swapper!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            if (a.ProcessName == "EpicGamesLauncher")
+                                MessageBox.Show("Epic Games Launcher cannot be opened with Pro Swapper for safety measures. Close Pro Swapper to access Epic Games Launcher", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
                     }
-                    procs.Where(x => killdeez.Any(x.ProcessName.ToLower().StartsWith)).All(a => { a.Kill(); return true; });
-                }
+                    }
                 catch
                 { }
                 Thread.Sleep(3000);
@@ -136,8 +138,11 @@ namespace Pro_Swapper
                 global.TextColor = theme[3];
                 RPC.rpctimestamp = Timestamps.Now;
                 RPC.InitializeRPC();
-                new Thread(LoadIcons).Start();
-                new Thread(CloseFN).Start();
+                
+                //Async methods
+                LoadIcons();
+                Task.Run(() => CloseFN());
+                
                 Icon = appIcon;
                 Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
                 SetStyle(ControlStyles.OptimizedDoubleBuffer, true);

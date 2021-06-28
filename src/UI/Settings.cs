@@ -3,6 +3,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
+using System.IO;
+
 namespace Pro_Swapper
 {
     public partial class Settings : Form
@@ -13,17 +16,11 @@ namespace Pro_Swapper
             RPC.SetState("Settings", true);
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
             Icon = Main.appIcon;
-            new Thread(() =>
-            {
-                CheckForIllegalCrossThreadCalls = false;
-                Thread.CurrentThread.IsBackground = true;
-                Thread.CurrentThread.Priority = ThreadPriority.Highest;
-
-                pictureBox7.Image = global.ItemIcon("0G7O3O2.png");
-                pictureBox1.Image = global.ItemIcon("8Z9xRUU.png");
-                pictureBox2.Image = global.ItemIcon("EHbHFjp.png");
-                discord.Image = global.ItemIcon("ECo8w6F.png");
-            }).Start();
+            CheckForIllegalCrossThreadCalls = false;
+            Task.Run(() => pictureBox7.Image = global.ItemIcon("0G7O3O2.png"));
+            Task.Run(() => pictureBox1.Image = global.ItemIcon("8Z9xRUU.png"));
+            Task.Run(() => pictureBox2.Image = global.ItemIcon("EHbHFjp.png"));
+            Task.Run(() => discord.Image = global.ItemIcon("ECo8w6F.png"));
         }
         private void button1_Click(object sender, EventArgs e) => Close();
         private void SettingsForm_MouseDown(object sender, MouseEventArgs e)
@@ -60,6 +57,8 @@ namespace Pro_Swapper
             button4.BackColor = global.Button;
             button4.ForeColor = global.TextColor;
 
+            button6.BackColor = global.Button;
+            button6.ForeColor = global.TextColor;
 
             button10.BackColor = global.Button;
             button10.ForeColor = global.TextColor;
@@ -162,6 +161,17 @@ namespace Pro_Swapper
             }
             int years = Convert.ToInt32(Math.Floor((double)ts.Days / 365));
             return years <= 1 ? "one year ago" : years + " years ago";
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Do you want to reset Pro Swapper to it's original settings? This option also deletes any cached images and older settings", "Delete Pro Swapper Settings?", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                Directory.Delete(global.ProSwapperFolder, true);
+                global.InitConfig();
+                MessageBox.Show("Deleted " + global.ProSwapperFolder, "Deleted ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
     }
 }
