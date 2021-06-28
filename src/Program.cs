@@ -26,6 +26,9 @@ namespace Pro_Swapper
                 else
                     File.Copy(FortniteOodleDLL, oodledll);
             }
+            global.CreateDir(global.ProSwapperFolder);
+            global.CreateDir(global.ProSwapperFolder + "\\Config");
+            global.CreateDir(global.ProSwapperFolder + "\\Images");
             global.InitConfig();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
