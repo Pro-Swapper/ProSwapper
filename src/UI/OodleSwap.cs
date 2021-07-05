@@ -10,10 +10,10 @@ namespace Pro_Swapper
     public partial class OodleSwap : Form
     {
         private static api.Item ThisItem { get; set; }
-        public OodleSwap(int item)
+        public OodleSwap(api.Item item)
         {
             InitializeComponent();
-            ThisItem = api.apidata.items[item];
+            ThisItem = item;
             BackColor = global.MainMenu;
             logbox.BackColor = global.MainMenu;
            

@@ -18,7 +18,7 @@ namespace Pro_Swapper
             skinsflowlayout.BackColor = global.ItemsBG;
             Tag = tab;
         }
-        private async Task<Panel> AddItem(int i, api.Item item)
+        private async Task<Panel> AddItem(api.Item item)
         {
             CheckForIllegalCrossThreadCalls = false;
             if (item.ShowMain == false)
@@ -35,7 +35,7 @@ namespace Pro_Swapper
             };
             picturebox.Click += delegate
             {
-                new OodleSwap(i).Show();
+                new OodleSwap(item).Show();
             };
             Label lbl = new Label
             {
@@ -94,12 +94,12 @@ namespace Pro_Swapper
             List<Task<Panel>> icons = new List<Task<Panel>>();
 
             foreach (api.Item item in api.apidata.items.Where(x => x.Type.Equals(Tag)))
-                icons.Add(Task.Run(() => AddItem(Array.IndexOf(api.apidata.items, item), item)));            
+                icons.Add(Task.Run(() => AddItem(item)));            
             foreach (api.OptionMenu option in api.apidata.OptionMenu.Where(x => x.Type.Equals(Tag)))
                 icons.Add(Task.Run(() => AddOption(option)));
+
             icons.RemoveAll(x => x.Result == null);
             await Task.WhenAll(icons);
-
             foreach (var a in icons)
                 skinsflowlayout.Controls.Add(a.Result);
 

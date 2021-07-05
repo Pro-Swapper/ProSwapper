@@ -29,7 +29,6 @@ namespace Pro_Swapper
                 return Image.FromFile(path);
         }
 
-
         private static Image SaveImage(string imageUrl, string filename, ImageFormat format)
         {
             WebClient client = new WebClient();
@@ -54,10 +53,9 @@ namespace Pro_Swapper
         public static bool IsNameModified()
         {
             if (Process.GetCurrentProcess().ProcessName.Contains("Pro_Swapper"))
-            {
                 return false;
-            }
-            else return true;
+            else 
+                return true;
         }
             
         public static Color MainMenu, Button, TextColor, ItemsBG;
@@ -73,24 +71,16 @@ namespace Pro_Swapper
         }
 
         public static FileAttributes RemoveAttribute(FileAttributes attributes, FileAttributes attributesToRemove) => attributes & ~attributesToRemove;
-        public static readonly string ProSwapperFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Pro_Swapper\";
+        public static string ProSwapperFolder => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Pro_Swapper\";
         public static void CreateDir(string dir)
         {
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
         }
         #region Config Handler
-        private static string ConfigPath
-            {
-                get
-                {
-                    string path = ProSwapperFolder + @"Config\" + version + "_config.txt";
-                    CreateDir(ProSwapperFolder + @"Config\");
-                    return path;
-                }
-            }
+        private static string ConfigPath => ProSwapperFolder + @"Config\" + version + "_config.txt";
 
-            public static ConfigObj CurrentConfig;
+        public static ConfigObj CurrentConfig;
             public static void InitConfig()
             {
                 if (!File.Exists(ConfigPath))

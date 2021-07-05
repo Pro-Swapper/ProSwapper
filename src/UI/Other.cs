@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 namespace Pro_Swapper
 {
@@ -12,9 +11,9 @@ namespace Pro_Swapper
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             BackColor = global.ItemsBG;
 
-            pictureBox8.Image = global.ItemIcon("EzIhXbh.png");
-            StretchRes.Image = global.ItemIcon("npHpZes.png");
-            Music.Image = global.ItemIcon("pnjMa2G.png");
+            pictureBox8.Image = global.ItemIcon("90ZggOY.png");
+            StretchRes.Image = global.ItemIcon("NK5rFHP.jpg");
+            Music.Image = global.ItemIcon("jEOdLBj.jpg");
             Aimbot.Image = global.ItemIcon("xXqdfcu.png");
             Splash.Image = global.ItemIcon("jH5L1Y2.png");
         }

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Pro_Swapper.API;
+using System.Threading.Tasks;
 namespace Pro_Swapper
 {
     public partial class SwapOption : Form
@@ -27,7 +28,7 @@ namespace Pro_Swapper
             if (e.Button == MouseButtons.Left) global.FormMove(Handle);
         }
         private void ExitButton_Click(object sender, EventArgs e) => Close();
-        private void AddItem(api.Item item)
+        private async void AddItem(api.Item item)
         {
             int buttonx = 154;
             int buttony = 161;
@@ -39,7 +40,7 @@ namespace Pro_Swapper
             };
                 picturebox.Click += delegate
                 {
-                    new OodleSwap(Array.IndexOf(api.apidata.items, item)).Show();
+                    new OodleSwap(item).Show();
                     Close();
                 };
             Label lbl = new Label
@@ -55,16 +56,13 @@ namespace Pro_Swapper
             if (IsSwapOption)
             {
                 lbl.Text = item.SwapsFrom;
-                picturebox.Image = global.ItemIcon(item.FromImage);
+                picturebox.Image = await Task.Run(() => global.ItemIcon(item.FromImage));
             }
             else
             {
                 lbl.Text = item.SwapsTo;
-                picturebox.Image = global.ItemIcon(item.ToImage);
+                picturebox.Image = await Task.Run(() => global.ItemIcon(item.ToImage));
             }
-                
-
-
             Panel panel = new Panel
             {
                 Size = new Size(buttonx + 10, buttony + 50)

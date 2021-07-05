@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 using Pro_Swapper.Properties;
+using System.Net;
 namespace Pro_Swapper
 {
     static class Program
@@ -13,7 +14,7 @@ namespace Pro_Swapper
         [STAThread]
         private static void Main()
         {
-            global.web = new System.Net.WebClient();
+            global.web = new WebClient();
             global.web.Proxy = null;
             string FortniteOodleDLL = EpicGamesLauncher.GetOodleDll();
             if (!File.Exists(oodledll))
