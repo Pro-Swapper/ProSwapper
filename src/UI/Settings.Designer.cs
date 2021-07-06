@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Settings));
             this.button1 = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
@@ -39,15 +40,15 @@
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
-            this.pictureBox7 = new System.Windows.Forms.PictureBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.folder = new System.Windows.Forms.PictureBox();
+            this.yt = new System.Windows.Forms.PictureBox();
+            this.twitter = new System.Windows.Forms.PictureBox();
             this.discord = new System.Windows.Forms.PictureBox();
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.folder)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.yt)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.twitter)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.discord)).BeginInit();
             this.SuspendLayout();
             // 
@@ -100,9 +101,9 @@
             this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(19, 76);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(112, 16);
+            this.label1.Size = new System.Drawing.Size(126, 16);
             this.label1.TabIndex = 92;
-            this.label1.Text = "Select your Pak Files";
+            this.label1.Text = "Fortnite Paks Location:";
             // 
             // paksBox
             // 
@@ -115,7 +116,6 @@
             this.paksBox.ReadOnly = true;
             this.paksBox.Size = new System.Drawing.Size(373, 17);
             this.paksBox.TabIndex = 91;
-            this.paksBox.Text = "Paks Location";
             // 
             // Restart
             // 
@@ -219,53 +219,57 @@
             this.button10.UseVisualStyleBackColor = false;
             this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
-            // pictureBox7
+            // folder
             // 
-            this.pictureBox7.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox7.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox7.ErrorImage = null;
-            this.pictureBox7.ImageLocation = "";
-            this.pictureBox7.InitialImage = null;
-            this.pictureBox7.Location = new System.Drawing.Point(401, 69);
-            this.pictureBox7.Name = "pictureBox7";
-            this.pictureBox7.Size = new System.Drawing.Size(47, 47);
-            this.pictureBox7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox7.TabIndex = 94;
-            this.pictureBox7.TabStop = false;
-            this.pictureBox7.Click += new System.EventHandler(this.pictureBox7_Click);
+            this.folder.BackColor = System.Drawing.Color.Transparent;
+            this.folder.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.folder.ErrorImage = null;
+            this.folder.Image = ((System.Drawing.Image)(resources.GetObject("folder.Image")));
+            this.folder.ImageLocation = "";
+            this.folder.InitialImage = null;
+            this.folder.Location = new System.Drawing.Point(401, 69);
+            this.folder.Name = "folder";
+            this.folder.Size = new System.Drawing.Size(47, 47);
+            this.folder.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.folder.TabIndex = 94;
+            this.folder.TabStop = false;
+            this.folder.Click += new System.EventHandler(this.pictureBox7_Click);
             // 
-            // pictureBox1
+            // yt
             // 
-            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox1.ErrorImage = null;
-            this.pictureBox1.ImageLocation = "";
-            this.pictureBox1.InitialImage = null;
-            this.pictureBox1.Location = new System.Drawing.Point(339, 12);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(67, 43);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 112;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.yt.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.yt.ErrorImage = null;
+            this.yt.Image = ((System.Drawing.Image)(resources.GetObject("yt.Image")));
+            this.yt.ImageLocation = "";
+            this.yt.InitialImage = null;
+            this.yt.Location = new System.Drawing.Point(339, 12);
+            this.yt.Name = "yt";
+            this.yt.Size = new System.Drawing.Size(67, 43);
+            this.yt.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.yt.TabIndex = 112;
+            this.yt.TabStop = false;
+            this.yt.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
-            // pictureBox2
+            // twitter
             // 
-            this.pictureBox2.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox2.ErrorImage = null;
-            this.pictureBox2.ImageLocation = "";
-            this.pictureBox2.InitialImage = null;
-            this.pictureBox2.Location = new System.Drawing.Point(412, 12);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(67, 43);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox2.TabIndex = 113;
-            this.pictureBox2.TabStop = false;
-            this.pictureBox2.Click += new System.EventHandler(this.pictureBox2_Click);
+            this.twitter.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.twitter.ErrorImage = null;
+            this.twitter.Image = ((System.Drawing.Image)(resources.GetObject("twitter.Image")));
+            this.twitter.ImageLocation = "";
+            this.twitter.InitialImage = null;
+            this.twitter.Location = new System.Drawing.Point(412, 12);
+            this.twitter.Name = "twitter";
+            this.twitter.Size = new System.Drawing.Size(67, 43);
+            this.twitter.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.twitter.TabIndex = 113;
+            this.twitter.TabStop = false;
+            this.twitter.Click += new System.EventHandler(this.pictureBox2_Click);
             // 
             // discord
             // 
             this.discord.Cursor = System.Windows.Forms.Cursors.Hand;
             this.discord.ErrorImage = null;
+            this.discord.Image = ((System.Drawing.Image)(resources.GetObject("discord.Image")));
             this.discord.ImageLocation = "";
             this.discord.InitialImage = null;
             this.discord.Location = new System.Drawing.Point(485, 12);
@@ -320,14 +324,14 @@
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.discord);
-            this.Controls.Add(this.pictureBox2);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.twitter);
+            this.Controls.Add(this.yt);
             this.Controls.Add(this.button10);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button9);
             this.Controls.Add(this.Restart);
-            this.Controls.Add(this.pictureBox7);
+            this.Controls.Add(this.folder);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.paksBox);
@@ -342,9 +346,9 @@
             this.Text = "Settings";
             this.Load += new System.EventHandler(this.SettingsForm_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SettingsForm_MouseDown);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.folder)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.yt)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.twitter)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.discord)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -355,7 +359,7 @@
 
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.PictureBox pictureBox7;
+        private System.Windows.Forms.PictureBox folder;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox paksBox;
@@ -365,8 +369,8 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button10;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.PictureBox yt;
+        private System.Windows.Forms.PictureBox twitter;
         private System.Windows.Forms.PictureBox discord;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;

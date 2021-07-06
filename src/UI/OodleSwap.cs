@@ -9,7 +9,8 @@ namespace Pro_Swapper
 {
     public partial class OodleSwap : Form
     {
-        private static api.Item ThisItem { get; set; }
+        private api.Item ThisItem { get; set; }
+        
         public OodleSwap(api.Item item)
         {
             InitializeComponent();

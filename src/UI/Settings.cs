@@ -2,8 +2,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace Pro_Swapper
@@ -16,11 +14,6 @@ namespace Pro_Swapper
             RPC.SetState("Settings", true);
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
             Icon = Main.appIcon;
-            CheckForIllegalCrossThreadCalls = false;
-            Task.Run(() => pictureBox7.Image = global.ItemIcon("0G7O3O2.png"));
-            Task.Run(() => pictureBox1.Image = global.ItemIcon("8Z9xRUU.png"));
-            Task.Run(() => pictureBox2.Image = global.ItemIcon("EHbHFjp.png"));
-            Task.Run(() => discord.Image = global.ItemIcon("ECo8w6F.png"));
         }
         private void button1_Click(object sender, EventArgs e) => Close();
         private void SettingsForm_MouseDown(object sender, MouseEventArgs e)
