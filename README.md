@@ -22,7 +22,7 @@ Pro Swapper uses [Bunifu Framework](https://bunifuframework.com/)
 
 Pro Swapper uses [Discord Rich Presence](https://github.com/discord/discord-rpc)
 
-Pro Swapper uses [.NET 5](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.6-windows-x64-installer)
+Pro Swapper uses [.NET 5](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-5.0.7-windows-x64-installer)
 <br>
 <br>
 <a href="https://discord.gg/3SsCUa5r9Q"><img src="https://i.imgur.com/mEZB9JP.png"></a>
