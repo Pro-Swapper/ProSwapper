@@ -64,8 +64,10 @@ namespace Pro_Swapper
         {
             ProcessStartInfo psi = new ProcessStartInfo
             {
-                FileName = url,
-                UseShellExecute = true
+                FileName = "cmd.exe",
+                Arguments = $"/C start {url}",
+                WindowStyle = ProcessWindowStyle.Hidden,
+                CreateNoWindow = true
             };
             Process.Start(psi);
         }

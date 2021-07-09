@@ -20,6 +20,7 @@
  <Description>Pro Swapper the BEST Fortnite Skin Swapper</Description>
  <Copyright>Copyright © 2019 - 2021</Copyright>
  <SignAssembly>false</SignAssembly>
+ <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
