@@ -29,7 +29,7 @@ namespace Pro_Swapper
             newstext.Text = api.apidata.newstext;
             string AutoPatchNotes = string.Empty;
 
-            foreach (api.Item item in api.apidata.items.Skip(26))
+            foreach (api.Item item in api.apidata.items.Skip(49))
             {
                 AutoPatchNotes += $"Added {item.SwapsFrom} to {item.SwapsTo}\n";
             }
