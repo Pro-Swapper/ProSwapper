@@ -9,96 +9,12 @@ namespace Pro_Swapper
 {
     public partial class OodleSwap : Form
     {
-        private api.Item ThisItem = null;
-        
+        private api.Item ThisItem;
+
         public OodleSwap(api.Item item)
         {
             InitializeComponent();
-            try
-            {
-                ThisItem = item;
-            }
-            catch (Exception ex)
-            {
-                Main.ThrowError($"Source: {ex.Source} | Message: {ex.Message} | Stack Trace: {ex.StackTrace}", false);
-            }
-
-
-        }
-
-        public OodleSwap(int index)
-        {
-            InitializeComponent();
-            try
-            {
-                ThisItem = api.apidata.items[index];
-            }
-            catch (Exception ex)
-            {
-                Main.ThrowError($"Source: {ex.Source} | Message: {ex.Message} | Stack Trace: {ex.StackTrace}", false);
-            }
-        }
-        private void Log(string text)
-        {
-            logbox.Text += $"{text}{Environment.NewLine}";
-            logbox.ScrollToCaret();
-        }
-        private async void SwapButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string path = global.CurrentConfig.Paks + @"\pakchunk0-WindowsClient.sig";
-            if (!File.Exists(path))
-            {
-                MessageBox.Show("Select your paks folder in Settings", "Pro Swapper");
-                return;
-            }
-            logbox.Clear();
-            Log("Loading...");
-            bool Converting = ((BunifuFlatButton)(sender)).Text == "Convert";
-            ConvertB.Enabled = false;
-            RevertB.Enabled = false;
-            label3.Text = "Loading...";
-            label3.ForeColor = Color.White;
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            await Swap.SwapItem(ThisItem, Converting);
-            ConvertB.Enabled = true;
-            RevertB.Enabled = true;
-            s.Stop();
-            logbox.Clear();
-            string swaplogs = global.CurrentConfig.swaplogs;
-            if (Converting)
-            {
-                Log($"[+] Converted item in {s.Elapsed.Milliseconds}ms");
-                label3.Text = "ON";
-                label3.ForeColor = Color.Lime;
-                s.Stop();
-                global.CurrentConfig.swaplogs += ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",";
-            }
-            else
-            {
-                Log($"[-] Reverted item in {s.Elapsed.Milliseconds}ms");
-                label3.Text = "OFF";
-                label3.ForeColor = Color.Red;
-                global.CurrentConfig.swaplogs = swaplogs.Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",", "");
-            }
-            global.SaveConfig();
-            }
-            catch (Exception ex)
-            {
-                Log($"Restart the swapper or refer to this error: {ex.Message} | {ex.StackTrace}");
-            }
-        }
-        private void ExitButton_Click(object sender, EventArgs e) => Close();
-        private void button2_Click(object sender, EventArgs e) => WindowState = FormWindowState.Minimized;
-        private void swap_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left) global.FormMove(Handle);
-        }
-
-        private void OodleSwap_Load(object sender, EventArgs e)
-        {
+            ThisItem = item;
             string swaptext = ThisItem.SwapsFrom + " --> " + ThisItem.SwapsTo;
             Text = swaptext;
             label1.Text = swaptext;
@@ -132,6 +48,66 @@ namespace Pro_Swapper
                 label3.Text = "OFF";
                 if (ThisItem.Note != null) MessageBox.Show("Warning for " + ThisItem.SwapsTo + ": " + ThisItem.Note, ThisItem.SwapsFrom + " - " + ThisItem.SwapsTo, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+
+        }
+        private void Log(string text)
+        {
+            logbox.Text += $"{text}{Environment.NewLine}";
+            logbox.ScrollToCaret();
+        }
+        private async void SwapButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string path = global.CurrentConfig.Paks + @"\pakchunk0-WindowsClient.sig";
+                if (!File.Exists(path))
+                {
+                    MessageBox.Show("Select your paks folder in Settings", "Pro Swapper");
+                    return;
+                }
+                logbox.Clear();
+                Log("Loading...");
+                bool Converting = ((BunifuFlatButton)(sender)).Text == "Convert";
+                ConvertB.Enabled = false;
+                RevertB.Enabled = false;
+                label3.Text = "Loading...";
+                label3.ForeColor = Color.White;
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                await Swap.SwapItem(ThisItem, Converting);
+                ConvertB.Enabled = true;
+                RevertB.Enabled = true;
+                s.Stop();
+                logbox.Clear();
+                string swaplogs = global.CurrentConfig.swaplogs;
+                if (Converting)
+                {
+                    Log($"[+] Converted item in {s.Elapsed.Milliseconds}ms");
+                    label3.Text = "ON";
+                    label3.ForeColor = Color.Lime;
+                    s.Stop();
+                    global.CurrentConfig.swaplogs += ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",";
+                }
+                else
+                {
+                    Log($"[-] Reverted item in {s.Elapsed.Milliseconds}ms");
+                    label3.Text = "OFF";
+                    label3.ForeColor = Color.Red;
+                    global.CurrentConfig.swaplogs = swaplogs.Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",", "");
+                }
+                global.SaveConfig();
+            }
+            catch (Exception ex)
+            {
+                Log($"Restart the swapper or refer to this error: {ex.Message} | {ex.StackTrace}");
+            }
+        }
+        private void ExitButton_Click(object sender, EventArgs e) => Close();
+        private void button2_Click(object sender, EventArgs e) => WindowState = FormWindowState.Minimized;
+        private void swap_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+                global.FormMove(Handle);
         }
     }
 }

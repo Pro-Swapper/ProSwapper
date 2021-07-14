@@ -32,12 +32,6 @@ namespace Pro_Swapper
             else
                 return Image.FromFile(path);
         }
-
-        public enum GridItemType
-        {
-            SwapOption, Item
-        }
-
         private static Image SaveImage(string imageUrl, string filename, ImageFormat format)
         {
             WebClient client = new WebClient();
