@@ -8,6 +8,9 @@
     <Compile Update="src\UI\Dashboard.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="src\UI\GridItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="src\UI\Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -23,7 +26,7 @@
     <Compile Update="src\UI\ThemeCreator.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="src\UI\UserControl.cs">
+    <Compile Update="src\UI\ItemTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
   </ItemGroup>

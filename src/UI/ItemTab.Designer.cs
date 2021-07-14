@@ -1,6 +1,6 @@
 ﻿namespace Pro_Swapper
 {
-    partial class UserControl
+    partial class ItemTab
     {
         /// <summary> 
         /// Required designer variable.
@@ -40,16 +40,15 @@
             this.skinsflowlayout.Size = new System.Drawing.Size(995, 606);
             this.skinsflowlayout.TabIndex = 0;
             // 
-            // UserControl
+            // ItemTab
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.AutoScroll = true;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.Controls.Add(this.skinsflowlayout);
             this.DoubleBuffered = true;
-            this.Name = "UserControl";
+            this.Name = "ItemTab";
             this.Size = new System.Drawing.Size(995, 606);
-            this.Load += new System.EventHandler(this.UserControl_Load);
             this.ResumeLayout(false);
 
         }

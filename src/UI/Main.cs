@@ -9,14 +9,13 @@ using DiscordRPC;
 using System.Linq;
 using Bunifu.Framework.UI;
 using Pro_Swapper.API;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Pro_Swapper
 {
     public partial class Main : Form
     {
-        public static void ThrowError(string ex) => new Message("Error!", ex, true).ShowDialog();
+        public static void ThrowError(string ex, bool close = true) => new Message("Error!", ex, close).ShowDialog();
         public static Icon appIcon = Icon.ExtractAssociatedIcon(Process.GetCurrentProcess().MainModule.FileName);
         public Main()
         {
@@ -28,22 +27,6 @@ namespace Pro_Swapper
         (
             int nLeftRect, int nTopRect, int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse
         );
-        #endregion
-        #region LoadIcons
-        private async void LoadIcons()
-        {
-            CheckForIllegalCrossThreadCalls = false;
-            List<Task> loadicons = new List<Task>();
-            loadicons.Add(Task.Run(() => pictureBox1.Image = global.ItemIcon("RKZPOXV.png")));
-            loadicons.Add(Task.Run(() => bunifuFlatButton1.Iconimage = global.ItemIcon("JCYJliG.png")));
-            loadicons.Add(Task.Run(() => bunifuFlatButton2.Iconimage = global.ItemIcon("0YAShwW.png")));
-            loadicons.Add(Task.Run(() => bunifuFlatButton3.Iconimage = global.ItemIcon("3kJgylm.png")));
-            loadicons.Add(Task.Run(() => bunifuFlatButton4.Iconimage = global.ItemIcon("s1uLZkY.png")));
-            loadicons.Add(Task.Run(() => bunifuFlatButton5.Iconimage = global.ItemIcon("frbu3Qj.png")));
-            loadicons.Add(Task.Run(() => bunifuFlatButton6.Iconimage = global.ItemIcon("CueE0Wg.png")));
-
-            await Task.WhenAll(loadicons);
-        }
         #endregion
         #region CloseFN
         private void CloseFN()
@@ -85,7 +68,7 @@ namespace Pro_Swapper
             if (tab == "Other")
                 panelContainer.Controls.Add(new OtherTab());
             else 
-                panelContainer.Controls.Add(new UserControl(tab));//If not other tab use this one
+                panelContainer.Controls.Add(new ItemTab(tab));//If not other tab use this one
         }
         private void pictureBox1_Click(object sender, EventArgs e)
         {
@@ -114,18 +97,20 @@ namespace Pro_Swapper
 
                 int thisVer = int.Parse(global.version.Replace(".", ""));
                 int apiVer = int.Parse(api.apidata.version.Replace(".", ""));
-                
+
+                const string NewDownload = "https://linkvertise.com/86737/proswapper";
+
                 if (apiVer > thisVer)
                 {
                     MessageBox.Show("New Pro Swapper Update found! Redirecting you to the new download!", "Pro Swapper Update", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    global.OpenUrl("https://linkvertise.com/86737/proswapper");
+                    global.OpenUrl(NewDownload);
                     Cleanup();
                 }
 
                 if (global.IsNameModified())
                 {
                     ThrowError($"This Pro Swapper version has been renamed, this means you have not downloaded it from the official source. Please redownload it on the Discord server at {api.apidata.discordurl}");
-                    global.OpenUrl("https://linkvertise.com/86737/proswapper");
+                    global.OpenUrl(NewDownload);
                 }
 
                 if (api.apidata.status[0].IsUp == false)
@@ -140,7 +125,6 @@ namespace Pro_Swapper
                 RPC.InitializeRPC();
                 
                 //Async methods
-                LoadIcons();
                 Task.Run(() => CloseFN());
                 
                 Icon = appIcon;
@@ -156,7 +140,6 @@ namespace Pro_Swapper
                 foreach (BunifuFlatButton c in panel1buttons.OfType<BunifuFlatButton>().Where(c => c.Tag.Equals("TabButton")).Distinct())
                 {
                         c.BackColor = global.Button;
-                        // ((BunifuFlatButton)c).IconZoom = 85;
                         c.Normalcolor = global.Button;
                         c.OnHovercolor = global.Button;
                         c.Activecolor = global.Button;
@@ -202,5 +185,6 @@ namespace Pro_Swapper
                 ThrowError($"Source: {ex.Source} | Message: {ex.Message} | Stack Trace: {ex.StackTrace}");
             }
         }
+
     }
 }

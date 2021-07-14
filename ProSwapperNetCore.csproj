@@ -11,7 +11,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
- <OutputType>Exe</OutputType>
+ <OutputType>WinExe</OutputType>
  <TargetFramework>net5.0-windows</TargetFramework>
  <Version>0.0.8.7</Version>
  <Company>Pro Swapper</Company>
@@ -34,7 +34,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\</OutputPath>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>

@@ -9,44 +9,34 @@ namespace Pro_Swapper
 {
     public partial class OodleSwap : Form
     {
-        private api.Item ThisItem { get; set; }
+        private api.Item ThisItem = null;
         
         public OodleSwap(api.Item item)
         {
             InitializeComponent();
-            ThisItem = item;
-            BackColor = global.MainMenu;
-            logbox.BackColor = global.MainMenu;
-           
-            ConvertB.ForeColor = global.TextColor;
-            ConvertB.BackColor = global.Button;
-            ConvertB.Activecolor = global.Button;
-            ConvertB.Normalcolor = global.Button;
-
-
-            RevertB.ForeColor = global.TextColor;
-            RevertB.BackColor = global.Button;
-            RevertB.Activecolor = global.Button;
-            RevertB.Normalcolor = global.Button;
-
-            logbox.ForeColor = global.TextColor;
-            if (global.CurrentConfig.swaplogs.Contains(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ","))
+            try
             {
-             label3.ForeColor = Color.Lime;
-             label3.Text = "ON";
+                ThisItem = item;
             }
-             else
-             {
-             label3.ForeColor = Color.Red;
-             label3.Text = "OFF";
-                if (ThisItem.Note != null) MessageBox.Show("Warning for " + ThisItem.SwapsTo + ": "+ ThisItem.Note, ThisItem.SwapsFrom + " - " + ThisItem.SwapsTo, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-             }
-            string swaptext = ThisItem.SwapsFrom + " --> " + ThisItem.SwapsTo;
-            Text = swaptext;
-            label1.Text = swaptext;
-            image.Image = global.ItemIcon(ThisItem.FromImage);
-            swapsfrom.Image = global.ItemIcon(ThisItem.ToImage);
-            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
+            catch (Exception ex)
+            {
+                Main.ThrowError($"Source: {ex.Source} | Message: {ex.Message} | Stack Trace: {ex.StackTrace}", false);
+            }
+
+
+        }
+
+        public OodleSwap(int index)
+        {
+            InitializeComponent();
+            try
+            {
+                ThisItem = api.apidata.items[index];
+            }
+            catch (Exception ex)
+            {
+                Main.ThrowError($"Source: {ex.Source} | Message: {ex.Message} | Stack Trace: {ex.StackTrace}", false);
+            }
         }
         private void Log(string text)
         {
@@ -105,6 +95,43 @@ namespace Pro_Swapper
         private void swap_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left) global.FormMove(Handle);
+        }
+
+        private void OodleSwap_Load(object sender, EventArgs e)
+        {
+            string swaptext = ThisItem.SwapsFrom + " --> " + ThisItem.SwapsTo;
+            Text = swaptext;
+            label1.Text = swaptext;
+            image.Image = global.ItemIcon(ThisItem.FromImage);
+            swapsfrom.Image = global.ItemIcon(ThisItem.ToImage);
+            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
+
+            BackColor = global.MainMenu;
+            logbox.BackColor = global.MainMenu;
+
+            ConvertB.ForeColor = global.TextColor;
+            ConvertB.BackColor = global.Button;
+            ConvertB.Activecolor = global.Button;
+            ConvertB.Normalcolor = global.Button;
+
+
+            RevertB.ForeColor = global.TextColor;
+            RevertB.BackColor = global.Button;
+            RevertB.Activecolor = global.Button;
+            RevertB.Normalcolor = global.Button;
+
+            logbox.ForeColor = global.TextColor;
+            if (global.CurrentConfig.swaplogs.Contains(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ","))
+            {
+                label3.ForeColor = Color.Lime;
+                label3.Text = "ON";
+            }
+            else
+            {
+                label3.ForeColor = Color.Red;
+                label3.Text = "OFF";
+                if (ThisItem.Note != null) MessageBox.Show("Warning for " + ThisItem.SwapsTo + ": " + ThisItem.Note, ThisItem.SwapsFrom + " - " + ThisItem.SwapsTo, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
     }
 }

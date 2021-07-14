@@ -248,6 +248,7 @@
             this.Name = "OodleSwap";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Load += new System.EventHandler(this.OodleSwap_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.swap_MouseDown);
             ((System.ComponentModel.ISupportInitialize)(this.image)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.swapsfrom)).EndInit();

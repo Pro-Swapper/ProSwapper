@@ -2,8 +2,6 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
-using System.Net;
-using System.Collections.Generic;
 namespace Pro_Swapper.API
 {
     public static class api

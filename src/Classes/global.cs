@@ -33,6 +33,11 @@ namespace Pro_Swapper
                 return Image.FromFile(path);
         }
 
+        public enum GridItemType
+        {
+            SwapOption, Item
+        }
+
         private static Image SaveImage(string imageUrl, string filename, ImageFormat format)
         {
             WebClient client = new WebClient();
@@ -84,36 +89,25 @@ namespace Pro_Swapper
                 Directory.CreateDirectory(dir);
         }
         #region Config Handler
-        private static string ConfigPath => ProSwapperFolder + @"Config\" + version + "_config.txt";
+        private static string ConfigPath => ProSwapperFolder + @"Config\" + version + "_config.json";
 
         public static ConfigObj CurrentConfig;
             public static void InitConfig()
             {
                 if (!File.Exists(ConfigPath))
                     File.WriteAllText(ConfigPath, ToJson(new ConfigObj()));
-
                 CurrentConfig = FromJSON<ConfigObj>(File.ReadAllText(ConfigPath));
             }
-            public static void SaveConfig()
-            {
-                File.WriteAllText(ConfigPath, ToJson(CurrentConfig));
-            }
-
-            public static T FromJSON<T>(string json)//Make a json string to obj
-            {
-                return JsonConvert.DeserializeObject<T>(json);
-            }
-            public static string ToJson(Object config)//Make obj to json string
-            {
-                return JsonConvert.SerializeObject(config);
-            }
+            public static void SaveConfig() => File.WriteAllText(ConfigPath, ToJson(CurrentConfig));
+            public static T FromJSON<T>(string json) => JsonConvert.DeserializeObject<T>(json);
+            public static string ToJson(Object config) => JsonConvert.SerializeObject(config);
 
             public class ConfigObj
             {
-            public string Paks { get; set; }
+            public string Paks { get; set; } = "";
             public Color[] theme { get; set; } = new Color[4] { Color.FromArgb(0, 33, 113), Color.FromArgb(64, 85, 170), Color.FromArgb(65,105,255), Color.FromArgb(255,255,255) };//0,33,113;    64,85,170;    65,105,255;   255,255,255
             public double lastopened { get; set; }
-            public string swaplogs { get; set; }
+            public string swaplogs { get; set; } = "";
             }
         #endregion
 
@@ -123,11 +117,7 @@ namespace Pro_Swapper
             hex = hex.Replace(" ", string.Empty).Replace("hex=", string.Empty);
             return Enumerable.Range(0, hex.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(hex.Substring(x, 2), 16)).ToArray();
         }
-        public static string FileToMd5(string filename)
-        {
-            if (File.Exists(filename)) return BitConverter.ToString(MD5.Create().ComputeHash(File.OpenRead(filename))).Replace("-", string.Empty).ToLowerInvariant();
-            else return string.Empty;
-        }
+        public static string FileToMd5(string filename) => BitConverter.ToString(MD5.Create().ComputeHash(File.OpenRead(filename))).Replace("-", string.Empty).ToLowerInvariant();
         #region FormMoveable
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
