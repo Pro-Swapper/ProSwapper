@@ -70,7 +70,7 @@ namespace Pro_Swapper
             label1.ForeColor = global.TextColor;
         }
 
-        private void button2_Click(object sender, EventArgs e) => global.OpenUrl(paksBox.Text);
+        private void button2_Click(object sender, EventArgs e) => Process.Start("explorer.exe", paksBox.Text);
         private void Restart_Click(object sender, EventArgs e)
         {
             Process.Start(AppDomain.CurrentDomain.FriendlyName);
@@ -161,9 +161,30 @@ namespace Pro_Swapper
             DialogResult result = MessageBox.Show("Do you want to reset Pro Swapper to it's original settings? This option also deletes any cached images and older settings", "Delete Pro Swapper Settings?", MessageBoxButtons.YesNo);
             if (result == DialogResult.Yes)
             {
-                Directory.Delete(global.ProSwapperFolder, true);
-                global.InitConfig();
-                MessageBox.Show("Deleted " + global.ProSwapperFolder, "Deleted ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                string dir = global.ProSwapperFolder;
+
+                string[] files = Directory.GetFiles(dir, "*", SearchOption.AllDirectories);
+
+                int del = 0;
+                foreach (string file in files)
+                {
+                    try
+                    {
+                        if (File.Exists(file))
+                        {
+                            File.Delete(file);
+                            del++;
+                        }
+                    }
+                    catch
+                    {
+                        //Used by proc
+                    }
+                }
+                MessageBox.Show("Cleaned " + del + " files in " + dir, "Done", MessageBoxButtons.OK, MessageBoxIcon.Information); ;
+                MessageBox.Show("Pro Swapper will now restart...");
+                Process.Start(AppDomain.CurrentDomain.FriendlyName);
+                Main.Cleanup();
             }
         }
     }

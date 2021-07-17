@@ -7,24 +7,34 @@ namespace Pro_Swapper
         public GridItem(api.Item i)
         {
             InitializeComponent();
-            pictureBox1.Image = global.ItemIcon(i.ToImage);
+            backgroundWorker1.DoWork += delegate
+            {
+                pictureBox1.Image = global.ItemIcon(i.ToImage);
+            };
+            backgroundWorker1.RunWorkerAsync();
             pictureBox1.Click += delegate
             {
                 new OodleSwap(i).Show();
             };
             label1.Text = i.SwapsTo.Split('|')[0];
+            backgroundWorker1.Dispose();
         }
 
 
         public GridItem(api.OptionMenu i)
         {
             InitializeComponent();
-            pictureBox1.Image = global.ItemIcon(i.MainIcon);
+            backgroundWorker1.DoWork += delegate
+            {
+                pictureBox1.Image = global.ItemIcon(i.MainIcon);
+            };
+            backgroundWorker1.RunWorkerAsync();
             pictureBox1.Click += delegate
             {
                 new SwapOption(i).Show();
             };
             label1.Text = i.Title.Split('|')[0];
+            backgroundWorker1.Dispose();
         }
     }
 }
