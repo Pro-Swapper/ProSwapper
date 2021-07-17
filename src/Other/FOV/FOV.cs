@@ -28,7 +28,11 @@ namespace Pro_Swapper.FOV
             label6.Text = "Current Monitor: " + currentScreen.Width + "x" + currentScreen.Height;
         }
 
-        private void button1_Click(object sender, EventArgs e) => Close();
+        private void button1_Click(object sender, EventArgs e)
+        {
+            global.SaveConfig();
+            Close();
+        }
 
         private void textBox1_TextChanged(object sender, EventArgs e) => global.CurrentConfig.ConfigIni = textBox1.Text;
 
