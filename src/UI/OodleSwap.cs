@@ -74,6 +74,20 @@ namespace Pro_Swapper
                 label3.ForeColor = Color.White;
                 Stopwatch s = new Stopwatch();
                 s.Start();
+                foreach (api.Asset asset in ThisItem.Asset)
+                {
+                    //Check if replace is longer
+                    for (int i = 0; i < asset.Search.Length; i++)
+                    {
+                        if (asset.Search[i].Length < asset.Replace[i].Length)
+                        {
+                            string error = "The replace length is longer than the search, pleaes make sure the search is greater than or equal to the replace length";
+                            MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            Log(error);
+                            return;
+                        }
+                    }
+                }
                 await Swap.SwapItem(ThisItem, Converting);
                 ConvertB.Enabled = true;
                 RevertB.Enabled = true;

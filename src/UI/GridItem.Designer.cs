@@ -39,7 +39,7 @@ namespace Pro_Swapper
             this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(121, 141);
+            this.pictureBox1.Size = new System.Drawing.Size(130, 130);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -50,7 +50,8 @@ namespace Pro_Swapper
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(3, 144);
+            this.label1.Location = new System.Drawing.Point(3, 132);
+            this.label1.MaximumSize = new System.Drawing.Size(120, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 13);
             this.label1.TabIndex = 1;
@@ -63,7 +64,7 @@ namespace Pro_Swapper
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
             this.Name = "GridItem";
-            this.Size = new System.Drawing.Size(121, 175);
+            this.Size = new System.Drawing.Size(130, 171);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

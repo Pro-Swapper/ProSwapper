@@ -13,14 +13,17 @@
   <PropertyGroup>
  <OutputType>WinExe</OutputType>
  <TargetFramework>net5.0-windows</TargetFramework>
- <Version>0.0.8.7</Version>
+ <Version>0.0.8.8</Version>
  <Company>Pro Swapper</Company>
  <Authors>Pro Swapper</Authors>
  <Product>Pro Swapper</Product>
- <Description>Pro Swapper the BEST Fortnite Skin Swapper</Description>
+ <Description>Pro Swapper the BEST Fortnite Skin Swapper
+https://proswapper.xyz</Description>
  <Copyright>Copyright © 2019 - 2021</Copyright>
  <SignAssembly>false</SignAssembly>
  <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+ <PackageProjectUrl>https://proswapper.xyz</PackageProjectUrl>
+ <NeutralLanguage>en</NeutralLanguage>
 </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

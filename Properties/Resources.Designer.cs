@@ -61,12 +61,42 @@ namespace Pro_Swapper.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap bottom_left {
+            get {
+                object obj = ResourceManager.GetObject("bottom_left", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap bottom_right {
+            get {
+                object obj = ResourceManager.GetObject("bottom_right", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] oo2core_5_win64 {
             get {
                 object obj = ResourceManager.GetObject("oo2core_5_win64", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap top_left {
+            get {
+                object obj = ResourceManager.GetObject("top_left", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

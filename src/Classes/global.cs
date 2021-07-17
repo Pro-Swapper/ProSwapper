@@ -50,6 +50,29 @@ namespace Pro_Swapper
             return bitmap;
         }
 
+
+
+        public static string IntToBool(string number)
+        {
+            if (number == "0")
+                return "false";
+            else if (number == "1")
+                return "true";
+
+            return null;
+        }
+
+        public static string BoolToInt(string boolean)
+        {
+            if (boolean == "false")
+                return "0";
+            else if (boolean == "true")
+                return "1";
+
+            return null;
+        }
+
+
         public static double GetEpochTime() => (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
 
 
@@ -99,6 +122,7 @@ namespace Pro_Swapper
             public class ConfigObj
             {
             public string Paks { get; set; } = "";
+            public string ConfigIni { get; set; } = "";
             public Color[] theme { get; set; } = new Color[4] { Color.FromArgb(0, 33, 113), Color.FromArgb(64, 85, 170), Color.FromArgb(65,105,255), Color.FromArgb(255,255,255) };//0,33,113;    64,85,170;    65,105,255;   255,255,255
             public double lastopened { get; set; }
             public string swaplogs { get; set; } = "";

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using Pro_Swapper.API;
 namespace Pro_Swapper
 {
@@ -13,7 +12,7 @@ namespace Pro_Swapper
             {
                 new OodleSwap(i).Show();
             };
-            label1.Text = i.SwapsTo;
+            label1.Text = i.SwapsTo.Split('|')[0];
         }
 
 
@@ -25,7 +24,7 @@ namespace Pro_Swapper
             {
                 new SwapOption(i).Show();
             };
-            label1.Text = i.Title;
+            label1.Text = i.Title.Split('|')[0];
         }
     }
 }

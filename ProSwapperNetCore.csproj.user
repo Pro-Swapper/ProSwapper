@@ -5,6 +5,18 @@
     <_LastSelectedProfileId>C:\Users\ProMa\source\repos\ProSwapperNetCore\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Update="src\Other\FOV\FOV.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Other\FOV\FOVUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\Other\FOV\StretchedUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\Other\SplashScreen\SplashSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="src\UI\Dashboard.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -21,6 +33,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="src\UI\Settings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\Other\SplashScreen\SplashUI.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="src\UI\ThemeCreator.cs">

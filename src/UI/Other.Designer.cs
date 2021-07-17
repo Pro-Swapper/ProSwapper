@@ -172,7 +172,7 @@
             this.StretchRes.Location = new System.Drawing.Point(143, 6);
             this.StretchRes.Name = "StretchRes";
             this.StretchRes.Size = new System.Drawing.Size(258, 141);
-            this.StretchRes.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.StretchRes.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.StretchRes.TabIndex = 77;
             this.StretchRes.TabStop = false;
             this.StretchRes.Click += new System.EventHandler(this.pictureBox2_Click);
