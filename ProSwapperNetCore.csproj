@@ -14,7 +14,7 @@
   <PropertyGroup>
  <OutputType>WinExe</OutputType>
  <TargetFramework>net5.0-windows</TargetFramework>
- <Version>0.0.8.8</Version>
+ <Version>0.0.8.9</Version>
  <Company>Pro Swapper</Company>
  <Authors>Pro Swapper</Authors>
  <Product>Pro Swapper</Product>
@@ -60,10 +60,27 @@ https://proswapper.xyz</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CUE4Parse\CUE4Parse-Conversion\**" />
+    <Compile Remove="CUE4Parse\CUE4Parse-Fortnite\**" />
+    <EmbeddedResource Remove="CUE4Parse\CUE4Parse-Conversion\**" />
+    <EmbeddedResource Remove="CUE4Parse\CUE4Parse-Fortnite\**" />
+    <None Remove="CUE4Parse\CUE4Parse-Conversion\**" />
+    <None Remove="CUE4Parse\CUE4Parse-Fortnite\**" />
+  </ItemGroup>
+
+
+  <ItemGroup>
     <Compile Remove="src\Classes\Items.cs" />
     <Compile Remove="src\Classes\Oodle\Utils\CompressionType.cs" />
     <Compile Remove="src\UI\swap.cs" />
     <Compile Remove="src\UI\swap.Designer.cs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Remove="CUE4Parse\.gitattributes" />
+    <None Remove="CUE4Parse\.gitignore" />
+    <None Remove="CUE4Parse\README.md" />
   </ItemGroup>
 
   <ItemGroup>
@@ -75,7 +92,10 @@ https://proswapper.xyz</Description>
   <ItemGroup>
     <PackageReference Include="DiscordRichPresence" Version="1.0.175" />
     <PackageReference Include="DotNetZip" Version="1.15.0" />
+    <PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.2.6" />
     <PackageReference Include="LZMA-SDK" Version="19.0.0" />
+    <PackageReference Include="MessagePack" Version="2.3.75" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -90,6 +110,12 @@ https://proswapper.xyz</Description>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="src\Other\Lobby\CID Selector\GridItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\UI\ZlibSwap.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="src\UI\SwapOption.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,13 +125,12 @@ https://proswapper.xyz</Description>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CUE4Parse\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="src\Other\Lobby\Lobby - Copy.resx">
+      <DependentUpon>Lobby.resx</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
 

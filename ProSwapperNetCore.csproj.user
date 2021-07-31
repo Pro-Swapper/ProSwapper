@@ -2,7 +2,7 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ShowAllFiles>false</ShowAllFiles>
-    <_LastSelectedProfileId>C:\Users\ProMa\source\repos\ProSwapperNetCore\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
+    <_LastSelectedProfileId>D:\GitHub\.Pro_Swapper\.Pro_Swapper\ProSwapper\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="src\Other\FOV\FOV.cs">
@@ -14,6 +14,9 @@
     <Compile Update="src\Other\FOV\StretchedUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="src\Other\Lobby\CID Selector\CIDSelection.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="src\Other\SplashScreen\SplashSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -22,6 +25,9 @@
     </Compile>
     <Compile Update="src\UI\GridItem.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="src\Other\Lobby\Lobby.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Update="src\UI\Main.cs">
       <SubType>Form</SubType>

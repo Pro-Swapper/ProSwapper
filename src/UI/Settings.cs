@@ -114,7 +114,7 @@ namespace Pro_Swapper
             else
                 MessageBox.Show("You have no items converted!", "Converted Items List", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-        private static string CalculateTimeSpan(DateTime dt)
+        public static string CalculateTimeSpan(DateTime dt)
         {
             var ts = new TimeSpan(DateTime.UtcNow.Ticks - dt.Ticks);
             double delta = Math.Abs(ts.TotalSeconds);

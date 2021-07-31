@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using CUE4Parse.Encryption.Aes;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
+using MessagePack;
 namespace Pro_Swapper.API
 {
     public static class api
@@ -10,44 +12,51 @@ namespace Pro_Swapper.API
         private static readonly string[] hosturls = {"https://pro-swapper.github.io/api","https://raw.githubusercontent.com/Pro-Swapper/api/main" };
         public static APIRoot apidata = null;
         public const string FNAPIEndpoint = "https://fortnite-api.com/v2/";
+        private const string BaseAESEndpoint = FNAPIEndpoint + "aes";
+       // FAesKey aes = new FAesKey(api.apidata.aes);
+
+        public static FAesKey fAesKey;
         private static string AESKey
         {
             get
             {
                 try
                 {
-                    return ((dynamic)JObject.Parse(global.web.DownloadString($"{FNAPIEndpoint}aes"))).data.mainKey;
+                    //Using msgpack_lz4 compression (faster)
+                    string aes = msgpack.MsgPacklz4($"{BaseAESEndpoint}?responseFormat=msgpack_lz4").data.mainKey;
+                    fAesKey = new FAesKey(aes);
+                    return aes;
                 }
                 catch (Exception ex)
                 {
                     return "";
                     throw new Exception($"Could not connect to {FNAPIEndpoint}: {ex.Message}");
                 }
-                
+
             }
         }
 
         public static void UpdateAPI()
         {
-
             #if DEBUG
             apidata = JsonConvert.DeserializeObject<APIRoot>(File.ReadAllText("api.json"));
             apidata.timestamp = global.GetEpochTime();
-
             string json = JsonConvert.SerializeObject(apidata, Formatting.None, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore//Makes filesize smaller hehe
             });
-
-            File.WriteAllText($"{global.version}.json", StringCompression.Compress(json));
+            byte[] compressedapi = MessagePackSerializer.ConvertFromJson(json, MessagePackSerializerOptions.Standard);
+            File.WriteAllBytes($"{global.version}.json", ByteCompression.Compress(compressedapi));
             #else
             Exception exception = null;
             foreach (string url in hosturls)
             {
                 try
                 {
-                    string apidatas = StringCompression.Decompress(global.web.DownloadString($"{url}{endpoint}"));
-                    apidata = JsonConvert.DeserializeObject<APIRoot>(apidatas);
+                    
+                    byte[] apidatas = ByteCompression.Decompress(global.web.DownloadData($"{url}{endpoint}"));
+                    string json = MessagePackSerializer.ConvertToJson(apidatas);
+                    apidata = JsonConvert.DeserializeObject<APIRoot>(json);
                     Console.WriteLine(apidatas);
                 }
                 catch (Exception ex)
@@ -80,6 +89,7 @@ namespace Pro_Swapper.API
             public Asset[] Asset { get; set; }
             public string Note { get; set; } = null;
             public bool ShowMain { get; set; } = true;
+            public bool Zlib { get; set; } = false;
         }
         public class OptionMenu
         {
@@ -104,7 +114,6 @@ namespace Pro_Swapper.API
             public string version { get; set; }
             public string discordurl { get; set; }
             public double timestamp { get; set; }
-            public string fnver { get; set; }
             public string aes { get; set; }
             public Item[] items { get; set; }
             public Status[] status { get; set; }

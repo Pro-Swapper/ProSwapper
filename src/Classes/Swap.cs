@@ -6,6 +6,10 @@ using System.IO;
 using Pro_Swapper.API;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CUE4Parse.FileProvider;
+using CUE4Parse.UE4.Vfs;
+using CUE4Parse.Encryption.Aes;
+
 namespace Pro_Swapper
 {
     public static class Swap
@@ -13,7 +17,22 @@ namespace Pro_Swapper
         private static string PaksLocation = global.CurrentConfig.Paks;
         public static async Task SwapItem(api.Item item, bool Converting)
         {
-            
+            //Load the exporter
+            List<string> thesefiles = new List<string>();
+            foreach (var Asset in item.Asset)
+            {
+                thesefiles.Add(Path.GetFileNameWithoutExtension(Asset.UcasFile));
+            }
+
+            List<string> UsingFiles = thesefiles.Distinct().ToList();
+
+
+            var Provider = new DefaultFileProvider(global.CurrentConfig.Paks, SearchOption.TopDirectoryOnly);
+            Provider.Initialize(UsingFiles);
+
+            //Load all aes keys for required files, cleaner in linq than doing a loop
+            Provider.UnloadedVfs.All(x => { Provider.SubmitKey(x.EncryptionKeyGuid, api.fAesKey);return true;});
+
 
             List<FinalPastes> finalPastes = new List<FinalPastes>();
             foreach (api.Asset asset in item.Asset)
@@ -24,13 +43,13 @@ namespace Pro_Swapper
                 File.SetAttributes(ucasfile, global.RemoveAttribute(File.GetAttributes(ucasfile), FileAttributes.ReadOnly));
 
 
-                byte[] exportasset = Fortnite.FortniteExport.ExportAsset(asset.UcasFile, asset.AssetPath);
+                byte[] exportasset = Fortnite.FortniteExport.ExportAsset(Provider, asset.UcasFile, asset.AssetPath);
 #if DEBUG
                 Directory.CreateDirectory("Exports");
 
                 string smallname = Path.GetFileName(asset.AssetPath);
                 File.WriteAllBytes($"Exports\\Exported_{smallname}.pak", exportasset);//Just simple export
-                File.WriteAllBytes($"Exports\\RawExport_{smallname}.pak", RawExported);//Uncompress exported by CUE4Parse
+               // File.WriteAllBytes($"Exports\\RawExport_{smallname}.pak", RawExported);//Uncompress exported by CUE4Parse
                 
 #endif
                 //edit files and compress with oodle and replace
@@ -40,7 +59,6 @@ namespace Pro_Swapper
                     continue;
 
 
-                //byte[] towrite = MermaidCompress(edited);
                 byte[] towrite = Oodle.OodleClass.Compress(edited);
 #if DEBUG
                 //Logging stuff for devs hehe
@@ -48,35 +66,35 @@ namespace Pro_Swapper
                 File.WriteAllBytes($"Exports\\Compressed{smallname}.pak", towrite);//Compressed edited export
 
 #endif
-                finalPastes.Add(new FinalPastes(ucasfile, towrite, RawExported));
+                finalPastes.Add(new FinalPastes(ucasfile, towrite, Fortnite.FortniteExport.Offset));
             }
-
+            Provider.Dispose();
             List<Task> tasklist = new List<Task>();
             //Actually put into game files:
             foreach (FinalPastes pastes in finalPastes)
                 tasklist.Add(Task.Run(() => PasteInLocationBytes(pastes)));
 
+
+            
             await Task.WhenAll(tasklist);
         }
+
 
         public class FinalPastes
         {
             public string ucasfile { get; set; }
             public byte[] towrite { get; set; }
-            public byte[] RawExported { get; set; }
-            public FinalPastes(string Ucasfile, byte[] ToWrite, byte[] rawExported)
+            public long Offset { get; set; }
+            public FinalPastes(string Ucasfile, byte[] ToWrite, long offset)
             {
                 ucasfile = Ucasfile;
                 towrite = ToWrite;
-                RawExported = rawExported;
+                Offset = offset;
             }
         }
 
-
-        public static byte[] RawExported { get; set; }
-
         //Edits a byte array in memory
-        private static byte[] EditAsset(byte[] file, api.Asset asset, bool Converting, out bool Compress)
+        public static byte[] EditAsset(byte[] file, api.Asset asset, bool Converting, out bool Compress)
         {
             Compress = false;
             using (MemoryStream stream = new MemoryStream(file))
@@ -116,7 +134,7 @@ namespace Pro_Swapper
 
         
 
-        private static byte[] SameLength(byte[] search, byte[] replace)
+        public static byte[] SameLength(byte[] search, byte[] replace)
         {
             List<byte> result = new List<byte>(replace);
             int difference = search.Length - replace.Length;
@@ -126,18 +144,27 @@ namespace Pro_Swapper
 
             return result.ToArray();
         }
+
+        public static byte[] SetLength(byte[] search, byte[] longerbyte)
+        {
+            List<byte> result = new List<byte>(search);
+            int difference = longerbyte.Length - search.Length;
+            for (int i = 0; i < difference; i++)
+                result.Add(0);
+
+            return result.ToArray();
+        }
         //private static byte[] OodleChar = global.HexToByte("8C");
-        private static void PasteInLocationBytes(FinalPastes finalpaste)
+        public static void PasteInLocationBytes(FinalPastes finalpaste)
         {
             //Define our pak editor stream
             using (FileStream PakEditor = File.Open(finalpaste.ucasfile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
 
                 //Offset for "bothhave" for the general area of our bytes
-                int offset = (int)Algorithms.BoyerMoore.IndexOf(PakEditor, finalpaste.RawExported);
+                //int offset = (int)Algorithms.BoyerMoore.IndexOf(PakEditor, finalpaste.RawExported);
                 //Offset is where Œ char is
-
-                PakEditor.Position = offset;
+                PakEditor.Position = finalpaste.Offset;
                 PakEditor.Write(finalpaste.towrite, 0, finalpaste.towrite.Length);
             }
         }

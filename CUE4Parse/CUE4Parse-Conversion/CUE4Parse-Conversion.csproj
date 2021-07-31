@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>CUE4Parse_Conversion</RootNamespace>
+	<LangVersion>default</LangVersion>
+	<Nullable>enable</Nullable>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<TargetFrameworks>netcoreapp3.1;netstandard2.1</TargetFrameworks>
+    <IsPublishable>false</IsPublishable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="2.80.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Detex.dll" />
+    <EmbeddedResource Include="Resources\Detex.dll" />
+  </ItemGroup>
+
+</Project>

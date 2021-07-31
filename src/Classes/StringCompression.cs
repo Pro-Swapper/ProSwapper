@@ -1,61 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Text;
+﻿using System.IO;
 
 namespace Pro_Swapper
 {
-    //https://stackoverflow.com/a/17993002/12897035
-    public static class StringCompression
+    public static class ByteCompression
     {
-        /// <summary>
-        /// Compresses the string.
-        /// </summary>
-        /// <param name="text">The text.</param>
-        /// <returns></returns>
-        public static string Compress(string text)
+        public static byte[] Decompress(byte[] input)
         {
-            byte[] buffer = Encoding.UTF8.GetBytes(text);
-            var memoryStream = new MemoryStream();
-            using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Compress, true))
+            using (MemoryStream ms = new MemoryStream())
             {
-                gZipStream.Write(buffer, 0, buffer.Length);
+                using (Ionic.Zlib.ZlibStream zls = new Ionic.Zlib.ZlibStream(ms, Ionic.Zlib.CompressionMode.Decompress, Ionic.Zlib.CompressionLevel.BestCompression))
+                    zls.Write(input, 0, input.Length);
+
+                return ms.ToArray();
             }
-
-            memoryStream.Position = 0;
-
-            var compressedData = new byte[memoryStream.Length];
-            memoryStream.Read(compressedData, 0, compressedData.Length);
-
-            var gZipBuffer = new byte[compressedData.Length + 4];
-            Buffer.BlockCopy(compressedData, 0, gZipBuffer, 4, compressedData.Length);
-            Buffer.BlockCopy(BitConverter.GetBytes(buffer.Length), 0, gZipBuffer, 0, 4);
-            return Convert.ToBase64String(gZipBuffer);
         }
-
-        /// <summary>
-        /// Decompresses the string.
-        /// </summary>
-        /// <param name="compressedText">The compressed text.</param>
-        /// <returns></returns>
-        public static string Decompress(string compressedText)
+        public static byte[] Compress(byte[] input)
         {
-            byte[] gZipBuffer = Convert.FromBase64String(compressedText);
-            using (var memoryStream = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
-                int dataLength = BitConverter.ToInt32(gZipBuffer, 0);
-                memoryStream.Write(gZipBuffer, 4, gZipBuffer.Length - 4);
+                using (Ionic.Zlib.ZlibStream zls = new Ionic.Zlib.ZlibStream(ms, Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.BestCompression))
+                    zls.Write(input, 0, input.Length);
 
-                var buffer = new byte[dataLength];
-
-                memoryStream.Position = 0;
-                using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
-                {
-                    gZipStream.Read(buffer, 0, buffer.Length);
-                }
-
-                return Encoding.UTF8.GetString(buffer);
+                return ms.ToArray();
             }
         }
     }

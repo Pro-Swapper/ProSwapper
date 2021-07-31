@@ -35,7 +35,11 @@ namespace Pro_Swapper
                     {
                         string filedata = File.ReadAllText(o.FileName);
                         api.Item pluginitem = JsonConvert.DeserializeObject<api.Item>(filedata);
-                        new OodleSwap(pluginitem).ShowDialog();
+
+                        if (pluginitem.Zlib == true)
+                            new ZlibSwap(pluginitem).ShowDialog();
+                        else
+                            new OodleSwap(pluginitem).ShowDialog();
                     }
                     catch
                     {
@@ -44,8 +48,7 @@ namespace Pro_Swapper
                 }
             }
         }
-
-        
+        private void pictureBox2_Click_1(object sender, EventArgs e)=> new Lobby().ShowDialog();
     }
 }
  

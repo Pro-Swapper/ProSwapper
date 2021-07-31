@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using MessagePack;
 using Newtonsoft.Json.Linq;
 using Pro_Swapper.API;
 namespace Pro_Swapper
@@ -36,7 +37,7 @@ namespace Pro_Swapper
             patchnotes.Text += api.apidata.patchnotes + Environment.NewLine + AutoPatchNotes;
             try
             {
-                news.ImageLocation = ((dynamic)JObject.Parse(global.web.DownloadString($"{api.FNAPIEndpoint}news/br"))).data.image;
+                news.ImageLocation = msgpack.MsgPacklz4($"{api.FNAPIEndpoint}news/br?responseFormat=msgpack_lz4&responseOptions=ignore_null").data.image;
             }
             catch { }
         }

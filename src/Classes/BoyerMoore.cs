@@ -5,8 +5,9 @@ using System.Text;
 
 namespace Pro_Swapper.Algorithms
 {
+    //Pro Swappper uses offsets now so this class isnt needed
     //https://stackoverflow.com/a/61947989/12897035
-    class BoyerMoore
+    /*class BoyerMoore
     {
         /// <summary>
         /// Finds the first occurrence of <paramref name="pattern"/> in a stream
@@ -85,5 +86,5 @@ namespace Pro_Swapper.Algorithms
 
             return -1;
         }
-    }
+    }*/
 }

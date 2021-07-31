@@ -20,34 +20,79 @@ namespace Pro_Swapper
         private const string ImgurCDN = "https://i.imgur.com/";
         public static Image ItemIcon(string url)
         {
+            if (url.StartsWith("https://fortnite-api.com/"))
+            {
+                //Fetch with fortnite api
+                string path = ProSwapperFolder + @"Images\" + url.Replace("https:", "").Replace("/", "");
+                //Downloads image if doesnt exists
+                if (!File.Exists(path))
+                    return SaveImage(url, path, ImageFormat.Png);
+                else
+                {
+                        return Image.FromFile(path);
+                }
+                   
+
+            }
+            else
+            {
+                //Fetch from imgur
                 string ActualUrl = url.Substring(url.LastIndexOf('/') + 1);//If not full url returns original which is what we want :) https://stackoverflow.com/a/5327562/12897035
                 string path = ProSwapperFolder + @"Images\" + ActualUrl;
                 string imageurl = ImgurCDN + ActualUrl;
-            
-            
-            
-            //Downloads image if doesnt exists
-            if (!File.Exists(path))
-                return SaveImage(imageurl, path, ImageFormat.Png);
-            else
-                return Image.FromFile(path);
+
+
+                //Downloads image if doesnt exists
+                if (!File.Exists(path))
+                    return SaveImage(imageurl, path, ImageFormat.Png);
+                else
+                    return Image.FromFile(path);
+            }
         }
+
+        public static string ItemIconButLocation(string url)
+        {
+            if (url.StartsWith("https://fortnite-api.com/"))
+            {
+                //Fetch with fortnite api
+                string path = ProSwapperFolder + @"Images\" + url.Replace("https:", "").Replace("/", "");
+                //Downloads image if doesnt exists
+                if (!File.Exists(path))
+                    SaveImage(url, path, ImageFormat.Png);
+
+                return path;
+            }
+            else
+            {
+                //Fetch from imgur
+                string ActualUrl = url.Substring(url.LastIndexOf('/') + 1);//If not full url returns original which is what we want :) https://stackoverflow.com/a/5327562/12897035
+                string path = ProSwapperFolder + @"Images\" + ActualUrl;
+                string imageurl = ImgurCDN + ActualUrl;
+
+
+                //Downloads image if doesnt exists
+                if (!File.Exists(path))
+                    SaveImage(imageurl, path, ImageFormat.Png);
+
+                return path;
+            }
+           
+        }
+
         private static Image SaveImage(string imageUrl, string filename, ImageFormat format)
         {
-            WebClient client = new WebClient();
-            client.Proxy = null;
-            Stream stream = client.OpenRead(imageUrl);
-            Bitmap bitmap; bitmap = new Bitmap(stream);
-
-            if (bitmap != null)
+            using (WebClient web = new WebClient())
             {
-                bitmap.Save(filename, format);
+                Stream stream = web.OpenRead(imageUrl);
+                Bitmap bitmap = new Bitmap(stream);
+
+                if (bitmap != null)
+                    bitmap.Save(filename, format);
+
+                stream.Flush();
+                stream.Close();
+                return bitmap;
             }
-            
-            stream.Flush();
-            stream.Close();
-            client.Dispose();
-            return bitmap;
         }
 
 

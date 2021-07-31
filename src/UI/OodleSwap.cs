@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using Pro_Swapper.API;
 using Bunifu.Framework.UI;
+using System.Threading.Tasks;
 namespace Pro_Swapper
 {
     public partial class OodleSwap : Form
@@ -52,11 +53,14 @@ namespace Pro_Swapper
         }
         private void Log(string text)
         {
+            CheckForIllegalCrossThreadCalls = false;
             logbox.Text += $"{text}{Environment.NewLine}";
             logbox.ScrollToCaret();
         }
-        private async void SwapButton_Click(object sender, EventArgs e)
+
+        private async void ButtonbgWorker(bool Converting)
         {
+            CheckForIllegalCrossThreadCalls = false;
             try
             {
                 string path = global.CurrentConfig.Paks + @"\pakchunk0-WindowsClient.sig";
@@ -65,9 +69,8 @@ namespace Pro_Swapper
                     MessageBox.Show("Select your paks folder in Settings", "Pro Swapper");
                     return;
                 }
-                logbox.Clear();
-                Log("Loading...");
-                bool Converting = ((BunifuFlatButton)(sender)).Text == "Convert";
+                
+                
                 ConvertB.Enabled = false;
                 RevertB.Enabled = false;
                 label3.Text = "Loading...";
@@ -115,6 +118,14 @@ namespace Pro_Swapper
             {
                 Log($"Restart the swapper or refer to this error: {ex.Message} | {ex.StackTrace}");
             }
+        }
+
+        private void SwapButton_Click(object sender, EventArgs e)
+        {
+            logbox.Clear();
+            Log("Loading...");
+            bool isconverting = ((BunifuFlatButton)(sender)).Text == "Convert";
+            Task.Run(() => ButtonbgWorker(isconverting));
         }
         private void ExitButton_Click(object sender, EventArgs e) => Close();
         private void button2_Click(object sender, EventArgs e) => WindowState = FormWindowState.Minimized;
