@@ -8,7 +8,7 @@ namespace Pro_Swapper.CID_Selector
 {
     public partial class CIDSelection : Form
     {
-        private SkinSearch.Datum SearchedSkin = null;
+        public static SkinSearch.Datum SearchedSkin = null;
         private BackendTypes currentBackEndType = AthenaCharacter;
 
         //Use only the following backend types
@@ -32,9 +32,12 @@ namespace Pro_Swapper.CID_Selector
             AthenaItemWrap,
            // All,
         }
-        public CIDSelection()
+        public static Lobby lobbyform;
+
+        public CIDSelection(Lobby lobbyfrm)
         {
             InitializeComponent();
+            lobbyform = lobbyfrm;
             Icon = Main.appIcon;
             BackColor = global.MainMenu;
             flowLayoutPanel1.BackColor = global.MainMenu;
@@ -52,14 +55,8 @@ namespace Pro_Swapper.CID_Selector
                 
                 for (int i = 0; i < skinlist.Count; i++)
                 {
-                   // BackendTypes thisbackendtype = (BackendTypes)Enum.Parse(typeof(BackendTypes), skinlist[i].type.backendValue);
-                   // if (currentBackEndType == thisbackendtype)
-                      //  flowLayoutPanel1.Controls.Add(new GridItem(skinlist[i], SearchedSkin));
-
                     if (currentBackEndType.ToString() == skinlist[i].type.backendValue)
-                    {
-                        flowLayoutPanel1.Controls.Add(new GridItem(skinlist[i], SearchedSkin));
-                    }
+                        flowLayoutPanel1.Controls.Add(new GridItem(skinlist[i]));
                 }    
                     
                 label1.Text = $"Found {flowLayoutPanel1.Controls.Count} cosmetics compatible with {SearchedSkin.name}";

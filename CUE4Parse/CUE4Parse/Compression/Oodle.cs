@@ -21,7 +21,7 @@ namespace CUE4Parse.Compression
         private const string WARFRAME_CDN_HOST = "https://origin.warframe.com";
         private const string WARFRAME_INDEX_PATH = "/origin/E926E926/index.txt.lzma";
         private const string WARFRAME_INDEX_URL = WARFRAME_CDN_HOST + WARFRAME_INDEX_PATH;
-        public const string OODLE_DLL_NAME = "oo2core_8_win64.dll";
+        public const string OODLE_DLL_NAME = "oo2core_5_win64.dll";
         
         public static bool LoadOodleDll()
         {
@@ -38,7 +38,7 @@ namespace CUE4Parse.Compression
             LoadOodleDll();
             unsafe
             {
-                File.WriteAllBytes("compressed_texture" + new Random().Next(1,20) + ".pak", compressed);
+                //File.WriteAllBytes("compressed_texture" + new Random().Next(1,20) + ".pak", compressed);
                 fixed (byte* compressedPtr = compressed, uncompressedPtr = uncompressed)
                 {
                     var decodedSize = OodleLZ_Decompress(compressedPtr + compressedOffset, compressedSize,

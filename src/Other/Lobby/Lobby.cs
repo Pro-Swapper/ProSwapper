@@ -14,6 +14,8 @@ namespace Pro_Swapper
         public static SkinSearch.Root allskins = new SkinSearch.Root();
 
         public static api.Item CurrentCID = null;
+
+        public static CIDSelection cidform;
         public Lobby()
         {
             InitializeComponent();
@@ -46,7 +48,8 @@ namespace Pro_Swapper
 
         private void button2_Click(object sender, EventArgs e)
         {
-            new CIDSelection().ShowDialog();
+            cidform = new CIDSelection(this);
+            cidform.ShowDialog();
         }
 
         private void saveAsPluginjsonToolStripMenuItem_Click(object sender, EventArgs e)
