@@ -123,7 +123,7 @@ namespace Pro_Swapper.CID_Selector
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(228, 38);
             this.label4.TabIndex = 306;
-            this.label4.Text = "Search with either Item ID or Name:\r\nType below the skin you OWN";
+            this.label4.Text = "Search with either Item ID or Name:\r\nType below the cosmetic you OWN";
             // 
             // label2
             // 

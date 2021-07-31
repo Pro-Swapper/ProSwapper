@@ -129,9 +129,6 @@ https://proswapper.xyz</Description>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="src\Other\Lobby\Lobby - Copy.resx">
-      <DependentUpon>Lobby.resx</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
 
 
