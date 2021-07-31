@@ -58,13 +58,11 @@ namespace CUE4Parse.FileProvider
 
             foreach (var file in directory.EnumerateFiles("*.*", option))
             {
-                for (int i = 0; i < filter.Count; i++)
+                if (!filter.Any(file.Name.Contains))
                 {
-                    if (!file.Name.Contains(filter[i]))
-                    {
-                        goto contin;
-                    }
+                    goto contin;
                 }
+                
 
 
                 var ext = file.Extension.SubstringAfter('.');
