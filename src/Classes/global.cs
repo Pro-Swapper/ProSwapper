@@ -9,6 +9,8 @@ using System.Security.Cryptography;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
+using System.Windows.Forms;
+
 namespace Pro_Swapper
 {
     public class global

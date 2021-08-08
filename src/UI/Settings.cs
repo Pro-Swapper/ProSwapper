@@ -100,9 +100,6 @@ namespace Pro_Swapper
             MessageBox.Show("All configs for item reset! Now all items will show as OFF (This button should be used after verifying Fortnite)", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         private void button10_Click(object sender, EventArgs e) => new ThemeCreator().ShowDialog();
-        private void pictureBox1_Click(object sender, EventArgs e)=> global.OpenUrl("https://youtube.com/proswapperofficial");
-        private void pictureBox2_Click(object sender, EventArgs e)=> global.OpenUrl("https://twitter.com/Pro_Swapper");
-        private void discord_Click(object sender, EventArgs e) => global.OpenUrl(API.api.apidata.discordurl);
         private void button5_Click(object sender, EventArgs e) => new Message("Credits And About", $"Pro Swapper made by Kye#5000. https://github.com/kyeondiscord. Credit to Tamely & Smoonthie for new Fortnite Swapping Method(s) \n\n\n\nProduct Information:\nLicense: MIT\nVersion: {global.version}\nMD5: {global.FileToMd5(Process.GetCurrentProcess().MainModule.FileName)}\nLast Update: {CalculateTimeSpan(UnixTimeStampToDateTime(API.api.apidata.timestamp))}\nNumber of swappable items: {API.api.apidata.items.Length}", false).ShowDialog();
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp) => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(unixTimeStamp).ToUniversalTime();
         private void ConvertedItemsList(object sender, EventArgs e)

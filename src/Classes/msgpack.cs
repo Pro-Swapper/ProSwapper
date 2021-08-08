@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MessagePack;
+﻿using MessagePack;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Web;
+using System.Net;
+
 namespace Pro_Swapper
 {
     public static class msgpack
@@ -19,11 +15,15 @@ namespace Pro_Swapper
         /// <returns></returns>
         public static T MsgPacklz4<T>(string url)
         {
-            var lz4Options = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray).WithSecurity(MessagePackSecurity.UntrustedData);
-            var allskinslz4 = MessagePackSerializer.Deserialize<dynamic>(global.web.DownloadData(url), lz4Options);
-            string json = MessagePackSerializer.SerializeToJson(allskinslz4, lz4Options);
-
-            return JsonConvert.DeserializeObject<T>(json);
+            var lz4Options = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Proxy = null;
+            using (var response = (HttpWebResponse)request.GetResponse())
+            {
+                var AllCosmeticsLz4 = MessagePackSerializer.Deserialize<dynamic>(response.GetResponseStream(), lz4Options);
+                string json = MessagePackSerializer.SerializeToJson(AllCosmeticsLz4, lz4Options);
+                return JsonConvert.DeserializeObject<T>(json);
+            }
         }
 
         /// <summary>

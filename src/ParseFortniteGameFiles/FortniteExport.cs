@@ -6,7 +6,7 @@ using System.IO;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.UE4.Vfs;
 using Newtonsoft.Json;
-
+using Pro_Swapper.API;
 namespace Pro_Swapper.Fortnite
 {
     public static class FortniteExport
@@ -14,15 +14,17 @@ namespace Pro_Swapper.Fortnite
 
         public static byte[] ExportAsset(string filename, string Asset)
         {
+            if (api.fAesKey == null)
+                api.fAesKey = api.AESKey;
+
             string basefilename = Path.GetFileNameWithoutExtension(filename);
             var Provider = new DefaultFileProvider(global.CurrentConfig.Paks, SearchOption.TopDirectoryOnly);
             Provider.Initialize();
-            string aes = API.api.apidata.aes;
             IReadOnlyCollection<IAesVfsReader> vfs = Provider.UnloadedVfs;
             foreach (IAesVfsReader file in vfs)
             {
                 if (file.Name.Contains(basefilename))
-                    Provider.SubmitKey(file.EncryptionKeyGuid, new FAesKey(aes));
+                    Provider.SubmitKey(file.EncryptionKeyGuid, api.fAesKey);
             }  
             
             try

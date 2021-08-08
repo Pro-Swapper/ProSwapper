@@ -6,21 +6,17 @@ namespace Pro_Swapper
 	{
 		public static DiscordRpcClient client;
 		public static Timestamps rpctimestamp { get; set; }
+		private static RichPresence presence;
 		public static void InitializeRPC()
 		{
 			client = new DiscordRpcClient("697579712653819985");
 			client.Initialize();
-			SetState("Idle", false);
-		}
-		public static void SetState(string state, bool watching)
-		{
-			string discordurl = Convert.ToString(API.api.apidata.discordurl);
-			Button[] buttons = new Button[] { new Button() { Label = "Discord", Url = discordurl } };
-			if (watching) state = "Watching " + state;
-			client.SetPresence(new RichPresence()
+			Button[] buttons = { new Button() { Label = "Discord", Url = API.api.apidata.discordurl }, new Button() { Label = "YouTube", Url = "https://youtube.com/proswapperofficial"} };
+
+			presence = new RichPresence()
 			{
 				Details = "Pro Swapper | " + global.version,
-				State = state,
+				State = "Idle",
 				Timestamps = rpctimestamp,
 				Buttons = buttons,
 
@@ -31,7 +27,16 @@ namespace Pro_Swapper
 					SmallImageKey = "proswapperman",
 					SmallImageText = "Made by Kye#5000"
 				}
-			});
+			};
+			SetState("Idle");
+		}
+		public static void SetState(string state, bool watching = false)
+		{
+			if (watching) 
+				state = "Watching " + state;
+
+			presence.State = state;
+			client.SetPresence(presence);
 		}
 	}
 }

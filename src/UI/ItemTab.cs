@@ -1,7 +1,6 @@
 ﻿using System.Windows.Forms;
 using Pro_Swapper.API;
 using System.Linq;
-
 namespace Pro_Swapper
 {
     public partial class ItemTab : UserControl
@@ -20,6 +19,12 @@ namespace Pro_Swapper
 
             if (skinsflowlayout.Controls.Count == 0)
                 MessageBox.Show($"{tab} is currently disabled, please be patient for the developer(s) of Pro Swapper to add this feature. If you would like to request a feature please send a message on the Discord server", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void ItemTab_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+                global.FormMove(Main.Mainform.Handle);
         }
     }
 }

@@ -15,8 +15,8 @@ namespace Pro_Swapper.API
         private const string BaseAESEndpoint = FNAPIEndpoint + "aes";
        // FAesKey aes = new FAesKey(api.apidata.aes);
 
-        public static FAesKey fAesKey;
-        private static string AESKey
+        public static FAesKey fAesKey = null;
+        public static FAesKey AESKey
         {
             get
             {
@@ -24,12 +24,11 @@ namespace Pro_Swapper.API
                 {
                     //Using msgpack_lz4 compression (faster)
                     string aes = msgpack.MsgPacklz4($"{BaseAESEndpoint}?responseFormat=msgpack_lz4").data.mainKey;
-                    fAesKey = new FAesKey(aes);
-                    return aes;
+                    return new FAesKey(aes);
                 }
                 catch (Exception ex)
                 {
-                    return "";
+                    return null;
                     throw new Exception($"Could not connect to {FNAPIEndpoint}: {ex.Message}");
                 }
 
@@ -68,7 +67,6 @@ namespace Pro_Swapper.API
             if (exception != null)
                 Main.ThrowError($"Pro Swapper needs an internet connection to run, if you are already connected to the internet Pro Swapper's API may be blocked in your country, please use a VPN or try disabling your firewall, if you are already doing this please refer to this error: \n\n{exception.Message}");
             #endif
-            apidata.aes = AESKey;
         }
 
         public class Asset
@@ -114,7 +112,6 @@ namespace Pro_Swapper.API
             public string version { get; set; }
             public string discordurl { get; set; }
             public double timestamp { get; set; }
-            public string aes { get; set; }
             public Item[] items { get; set; }
             public Status[] status { get; set; }
             public OptionMenu[] OptionMenu { get; set; }

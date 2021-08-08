@@ -37,8 +37,9 @@
             this.skinsflowlayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.skinsflowlayout.Location = new System.Drawing.Point(0, 0);
             this.skinsflowlayout.Name = "skinsflowlayout";
-            this.skinsflowlayout.Size = new System.Drawing.Size(995, 606);
+            this.skinsflowlayout.Size = new System.Drawing.Size(999, 608);
             this.skinsflowlayout.TabIndex = 0;
+            this.skinsflowlayout.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ItemTab_MouseDown);
             // 
             // ItemTab
             // 
@@ -48,7 +49,8 @@
             this.Controls.Add(this.skinsflowlayout);
             this.DoubleBuffered = true;
             this.Name = "ItemTab";
-            this.Size = new System.Drawing.Size(995, 606);
+            this.Size = new System.Drawing.Size(999, 608);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ItemTab_MouseDown);
             this.ResumeLayout(false);
 
         }

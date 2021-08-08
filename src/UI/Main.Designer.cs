@@ -337,9 +337,9 @@
             // 
             // panelContainer
             // 
-            this.panelContainer.Location = new System.Drawing.Point(224, 30);
+            this.panelContainer.Location = new System.Drawing.Point(220, 30);
             this.panelContainer.Name = "panelContainer";
-            this.panelContainer.Size = new System.Drawing.Size(995, 606);
+            this.panelContainer.Size = new System.Drawing.Size(999, 608);
             this.panelContainer.TabIndex = 5;
             this.panelContainer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Main_MouseDown);
             // 

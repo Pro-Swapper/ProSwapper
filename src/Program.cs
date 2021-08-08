@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 using Pro_Swapper.Properties;
 using System.Net;
 namespace Pro_Swapper
@@ -14,6 +15,11 @@ namespace Pro_Swapper
         [STAThread]
         private static void Main()
         {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            UI.Splash splash = new UI.Splash();
+            Task.Run(() => Application.Run(splash));
             global.web = new WebClient();
             global.web.Proxy = null;
             string FortniteOodleDLL = EpicGamesLauncher.GetOodleDll();
@@ -31,9 +37,8 @@ namespace Pro_Swapper
             global.CreateDir(global.ProSwapperFolder + "\\Config");
             global.CreateDir(global.ProSwapperFolder + "\\Images");
             global.InitConfig();
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Main());
+            
+            Application.Run(new Main(splash));
         }
     }
 }

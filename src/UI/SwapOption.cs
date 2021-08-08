@@ -10,6 +10,7 @@ namespace Pro_Swapper
         public SwapOption(api.OptionMenu optionmenu)
         {
             InitializeComponent();
+            RPC.SetState(optionmenu.Title.Split('|')[0] + " Swap Option", true);
             Icon = Main.appIcon;
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 50, 50));
             
@@ -28,7 +29,7 @@ namespace Pro_Swapper
             if (e.Button == MouseButtons.Left) global.FormMove(Handle);
         }
         private void ExitButton_Click(object sender, EventArgs e) => Close();
-        private async void AddItem(api.Item item)
+        private void AddItem(api.Item item)
         {
             int buttonx = 154;
             int buttony = 161;
@@ -56,12 +57,12 @@ namespace Pro_Swapper
             if (IsSwapOption)
             {
                 lbl.Text = item.SwapsFrom;
-                picturebox.Image = await Task.Run(() => global.ItemIcon(item.FromImage));
+                picturebox.Image = global.ItemIcon(item.FromImage);
             }
             else
             {
                 lbl.Text = item.SwapsTo;
-                picturebox.Image = await Task.Run(() => global.ItemIcon(item.ToImage));
+                picturebox.Image = global.ItemIcon(item.ToImage);
             }
             Panel panel = new Panel
             {

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using CUE4Parse.FileProvider;
-using CUE4Parse.UE4.Vfs;
 using static Pro_Swapper.Swap;
 using Ionic.Zlib;
 
@@ -22,6 +21,7 @@ namespace Pro_Swapper
         public ZlibSwap(api.Item item)
         {
             InitializeComponent();
+            RPC.SetState(item.SwapsFrom + " To " + item.SwapsTo, true);
             ThisItem = item;
             string swaptext = ThisItem.SwapsFrom + " --> " + ThisItem.SwapsTo;
             Text = swaptext;
@@ -60,65 +60,42 @@ namespace Pro_Swapper
         }
         private void Log(string text)
         {
-            CheckForIllegalCrossThreadCalls = false;
-            logbox.Text += $"{text}{Environment.NewLine}";
-            logbox.ScrollToCaret();
+            Action writelogbox = delegate { logbox.Text += $"{text}{Environment.NewLine}"; };
+            logbox.Invoke(writelogbox);
+            Action ScrollDown = delegate { logbox.ScrollToCaret(); };
+            logbox.Invoke(ScrollDown);
         }
+        private void ThreadSafe(Control control, Action action) => control.Invoke((Delegate)action);
 
         private async void ButtonbgWorker(bool Converting)
         {
-            CheckForIllegalCrossThreadCalls = false;
             try
             {
-                string path = global.CurrentConfig.Paks + @"\pakchunk0-WindowsClient.sig";
-                if (!File.Exists(path))
-                {
-                    MessageBox.Show("Select your paks folder in Settings", "Pro Swapper");
-                    return;
-                }
-
-
-                ConvertB.Enabled = false;
-                RevertB.Enabled = false;
-                label3.Text = "Loading...";
-                label3.ForeColor = Color.White;
+                ThreadSafe(ConvertB, () => { ConvertB.Enabled = false; });
+                ThreadSafe(RevertB, () => { RevertB.Enabled = false; });
+                ThreadSafe(label3, () => { label3.Text = "Loading..."; });
+                ThreadSafe(label3, () => { label3.ForeColor = Color.White; });
                 Stopwatch s = new Stopwatch();
                 s.Start();
-                foreach (api.Asset asset in ThisItem.Asset)
-                {
-                    //Check if replace is longer
-                    for (int i = 0; i < asset.Search.Length; i++)
-                    {
-                        if (asset.Search[i].Length < asset.Replace[i].Length)
-                        {
-                            string error = "The replace length is longer than the search, pleaes make sure the search is greater than or equal to the replace length";
-                            MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            Log(error);
-                            return;
-                        }
-                    }
-                }
-
                 await Task.Run(() => SwapAsync(ThisItem, Converting));
-
-                ConvertB.Enabled = true;
-                RevertB.Enabled = true;
+                ThreadSafe(ConvertB, () => { ConvertB.Enabled = true; });
+                ThreadSafe(RevertB, () => { RevertB.Enabled = true; });
                 s.Stop();
-                logbox.Clear();
+                ThreadSafe(logbox, () => { logbox.Clear(); });
                 string swaplogs = global.CurrentConfig.swaplogs;
                 if (Converting)
                 {
                     Log($"[+] Converted item in {s.Elapsed.Milliseconds}ms");
-                    label3.Text = "ON";
-                    label3.ForeColor = Color.Lime;
+                    ThreadSafe(label3, () => { label3.Text = "ON"; });
+                    ThreadSafe(label3, () => { label3.ForeColor = Color.Lime; });
                     s.Stop();
                     global.CurrentConfig.swaplogs += ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",";
                 }
                 else
                 {
                     Log($"[-] Reverted item in {s.Elapsed.Milliseconds}ms");
-                    label3.Text = "OFF";
-                    label3.ForeColor = Color.Red;
+                    ThreadSafe(label3, () => { label3.Text = "OFF"; });
+                    ThreadSafe(label3, () => { label3.ForeColor = Color.Red; });
                     global.CurrentConfig.swaplogs = swaplogs.Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",", "");
                 }
                 global.SaveConfig();
@@ -131,6 +108,26 @@ namespace Pro_Swapper
 
         private void SwapButton_Click(object sender, EventArgs e)
         {
+            string path = global.CurrentConfig.Paks + @"\pakchunk0-WindowsClient.sig";
+            if (!File.Exists(path))
+            {
+                MessageBox.Show("Select your paks folder in Settings", "Pro Swapper");
+                return;
+            }
+            foreach (api.Asset asset in ThisItem.Asset)
+            {
+                //Check if replace is longer
+                for (int i = 0; i < asset.Search.Length; i++)
+                {
+                    if (asset.Search[i].Length < asset.Replace[i].Length)
+                    {
+                        string error = "The replace length is longer than the search, pleaes make sure the search is greater than or equal to the replace length";
+                        MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Log(error);
+                        return;
+                    }
+                }
+            }
             logbox.Clear();
             Log("Loading...");
             bool isconverting = ((BunifuFlatButton)(sender)).Text == "Convert";
@@ -147,7 +144,7 @@ namespace Pro_Swapper
 
         public static string SearchString = null;
 
-        public static ZlibBlock zlibblock;
+        public static ZlibBlock zlibblock = null;
 
         public class ZlibBlock
         {
@@ -203,7 +200,6 @@ namespace Pro_Swapper
                 SearchString = asset.Replace[assetnum];
                 //Use this to define zlibblock var
                 Fortnite.FortniteExport.ExportAsset(Provider, asset.UcasFile, asset.AssetPath);
-
 #if DEBUG
                 Directory.CreateDirectory("Exports");
 

@@ -6,6 +6,7 @@ using System.IO;
 using Pro_Swapper.CID_Selector;
 using Newtonsoft.Json;
 using Pro_Swapper.API;
+using System.Threading.Tasks;
 namespace Pro_Swapper
 {
     public partial class Lobby : Form
@@ -16,7 +17,7 @@ namespace Pro_Swapper
         public static api.Item CurrentCID = null;
 
         public static CIDSelection cidform;
-        public Lobby()
+        public Lobby(UI.Splash splash)
         {
             InitializeComponent();
             Icon = Main.appIcon;
@@ -29,6 +30,8 @@ namespace Pro_Swapper
                     datalist.Add(item);
             }
             allskins.data = datalist;
+            Action safeClose = delegate { splash.Close(); };
+            splash.Invoke(safeClose);
         }
 
 

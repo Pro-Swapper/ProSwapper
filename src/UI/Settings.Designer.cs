@@ -41,15 +41,9 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
             this.folder = new System.Windows.Forms.PictureBox();
-            this.yt = new System.Windows.Forms.PictureBox();
-            this.twitter = new System.Windows.Forms.PictureBox();
-            this.discord = new System.Windows.Forms.PictureBox();
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.folder)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.yt)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.twitter)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.discord)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -235,51 +229,6 @@
             this.folder.TabStop = false;
             this.folder.Click += new System.EventHandler(this.pictureBox7_Click);
             // 
-            // yt
-            // 
-            this.yt.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.yt.ErrorImage = null;
-            this.yt.Image = ((System.Drawing.Image)(resources.GetObject("yt.Image")));
-            this.yt.ImageLocation = "";
-            this.yt.InitialImage = null;
-            this.yt.Location = new System.Drawing.Point(339, 12);
-            this.yt.Name = "yt";
-            this.yt.Size = new System.Drawing.Size(67, 43);
-            this.yt.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.yt.TabIndex = 112;
-            this.yt.TabStop = false;
-            this.yt.Click += new System.EventHandler(this.pictureBox1_Click);
-            // 
-            // twitter
-            // 
-            this.twitter.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.twitter.ErrorImage = null;
-            this.twitter.Image = ((System.Drawing.Image)(resources.GetObject("twitter.Image")));
-            this.twitter.ImageLocation = "";
-            this.twitter.InitialImage = null;
-            this.twitter.Location = new System.Drawing.Point(412, 12);
-            this.twitter.Name = "twitter";
-            this.twitter.Size = new System.Drawing.Size(67, 43);
-            this.twitter.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.twitter.TabIndex = 113;
-            this.twitter.TabStop = false;
-            this.twitter.Click += new System.EventHandler(this.pictureBox2_Click);
-            // 
-            // discord
-            // 
-            this.discord.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.discord.ErrorImage = null;
-            this.discord.Image = ((System.Drawing.Image)(resources.GetObject("discord.Image")));
-            this.discord.ImageLocation = "";
-            this.discord.InitialImage = null;
-            this.discord.Location = new System.Drawing.Point(485, 12);
-            this.discord.Name = "discord";
-            this.discord.Size = new System.Drawing.Size(67, 43);
-            this.discord.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.discord.TabIndex = 116;
-            this.discord.TabStop = false;
-            this.discord.Click += new System.EventHandler(this.discord_Click);
-            // 
             // button5
             // 
             this.button5.BackColor = System.Drawing.Color.RoyalBlue;
@@ -323,9 +272,6 @@
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button7);
-            this.Controls.Add(this.discord);
-            this.Controls.Add(this.twitter);
-            this.Controls.Add(this.yt);
             this.Controls.Add(this.button10);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
@@ -347,9 +293,6 @@
             this.Load += new System.EventHandler(this.SettingsForm_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SettingsForm_MouseDown);
             ((System.ComponentModel.ISupportInitialize)(this.folder)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.yt)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.twitter)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.discord)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -369,9 +312,6 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button10;
-        private System.Windows.Forms.PictureBox yt;
-        private System.Windows.Forms.PictureBox twitter;
-        private System.Windows.Forms.PictureBox discord;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;
     }

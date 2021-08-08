@@ -3,6 +3,8 @@ using Pro_Swapper.API;
 using System.IO;
 using Newtonsoft.Json;
 using System.Windows.Forms;
+using System.Threading.Tasks;
+
 namespace Pro_Swapper
 {
     public partial class OtherTab : UserControl
@@ -48,7 +50,23 @@ namespace Pro_Swapper
                 }
             }
         }
-        private void pictureBox2_Click_1(object sender, EventArgs e)=> new Lobby().ShowDialog();
+        private void pictureBox2_Click_1(object sender, EventArgs e)
+        {
+            UI.Splash splash = new UI.Splash();
+            Task.Run(() => Application.Run(splash));
+            new Lobby(splash).Show();
+        }
+
+        private void OtherTab_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+                global.FormMove(Main.Mainform.Handle);
+        }
+
+        private void pictureBox3_Click_1(object sender, EventArgs e)
+        {
+            new UI.Map().ShowDialog();
+        }
     }
 }
  
