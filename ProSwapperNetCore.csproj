@@ -14,7 +14,7 @@
   <PropertyGroup>
  <OutputType>WinExe</OutputType>
  <TargetFramework>net5.0-windows</TargetFramework>
- <Version>0.0.9.0</Version>
+ <Version>0.0.9.1</Version>
  <Company>Pro Swapper</Company>
  <Authors>Pro Swapper</Authors>
  <Product>Pro Swapper</Product>

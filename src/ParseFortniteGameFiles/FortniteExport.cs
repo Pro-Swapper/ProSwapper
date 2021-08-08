@@ -11,36 +11,6 @@ namespace Pro_Swapper.Fortnite
 {
     public static class FortniteExport
     {
-
-        public static byte[] ExportAsset(string filename, string Asset)
-        {
-            if (api.fAesKey == null)
-                api.fAesKey = api.AESKey;
-
-            string basefilename = Path.GetFileNameWithoutExtension(filename);
-            var Provider = new DefaultFileProvider(global.CurrentConfig.Paks, SearchOption.TopDirectoryOnly);
-            Provider.Initialize();
-            IReadOnlyCollection<IAesVfsReader> vfs = Provider.UnloadedVfs;
-            foreach (IAesVfsReader file in vfs)
-            {
-                if (file.Name.Contains(basefilename))
-                    Provider.SubmitKey(file.EncryptionKeyGuid, api.fAesKey);
-            }  
-            
-            try
-            {
-                byte[] asset = Provider.SaveAsset(Asset);
-                Provider.Dispose();
-                return asset;
-            }
-            catch (Exception ex)
-            {
-                Provider.Dispose();
-                throw new Exception($"Asset {Asset} in {filename} could not be exported: {ex.Message}");
-            }
-        }
-
-
         public static byte[] ExportAsset(DefaultFileProvider Provider, string filename, string Asset)
         {
             try

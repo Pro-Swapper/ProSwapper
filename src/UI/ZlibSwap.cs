@@ -177,8 +177,10 @@ namespace Pro_Swapper
                 var Provider = new DefaultFileProvider(global.CurrentConfig.Paks, SearchOption.TopDirectoryOnly);
                 Provider.Initialize(UsingFiles);
 
-                //Load all aes keys for required files, cleaner in linq than doing a loop
-                Provider.UnloadedVfs.All(x => { Provider.SubmitKey(x.EncryptionKeyGuid, api.fAesKey); return true; });
+            if (api.fAesKey == null)
+                api.fAesKey = api.AESKey;
+            //Load all aes keys for required files, cleaner in linq than doing a loop
+            Provider.UnloadedVfs.All(x => { Provider.SubmitKey(x.EncryptionKeyGuid, api.fAesKey); return true; });
 
 
                 List<FinalPastes> finalPastes = new List<FinalPastes>();
