@@ -5,10 +5,7 @@ using System.Text;
 using System.IO;
 using Pro_Swapper.API;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using CUE4Parse.FileProvider;
-using CUE4Parse.UE4.Vfs;
-using CUE4Parse.Encryption.Aes;
 
 namespace Pro_Swapper
 {
@@ -17,17 +14,32 @@ namespace Pro_Swapper
         private static string PaksLocation = global.CurrentConfig.Paks;
         public static async Task SwapItem(api.Item item, bool Converting)
         {
+            //global.CreateDir(PaksLocation + "\\Pro_Swapper");
+
             //Load the exporter
             List<string> thesefiles = new List<string>();
             foreach (var Asset in item.Asset)
-            {
                 thesefiles.Add(Path.GetFileNameWithoutExtension(Asset.UcasFile));
-            }
 
             List<string> UsingFiles = thesefiles.Distinct().ToList();
+           /* foreach (string file in UsingFiles)
+            {
+                string BaseFileName = $"{PaksLocation}\\Pro_Swapper\\{file}";
+                if (!File.Exists(BaseFileName + ".ucas"))
+                {
+                    File.Copy($"{PaksLocation}\\{file}.sig", BaseFileName + ".sig", true);
+                    File.Copy($"{PaksLocation}\\{file}.utoc", BaseFileName + ".utoc", true);
+                    File.Copy($"{PaksLocation}\\{file}.pak", BaseFileName + ".pak", true);
+                    File.Copy($"{PaksLocation}\\{file}.ucas", BaseFileName + ".ucas", true);
+                }
+                    
+            }*/
+
+            
 
 
-            var Provider = new DefaultFileProvider(global.CurrentConfig.Paks, SearchOption.TopDirectoryOnly);
+           // var Provider = new DefaultFileProvider($"{PaksLocation}\\Pro_Swapper", SearchOption.TopDirectoryOnly);
+            var Provider = new DefaultFileProvider(PaksLocation, SearchOption.TopDirectoryOnly);
             Provider.Initialize(UsingFiles);
 
             if (api.fAesKey == null)
@@ -41,6 +53,7 @@ namespace Pro_Swapper
             List<FinalPastes> finalPastes = new List<FinalPastes>();
             foreach (api.Asset asset in item.Asset)
             {
+               // string ucasfile = $"{PaksLocation}\\Pro_Swapper\\{asset.UcasFile}";
                 string ucasfile = $"{PaksLocation}\\{asset.UcasFile}";
 
                 //Checking if file is readonly coz we wouldn't be able to do shit with it

@@ -76,7 +76,7 @@ namespace Pro_Swapper.CID_Selector
             {
                 if (searchinfo.Contains("ID"))
                 {
-                    foreach (var item in Lobby.allskins.data)
+                    foreach (var item in global.allskins.data)
                     {
                         BackendTypes thisbackendtype = (BackendTypes)Enum.Parse(typeof(BackendTypes), item.type.backendValue);
                         if (currentBackEndType == thisbackendtype && item.id.ToLower() == searchinfo.ToLower())
@@ -86,7 +86,7 @@ namespace Pro_Swapper.CID_Selector
                 }
                 else
                 {
-                    foreach (var item in Lobby.allskins.data)
+                    foreach (var item in global.allskins.data)
                     {
                         BackendTypes thisbackendtype = (BackendTypes)Enum.Parse(typeof(BackendTypes), item.type.backendValue);
                         if (currentBackEndType == thisbackendtype && item.name.ToLower().StartsWith(searchinfo.ToLower()))
@@ -112,15 +112,15 @@ namespace Pro_Swapper.CID_Selector
             switch (comboBox1.Text)
             {
                 case "Alphabetical":
-                    itemlist = Lobby.allskins.data.OrderBy(x => x.name).ToList();
+                    itemlist = global.allskins.data.OrderBy(x => x.name).ToList();
                     break;
 
                 case "Rarity":
-                    itemlist = Lobby.allskins.data.OrderBy(x => x.rarity.backendValue).ToList();
+                    itemlist = global.allskins.data.OrderBy(x => x.rarity.backendValue).ToList();
                     break;
                 case "Season":
                 default:
-                    itemlist = Lobby.allskins.data;
+                    itemlist = global.allskins.data;
                     break;
             }
         }

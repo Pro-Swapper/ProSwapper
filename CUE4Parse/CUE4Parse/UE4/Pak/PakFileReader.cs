@@ -90,7 +90,10 @@ namespace CUE4Parse.UE4.Pak
                     data.Write(decompressed, 0, uncompressedSize);
 
                     if (Encoding.Default.GetString(decompressed).Contains(Pro_Swapper.ZlibSwap.SearchString))
+                    {
                         Pro_Swapper.ZlibSwap.zlibblock = new Pro_Swapper.ZlibSwap.ZlibBlock(block.CompressedStart, block.CompressedEnd, decompressed, src);
+                        return new byte[] { 0 };
+                    }
                 }
 
                 if (data.Length == pakEntry.UncompressedSize) return data.GetBuffer();

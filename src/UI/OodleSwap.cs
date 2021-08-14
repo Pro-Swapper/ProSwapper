@@ -23,7 +23,7 @@ namespace Pro_Swapper
             image.Image = global.ItemIcon(ThisItem.FromImage);
             swapsfrom.Image = global.ItemIcon(ThisItem.ToImage);
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
-
+            Icon = Main.appIcon;
             BackColor = global.MainMenu;
             logbox.BackColor = global.MainMenu;
 
@@ -50,7 +50,6 @@ namespace Pro_Swapper
                 label3.Text = "OFF";
                 if (ThisItem.Note != null) MessageBox.Show("Warning for " + ThisItem.SwapsTo + ": " + ThisItem.Note, ThisItem.SwapsFrom + " - " + ThisItem.SwapsTo, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-
         }
         private void Log(string text)
         {

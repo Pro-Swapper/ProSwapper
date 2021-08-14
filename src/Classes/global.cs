@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using System.Windows.Forms;
+using Pro_Swapper.CID_Selector;
 
 namespace Pro_Swapper
 {
@@ -18,6 +19,9 @@ namespace Pro_Swapper
         public static string version = Assembly.GetExecutingAssembly().GetName().Version.ToString().Substring(2, 5);
 
         public static WebClient web;
+
+        //For lobby swapper
+        public static SkinSearch.Root allskins = null;
 
         private const string ImgurCDN = "https://i.imgur.com/";
         public static Image ItemIcon(string url)
@@ -52,33 +56,15 @@ namespace Pro_Swapper
             }
         }
 
-        public static string ItemIconButLocation(string url)
+        public static void DeleteFile(string filepath)
         {
-            if (url.StartsWith("https://fortnite-api.com/"))
+            if (File.Exists(filepath))
             {
-                //Fetch with fortnite api
-                string path = ProSwapperFolder + @"Images\" + url.Replace("https:", "").Replace("/", "");
-                //Downloads image if doesnt exists
-                if (!File.Exists(path))
-                    SaveImage(url, path, ImageFormat.Png);
-
-                return path;
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                File.Delete(filepath);
             }
-            else
-            {
-                //Fetch from imgur
-                string ActualUrl = url.Substring(url.LastIndexOf('/') + 1);//If not full url returns original which is what we want :) https://stackoverflow.com/a/5327562/12897035
-                string path = ProSwapperFolder + @"Images\" + ActualUrl;
-                string imageurl = ImgurCDN + ActualUrl;
-
-
-                //Downloads image if doesnt exists
-                if (!File.Exists(path))
-                    SaveImage(imageurl, path, ImageFormat.Png);
-
-                return path;
-            }
-           
+                
         }
 
         private static Image SaveImage(string imageUrl, string filename, ImageFormat format)
@@ -120,7 +106,7 @@ namespace Pro_Swapper
         }
 
 
-        public static double GetEpochTime() => (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+        public static long GetEpochTime() => DateTimeOffset.Now.ToUnixTimeSeconds();
 
 
         public static bool IsNameModified()
@@ -173,6 +159,8 @@ namespace Pro_Swapper
             public Color[] theme { get; set; } = new Color[4] { Color.FromArgb(0, 33, 113), Color.FromArgb(64, 85, 170), Color.FromArgb(65,105,255), Color.FromArgb(255,255,255) };//0,33,113;    64,85,170;    65,105,255;   255,255,255
             public double lastopened { get; set; }
             public string swaplogs { get; set; } = "";
+            public string ManualAESKey { get; set; } = "";
+            public API.api.AESSource AESSource { get; set; } = API.api.AESSource.FortniteAPIV1;
             }
         #endregion
 
@@ -182,7 +170,14 @@ namespace Pro_Swapper
             hex = hex.Replace(" ", string.Empty).Replace("hex=", string.Empty);
             return Enumerable.Range(0, hex.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(hex.Substring(x, 2), 16)).ToArray();
         }
-        public static string FileToMd5(string filename) => BitConverter.ToString(MD5.Create().ComputeHash(File.OpenRead(filename))).Replace("-", string.Empty).ToLowerInvariant();
+        public static string FileToMd5(string filename)
+        {
+            if (File.Exists(filename))
+                return BitConverter.ToString(MD5.Create().ComputeHash(File.OpenRead(filename))).Replace("-", string.Empty).ToUpperInvariant();
+            else
+                return string.Empty;
+        }
+            
         #region FormMoveable
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);

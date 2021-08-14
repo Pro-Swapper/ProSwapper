@@ -62,9 +62,6 @@ namespace CUE4Parse.FileProvider
                 {
                     goto contin;
                 }
-                
-
-
                 var ext = file.Extension.SubstringAfter('.');
                 if (!file.Exists || string.IsNullOrEmpty(ext)) continue;
                 if (ext.Equals("pak", StringComparison.OrdinalIgnoreCase))

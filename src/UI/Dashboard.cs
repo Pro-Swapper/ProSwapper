@@ -38,7 +38,7 @@ namespace Pro_Swapper
             patchnotes.Text += api.apidata.patchnotes + Environment.NewLine + AutoPatchNotes;
             try
             {
-                news.ImageLocation = msgpack.MsgPacklz4($"{api.FNAPIEndpoint}news/br?responseFormat=msgpack_lz4&responseOptions=ignore_null").data.image;
+                news.ImageLocation = msgpack.MsgPacklz4($"{api.FNAPIEndpoint}v2/news/br?responseFormat=msgpack_lz4&responseOptions=ignore_null").data.image;
             }
             catch { }
         }
@@ -47,7 +47,7 @@ namespace Pro_Swapper
          private void twitter_Click(object sender, EventArgs e)=> global.OpenUrl("https://twitter.com/Pro_Swapper");
         private void discord_Click(object sender, EventArgs e)=> global.OpenUrl(api.apidata.discordurl);
         private void pictureBox1_Click(object sender, EventArgs e)=> global.OpenUrl("https://github.com/Pro-Swapper");
-        private void pictureBox2_Click(object sender, EventArgs e)=> global.OpenUrl("http://tiktok.com/@proswapperofficial");
+        private void pictureBox2_Click(object sender, EventArgs e)=> global.OpenUrl("https://tiktok.com/@proswapperofficial");
 
         private void news_MouseDown(object sender, MouseEventArgs e)
         {

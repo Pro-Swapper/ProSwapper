@@ -3,7 +3,11 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
-
+using Pro_Swapper.API;
+using System.Net.NetworkInformation;
+using static Pro_Swapper.API.api;
+using System.Linq;
+using System.Collections.Generic;
 namespace Pro_Swapper
 {
     public partial class Settings : Form
@@ -15,7 +19,11 @@ namespace Pro_Swapper
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
             Icon = Main.appIcon;
         }
-        private void button1_Click(object sender, EventArgs e) => Close();
+        private void button1_Click(object sender, EventArgs e)
+        {
+            global.SaveConfig();
+            Close();
+        }
         private void SettingsForm_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left) global.FormMove(Handle);
@@ -68,6 +76,20 @@ namespace Pro_Swapper
             Restart.ForeColor = global.TextColor;
             label13.ForeColor = global.TextColor;
             label1.ForeColor = global.TextColor;
+
+            AesKeySourceComboBox.BackColor = global.Button;
+            AesKeySourceComboBox.ForeColor = global.TextColor;
+            AesKeySourceComboBox.DataSource = Enum.GetNames(typeof(api.AESSource));
+            AesKeySourceComboBox.Text = global.CurrentConfig.AESSource.ToString();
+
+            if (global.CurrentConfig.AESSource == api.AESSource.Manual)
+            {
+                
+                manualAES.Visible = true;
+                manualAESLabel.Visible = true;
+                checkPing.Visible = false;
+                manualAES.Text = global.CurrentConfig.ManualAESKey;
+            }
         }
 
         private void button2_Click(object sender, EventArgs e) => Process.Start("explorer.exe", paksBox.Text);
@@ -87,9 +109,12 @@ namespace Pro_Swapper
             DialogResult result = MessageBox.Show("Do you want to verify Fortnite and revert your files to how they were before you used the swapper?", "Fortnite Verification", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
             if (result == DialogResult.Yes)
             {
-                global.OpenUrl($"{epicfnpath}verify");
+                string lobbyswapperpath = $"{global.CurrentConfig.Paks}\\Pro Swapper Lobby";
+                if (Directory.Exists(lobbyswapperpath))
+                    Directory.Delete(lobbyswapperpath, true);
                 global.CurrentConfig.swaplogs = "";
                 global.SaveConfig();
+                global.OpenUrl($"{epicfnpath}verify");
                 Main.Cleanup();
             }            
         }
@@ -100,14 +125,14 @@ namespace Pro_Swapper
             MessageBox.Show("All configs for item reset! Now all items will show as OFF (This button should be used after verifying Fortnite)", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         private void button10_Click(object sender, EventArgs e) => new ThemeCreator().ShowDialog();
-        private void button5_Click(object sender, EventArgs e) => new Message("Credits And About", $"Pro Swapper made by Kye#5000. https://github.com/kyeondiscord. Credit to Tamely & Smoonthie for new Fortnite Swapping Method(s) \n\n\n\nProduct Information:\nLicense: MIT\nVersion: {global.version}\nMD5: {global.FileToMd5(Process.GetCurrentProcess().MainModule.FileName)}\nLast Update: {CalculateTimeSpan(UnixTimeStampToDateTime(API.api.apidata.timestamp))}\nNumber of swappable items: {API.api.apidata.items.Length}", false).ShowDialog();
-        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp) => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(unixTimeStamp).ToUniversalTime();
+        private void button5_Click(object sender, EventArgs e) => new Message("Credits And About", $"Pro Swapper made by Kye#5000. https://github.com/kyeondiscord. Credit to Tamely & Smoonthie for new Fortnite Swapping Method(s) \n\n\n\nProduct Information:\nLicense: MIT\nCopyright (©) 2019 - {DateTime.Now.ToString("yyyy")} Pro Swapper\nVersion: {global.version}\nMD5: {global.FileToMd5(Process.GetCurrentProcess().MainModule.FileName)}\nLast Update: {CalculateTimeSpan(UnixTimeStampToDateTime(API.api.apidata.timestamp))}\nNumber of swappable items: {API.api.apidata.items.Length}", false).ShowDialog();
+        public static DateTime UnixTimeStampToDateTime(long unixTimeStamp) => DateTimeOffset.FromUnixTimeSeconds(unixTimeStamp).DateTime;
         private void ConvertedItemsList(object sender, EventArgs e)
         {
             string swaplogs = global.CurrentConfig.swaplogs;
             int converteditemno = swaplogs.Length - swaplogs.Replace(",", "").Length;
             if (converteditemno > 0)
-                MessageBox.Show("You currently have " + converteditemno + " item(s) converted. The items you have converted are: " + swaplogs, "Converted Items List", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("You currently have " + converteditemno + " item(s) converted. The items you have converted are: " + swaplogs.Remove(swaplogs.Length - 1), "Converted Items List", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
                 MessageBox.Show("You have no items converted!", "Converted Items List", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
@@ -152,7 +177,6 @@ namespace Pro_Swapper
             int years = Convert.ToInt32(Math.Floor((double)ts.Days / 365));
             return years <= 1 ? "one year ago" : years + " years ago";
         }
-
         private void button6_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show("Do you want to reset Pro Swapper to it's original settings? This option also deletes any cached images and older settings", "Delete Pro Swapper Settings?", MessageBoxButtons.YesNo);
@@ -169,20 +193,65 @@ namespace Pro_Swapper
                     {
                         if (File.Exists(file))
                         {
+                            GC.Collect();
+                            GC.WaitForPendingFinalizers();
                             File.Delete(file);
                             del++;
                         }
                     }
-                    catch
-                    {
-                        //Used by proc
-                    }
+                    catch { }//Used by proc
                 }
                 MessageBox.Show("Cleaned " + del + " files in " + dir, "Done", MessageBoxButtons.OK, MessageBoxIcon.Information); ;
                 MessageBox.Show("Pro Swapper will now restart...");
                 Process.Start(AppDomain.CurrentDomain.FriendlyName);
                 Main.Cleanup();
             }
+        }
+        private void AesKeySourceComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (AesKeySourceComboBox.Focused)//When form loads we dont want it to fire this event
+            {
+                Enum.TryParse(AesKeySourceComboBox.Text, out api.AESSource aesSource);
+                global.CurrentConfig.AESSource = aesSource;
+
+                if (global.CurrentConfig.AESSource == api.AESSource.Manual)
+                {
+                    manualAES.Visible = true;
+                    manualAESLabel.Visible = true;
+                    checkPing.Visible = false;
+                }
+                else
+                {
+                    manualAES.Visible = false;
+                    manualAESLabel.Visible = false;
+                    checkPing.Visible = true;
+                }
+                global.SaveConfig();
+            }
+        }
+        private void manualAES_TextChanged(object sender, EventArgs e)=> global.CurrentConfig.ManualAESKey = manualAES.Text;
+        private void button8_Click(object sender, EventArgs e)
+        {
+            Ping ping = new Ping();
+            string url = string.Empty;
+            switch (global.CurrentConfig.AESSource)
+            {
+                case AESSource.FortniteAPIV1:
+                case AESSource.FortniteAPIV2:
+                    url = "fortnite-api.com";
+                    break;
+
+                case AESSource.BenBot:
+                    url = "benbot.app";
+                    break;
+            }
+
+            PingReply pingreply = ping.Send(url, 5000);
+            List<long> listtimes = new List<long>();
+            for (int i = 0; i < 5; i++)
+                listtimes.Add(ping.Send(url, 5000).RoundtripTime);
+
+            MessageBox.Show($"Sent request to {pingreply.Address} ({url})\nStatus: {pingreply.Status}\nPing (Average): {listtimes.Average()} / Min: {listtimes.Min()} / Max: {listtimes.Max()}", "Pro Swapper AES", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

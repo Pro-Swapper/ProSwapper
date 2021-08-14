@@ -1,20 +1,18 @@
 ﻿using CUE4Parse.Encryption.Aes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net;
 using System;
-using System.IO;
 using MessagePack;
+using System.IO;
 namespace Pro_Swapper.API
 {
     public static class api
     {
-        private static readonly string endpoint = $"/{global.version}.json";
-        private static readonly string[] hosturls = {"https://pro-swapper.github.io/api","https://raw.githubusercontent.com/Pro-Swapper/api/main" };
+        private const string ProSwapperEndpoint = "https://pro-swapper.github.io/api/";
         public static APIRoot apidata = null;
-        public const string FNAPIEndpoint = "https://fortnite-api.com/v2/";
-        private const string BaseAESEndpoint = FNAPIEndpoint + "aes";
-       // FAesKey aes = new FAesKey(api.apidata.aes);
-
+        public const string FNAPIEndpoint = "https://fortnite-api.com/";
+        public const string BenBotEndpoint = "https://benbot.app/api/";
         public static FAesKey fAesKey = null;
         public static FAesKey AESKey
         {
@@ -22,9 +20,30 @@ namespace Pro_Swapper.API
             {
                 try
                 {
-                    //Using msgpack_lz4 compression (faster)
-                    string aes = msgpack.MsgPacklz4($"{BaseAESEndpoint}?responseFormat=msgpack_lz4").data.mainKey;
-                    return new FAesKey(aes);
+                    
+                    switch (global.CurrentConfig.AESSource)
+                    {
+                        default:
+                        case AESSource.FortniteAPIV1:
+                            //Using msgpack_lz4 compression (faster)
+                            string aesv1 = msgpack.MsgPacklz4($"{FNAPIEndpoint}v1/aes?responseFormat=msgpack_lz4").data.aes;
+                            return new FAesKey(aesv1);
+                          
+
+                        case AESSource.FortniteAPIV2:
+                            //Using msgpack_lz4 compression (faster)
+                            string aesv2 = msgpack.MsgPacklz4($"{FNAPIEndpoint}v2/aes?responseFormat=msgpack_lz4").data.mainKey;
+                            return new FAesKey(aesv2);
+
+                        case AESSource.BenBot:
+
+                            string json = new WebClient().DownloadString($"{BenBotEndpoint}v1/aes");
+                            string benbotaes = ((dynamic)JObject.Parse(json)).mainKey;
+                            return new FAesKey(benbotaes);
+                        case AESSource.Manual:
+                            return new FAesKey(global.CurrentConfig.ManualAESKey);
+
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -33,6 +52,14 @@ namespace Pro_Swapper.API
                 }
 
             }
+        }
+
+        public enum AESSource
+        {
+            FortniteAPIV1,
+            FortniteAPIV2,
+            BenBot,
+            Manual
         }
 
         public static void UpdateAPI()
@@ -47,25 +74,16 @@ namespace Pro_Swapper.API
             byte[] compressedapi = MessagePackSerializer.ConvertFromJson(json, MessagePackSerializerOptions.Standard);
             File.WriteAllBytes($"{global.version}.json", ByteCompression.Compress(compressedapi));
             #else
-            Exception exception = null;
-            foreach (string url in hosturls)
+            try
             {
-                try
-                {
-                    
-                    byte[] apidatas = ByteCompression.Decompress(global.web.DownloadData($"{url}{endpoint}"));
-                    string json = MessagePackSerializer.ConvertToJson(apidatas);
-                    apidata = JsonConvert.DeserializeObject<APIRoot>(json);
-                    Console.WriteLine(apidatas);
-                }
-                catch (Exception ex)
-                {
-                    exception = ex;
-                    continue;
-                }
+              byte[] apidatas = ByteCompression.Decompress(new WebClient().DownloadData($"{ProSwapperEndpoint}/{global.version}.json"));
+              string json = MessagePackSerializer.ConvertToJson(apidatas);
+              apidata = JsonConvert.DeserializeObject<APIRoot>(json);
             }
-            if (exception != null)
-                Main.ThrowError($"Pro Swapper needs an internet connection to run, if you are already connected to the internet Pro Swapper's API may be blocked in your country, please use a VPN or try disabling your firewall, if you are already doing this please refer to this error: \n\n{exception.Message}");
+            catch (Exception ex)
+            {
+                Main.ThrowError($"Pro Swapper needs an internet connection to run, if you are already connected to the internet Pro Swapper's API may be blocked in your country, please use a VPN or try disabling your firewall, if you are already doing this please refer to this error: \n\n{ex.Message}");
+            }
             #endif
         }
 
@@ -111,7 +129,7 @@ namespace Pro_Swapper.API
             public string patchnotes { get; set; }
             public string version { get; set; }
             public string discordurl { get; set; }
-            public double timestamp { get; set; }
+            public long timestamp { get; set; }
             public Item[] items { get; set; }
             public Status[] status { get; set; }
             public OptionMenu[] OptionMenu { get; set; }

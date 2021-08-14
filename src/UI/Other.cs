@@ -22,7 +22,7 @@ namespace Pro_Swapper
         private void pictureBox3_Click(object sender, EventArgs e)=> global.OpenUrl(yturl + "dQw4w9WgXcQ");
         private void pictureBox4_Click_1(object sender, EventArgs e) => new Splash.SplashUI().ShowDialog();
         private void pictureBox8_Click(object sender, EventArgs e)=> global.OpenUrl("https://api.nitestats.com/v1/shop/image?header=Pro%20Swapper&textcolor=03c6fc&background=3262a8");
-        private void label12_Click(object sender, EventArgs e)=> global.OpenUrl($"{githuburl}faq");
+        private void label12_Click(object sender, EventArgs e)=> global.OpenUrl($"https://docs.proswapper.xyz");
         private void pictureBox1_Click(object sender, EventArgs e)=> global.OpenUrl(yturl + "I_alZqXJgec");
         private void label2_Click(object sender, EventArgs e) => global.OpenUrl($"{githuburl}Plugins-Json");
         private void pictureBox1_Click_1(object sender, EventArgs e)

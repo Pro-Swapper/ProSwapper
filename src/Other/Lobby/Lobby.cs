@@ -11,9 +11,6 @@ namespace Pro_Swapper
 {
     public partial class Lobby : Form
     {
-
-        public static SkinSearch.Root allskins = new SkinSearch.Root();
-
         public static api.Item CurrentCID = null;
 
         public static CIDSelection cidform;
@@ -22,14 +19,18 @@ namespace Pro_Swapper
             InitializeComponent();
             Icon = Main.appIcon;
             BackColor = global.MainMenu;
-            SkinSearch.Root allitems = msgpack.MsgPacklz4<SkinSearch.Root>("https://fortnite-api.com/v2/cosmetics/br?responseFormat=msgpack_lz4&responseOptions=ignore_null");
-            var datalist = new List<SkinSearch.Datum>();
-            foreach (var item in allitems.data)
+            if (global.allskins == null)
             {
-                if (CIDSelection.actuallyUsingBackends.Any(item.type.backendValue.Equals))
-                    datalist.Add(item);
+                SkinSearch.Root allitems = msgpack.MsgPacklz4<SkinSearch.Root>($"{api.FNAPIEndpoint}v2/cosmetics/br?responseFormat=msgpack_lz4&responseOptions=ignore_null");
+                var datalist = new List<SkinSearch.Datum>();
+                foreach (var item in allitems.data)
+                {
+                    if (CIDSelection.actuallyUsingBackends.Any(item.type.backendValue.Equals))
+                        datalist.Add(item);
+                }
+                global.allskins = new SkinSearch.Root();
+                global.allskins.data = datalist;
             }
-            allskins.data = datalist;
             Action safeClose = delegate { splash.Close(); };
             splash.Invoke(safeClose);
         }
@@ -79,6 +80,50 @@ namespace Pro_Swapper
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
             MessageBox.Show("Press the button above to select the lobby swap skins");
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string lobbyswapperpath = $"{global.CurrentConfig.Paks}\\Pro Swapper Lobby";
+            if (Directory.Exists(lobbyswapperpath))
+            {
+                DialogResult result = MessageBox.Show("Do you want to remove all swapped lobby items?", "Remove Lobby Swapper Items?", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if (result == DialogResult.Yes)
+                {
+                    RevertAllLobbySwaps();
+                    MessageBox.Show("Reverted all lobby swapped items", "Pro Swapper Lobby", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                } 
+            }
+            else
+            {
+                MessageBox.Show("You have no lobby swapped items!", "Pro Swapper Lobby", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+
+        public static void RevertAllLobbySwaps()
+        {
+            string lobbyswapperpath = $"{global.CurrentConfig.Paks}\\Pro Swapper Lobby";
+            if (Directory.Exists(lobbyswapperpath))
+            {
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
+                Directory.Delete(lobbyswapperpath, true);
+
+                string swaplogs = global.CurrentConfig.swaplogs;
+
+                string[] swappeditems = swaplogs.Remove(swaplogs.Length - 1).Split(',');
+                string newconfig = "";
+                foreach (string item in swappeditems)
+                {
+                    if (!item.Contains("(Lobby)"))
+                        newconfig += item + ",";
+                }
+                global.CurrentConfig.swaplogs = newconfig;
+                global.SaveConfig();
+            }
         }
     }
 }

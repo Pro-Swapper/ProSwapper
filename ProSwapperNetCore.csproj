@@ -14,7 +14,7 @@
   <PropertyGroup>
  <OutputType>WinExe</OutputType>
  <TargetFramework>net5.0-windows</TargetFramework>
- <Version>0.0.9.1</Version>
+ <Version>0.0.9.2</Version>
  <Company>Pro Swapper</Company>
  <Authors>Pro Swapper</Authors>
  <Product>Pro Swapper</Product>
@@ -25,6 +25,8 @@ https://proswapper.xyz</Description>
  <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
  <PackageProjectUrl>https://proswapper.xyz</PackageProjectUrl>
  <NeutralLanguage>en</NeutralLanguage>
+ <PackageLicenseExpression></PackageLicenseExpression>
+ <PackageLicenseFile></PackageLicenseFile>
 </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

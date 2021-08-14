@@ -45,7 +45,7 @@ namespace Pro_Swapper
             RevertB.Normalcolor = global.Button;
 
             logbox.ForeColor = global.TextColor;
-            if (global.CurrentConfig.swaplogs.Contains(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ","))
+            if (global.CurrentConfig.swaplogs.Contains(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + " (Lobby),"))
             {
                 label3.ForeColor = Color.Lime;
                 label3.Text = "ON";
@@ -89,14 +89,14 @@ namespace Pro_Swapper
                     ThreadSafe(label3, () => { label3.Text = "ON"; });
                     ThreadSafe(label3, () => { label3.ForeColor = Color.Lime; });
                     s.Stop();
-                    global.CurrentConfig.swaplogs += ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",";
+                    global.CurrentConfig.swaplogs += ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + " (Lobby),";
                 }
                 else
                 {
                     Log($"[-] Reverted item in {s.Elapsed.Milliseconds}ms");
                     ThreadSafe(label3, () => { label3.Text = "OFF"; });
                     ThreadSafe(label3, () => { label3.ForeColor = Color.Red; });
-                    global.CurrentConfig.swaplogs = swaplogs.Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",", "");
+                    global.CurrentConfig.swaplogs = swaplogs.Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + " (Lobby),", "");
                 }
                 global.SaveConfig();
             }
@@ -166,16 +166,41 @@ namespace Pro_Swapper
 
         public static async Task SwapAsync(api.Item item, bool Converting)
         {
-                //Load the exporter
-                List<string> thesefiles = new List<string>();
+            string PaksLocation = global.CurrentConfig.Paks;
+            
+            //Load the exporter
+            List<string> thesefiles = new List<string>();
                 foreach (var Asset in item.Asset)
                     thesefiles.Add(Path.GetFileNameWithoutExtension(Asset.UcasFile));
 
-                List<string> UsingFiles = thesefiles.Distinct().ToList();
+            List<string> UsingFiles = thesefiles.Distinct().ToList();
+
+            foreach (string file in UsingFiles)
+            {
+                string BaseFileName = $"{PaksLocation}\\Pro Swapper Lobby\\{file}";
 
 
-                var Provider = new DefaultFileProvider(global.CurrentConfig.Paks, SearchOption.TopDirectoryOnly);
-                Provider.Initialize(UsingFiles);
+                //Check if it may be old game version
+                string OriginalSig = global.FileToMd5($"{PaksLocation}\\{file}.sig");
+                string ModifiedSig = global.FileToMd5(BaseFileName + ".sig");
+                if (OriginalSig != ModifiedSig)
+                    Lobby.RevertAllLobbySwaps();
+
+
+                if (!File.Exists(BaseFileName + ".pak"))
+                {
+                    global.CreateDir(PaksLocation + "\\Pro Swapper Lobby");
+                    File.Copy($"{PaksLocation}\\{file}.sig", BaseFileName + ".sig", true);
+                    File.Copy($"{PaksLocation}\\{file}.utoc", BaseFileName + ".utoc", true);
+                    File.Copy($"{PaksLocation}\\{file}.ucas", BaseFileName + ".ucas", true);
+                    File.Copy($"{PaksLocation}\\{file}.pak", BaseFileName + ".pak", true);
+                }
+
+                
+            }
+
+            var Provider = new DefaultFileProvider($"{PaksLocation}\\Pro Swapper Lobby", SearchOption.TopDirectoryOnly);
+            Provider.Initialize(UsingFiles);
 
             if (api.fAesKey == null)
                 api.fAesKey = api.AESKey;
@@ -183,23 +208,18 @@ namespace Pro_Swapper
             Provider.UnloadedVfs.All(x => { Provider.SubmitKey(x.EncryptionKeyGuid, api.fAesKey); return true; });
 
 
-                List<FinalPastes> finalPastes = new List<FinalPastes>();
-
-                int assetnum = 0;
-
-                for (int i = 0; i < item.Asset.Length; i++)
-                {
-                    api.Asset asset = item.Asset[i];
-
-                string ucasfile = $"{global.CurrentConfig.Paks}\\{asset.UcasFile}";
+            List<FinalPastes> finalPastes = new List<FinalPastes>();
+            foreach (api.Asset asset in item.Asset)
+              {
+                string ucasfile = $"{PaksLocation}\\Pro Swapper Lobby\\{asset.UcasFile}";
 
                 //Checking if file is readonly coz we wouldn't be able to do shit with it
                 File.SetAttributes(ucasfile, global.RemoveAttribute(File.GetAttributes(ucasfile), FileAttributes.ReadOnly));
 
                 if (Converting)
-                SearchString = asset.Search[assetnum];
+                    SearchString = asset.Search[0];
                 else
-                SearchString = asset.Replace[assetnum];
+                    SearchString = asset.Replace[0];
                 //Use this to define zlibblock var
                 Fortnite.FortniteExport.ExportAsset(Provider, asset.UcasFile, asset.AssetPath);
 #if DEBUG
@@ -212,7 +232,6 @@ namespace Pro_Swapper
 #endif
                 //edit files and compress with oodle and replace
                 byte[] edited = EditAsset(zlibblock.decompressed, asset, Converting, out bool Compress);//Compressed edited path
-                assetnum++;
                 if (!Compress)//File hasnt gotten any changes, no need to edit files that havent changed
                     continue;
 
@@ -245,7 +264,7 @@ namespace Pro_Swapper
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                using (ZlibStream zls = new ZlibStream(ms, CompressionMode.Compress, CompressionLevel.Level7))
+                using (ZlibStream zls = new ZlibStream(ms, CompressionMode.Compress, CompressionLevel.BestCompression))
                     zls.Write(input, 0, input.Length);
                 
                 return ms.ToArray();

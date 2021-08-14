@@ -106,13 +106,13 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label11.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label11.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.label11.Location = new System.Drawing.Point(6, 340);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(110, 30);
+            this.label11.Size = new System.Drawing.Size(135, 20);
             this.label11.TabIndex = 281;
-            this.label11.Text = "FAQ Help";
+            this.label11.Text = "Pro Swapper Docs";
             // 
             // label12
             // 
@@ -120,7 +120,7 @@
             this.label12.Cursor = System.Windows.Forms.Cursors.Hand;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 72F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label12.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label12.Location = new System.Drawing.Point(6, 189);
+            this.label12.Location = new System.Drawing.Point(29, 209);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(99, 108);
             this.label12.TabIndex = 282;
