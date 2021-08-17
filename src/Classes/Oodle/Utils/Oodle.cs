@@ -1,94 +1,49 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.IO;
 using System.Text;
 
 namespace Pro_Swapper.Oodle.Utils
 {
+    // Note: (Tamely) Still not completely cleaned, but WAYYYYY less spaghetti than it was
     public class Oodle
     {
-        public static byte[] sourceArray;
+        public static byte[]? SourceArray;
+        private static readonly byte[] DestinationArray = new byte[4];
+        public static int SourceLength;
 
-        public static byte[] targetArray;
-
-        private static byte[] destinationArray = new byte[4];
-
-        public static string destEncodedString;
-
-        public static string string_1;
-
-        public static int placeholderOffset2;
-
-        public static int placeholderOffset1;
-
-        public static int targetLength;
-
-        public static int placeholderOffset3;
-
-        public static int sourceLength;
-
-        public static byte[] Prepare(string filePath)
+        public static void Prepare(string filePath)
         {
-            placeholderOffset2 = 0;
-            placeholderOffset1 = 13;
-            sourceArray = null;
-            Oodle @class = new Oodle();
-            sourceArray = @class.Writer(filePath);
-            Array.Copy(sourceArray, destinationArray, 4);
-            destEncodedString = Encoding.ASCII.GetString(destinationArray);
-            if (destEncodedString == "OODL")
+            SourceArray = null; // Note: (Tamely) Need to assign null for reuse... just in case
+            SourceArray = File.ReadAllBytes(filePath);
+            Array.Copy(SourceArray, DestinationArray, 4);
+            Array.Copy(SourceArray, 12, DestinationArray, 0, 4);
+            var header = Encoding.ASCII.GetString(DestinationArray);
+            if (header == "KRKN")
             {
-                placeholderOffset2 = 1;
+                var targetLength = (int) BitConverter.ToUInt32(SourceArray, 20);
+                var targetArray = new byte[targetLength];
+                Array.Copy(SourceArray, 24, targetArray, 0, targetLength);
             }
-            Array.Copy(sourceArray, 12, destinationArray, 0, 4);
-            string_1 = Encoding.ASCII.GetString(destinationArray);
-            if (string_1 == "KRKN")
-            {
-                placeholderOffset1 = 8;
-                placeholderOffset3 = (int)BitConverter.ToUInt32(sourceArray, 16);
-                targetLength = (int)BitConverter.ToUInt32(sourceArray, 20);
-                targetArray = new byte[targetLength];
-                Array.Copy(sourceArray, 24, targetArray, 0, targetLength);
-            }
-            sourceLength = sourceArray.Length;
-            return sourceArray;
+
+            SourceLength = SourceArray.Length;
         }
-
-        public static byte[] Prepare(byte[] Bytes)
+        
+        public static void Prepare(byte[] array)
         {
-            placeholderOffset2 = 0;
-            placeholderOffset1 = 13;
-            sourceArray = null;
-            sourceArray = Bytes;
-            Array.Copy(sourceArray, destinationArray, 4);
-            destEncodedString = Encoding.ASCII.GetString(destinationArray);
-            if (destEncodedString == "OODL")
+            SourceArray = null; // Note: (Tamely) Need to assign null for reuse... just in case
+            SourceArray = array;
+            Array.Copy(SourceArray, DestinationArray, 4);
+            Array.Copy(SourceArray, 12, DestinationArray, 0, 4);
+            var header = Encoding.ASCII.GetString(DestinationArray);
+            if (header == "KRKN")
             {
-                placeholderOffset2 = 1;
+                var targetLength = (int) BitConverter.ToUInt32(SourceArray, 20);
+                var targetArray = new byte[targetLength];
+                Array.Copy(SourceArray, 24, targetArray, 0, targetLength);
             }
-            Array.Copy(sourceArray, 12, destinationArray, 0, 4);
-            string_1 = Encoding.ASCII.GetString(destinationArray);
-            if (string_1 == "KRKN")
-            {
-                placeholderOffset1 = 8;
-                placeholderOffset3 = (int)BitConverter.ToUInt32(sourceArray, 16);
-                targetLength = (int)BitConverter.ToUInt32(sourceArray, 20);
-                targetArray = new byte[targetLength];
-                Array.Copy(sourceArray, 24, targetArray, 0, targetLength);
-            }
-            sourceLength = sourceArray.Length;
-            return sourceArray;
-        }
 
-
-        private byte[] Writer(string fileName)
-        {
-            FileStream fileStream = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite);
-            BinaryReader binaryReader = new BinaryReader(fileStream);
-            long length = new FileInfo(fileName).Length;
-            byte[] result = binaryReader.ReadBytes((int)length);
-            binaryReader.Close();
-            fileStream.Close();
-            return result;
+            SourceLength = SourceArray.Length;
         }
     }
 }
