@@ -88,7 +88,6 @@ https://proswapper.xyz</Description>
   <ItemGroup>
     <None Include="bin\net5.0-windows\oo2core_6_win64.dll" />
     <None Include="bin\net5.0-windows\oo2core_8_win64.dll" />
-    <None Include="src\Classes\Oodle\Utils\CompressionType.cs" />
   </ItemGroup>
 
   <ItemGroup>
