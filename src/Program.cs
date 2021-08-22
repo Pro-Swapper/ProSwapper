@@ -2,7 +2,6 @@
 using System.IO;
 using System.Windows.Forms;
 using System.Threading.Tasks;
-using Pro_Swapper.Properties;
 using System.Net;
 namespace Pro_Swapper
 {
@@ -17,27 +16,25 @@ namespace Pro_Swapper
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            UI.Splash splash = new UI.Splash();
-            Task.Run(() => Application.Run(splash));
-            global.web = new WebClient();
-            global.web.Proxy = null;
-            string FortniteOodleDLL = EpicGamesLauncher.GetOodleDll();
-            if (!File.Exists(oodledll))
-            {
-                if (EpicGamesLauncher.GetOodleDll() == "")
-                {
-                    if (!File.Exists(oodledll))
-                        File.WriteAllBytes(oodledll, Resources.oo2core_5_win64);
-                }
-                else
-                    File.Copy(FortniteOodleDLL, oodledll);
-            }
             global.CreateDir(global.ProSwapperFolder);
             global.CreateDir(global.ProSwapperFolder + "\\Config");
             global.CreateDir(global.ProSwapperFolder + "\\Images");
             global.InitConfig();
-            
+
+            UI.Splash splash = new UI.Splash();
+            Task.Run(() => Application.Run(splash));
+
+            if (!File.Exists(global.CurrentConfig.Paks + @"\pakchunk0-WindowsClient.sig"))
+                EpicGamesLauncher.FindPakFiles();
+
+            if (!File.Exists(oodledll))
+            {
+                string FortniteOodleDLL = EpicGamesLauncher.GetOodleDll();
+                if (FortniteOodleDLL == null)
+                    File.WriteAllBytes(oodledll, new WebClient().DownloadData("https://cdn.proswapper.xyz/oo2core_5_win64.dll"));
+                else
+                    File.Copy(FortniteOodleDLL, oodledll);
+            }
             Application.Run(new Main(splash));
         }
     }

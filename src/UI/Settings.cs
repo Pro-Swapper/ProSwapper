@@ -8,6 +8,8 @@ using System.Net.NetworkInformation;
 using static Pro_Swapper.API.api;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 namespace Pro_Swapper
 {
     public partial class Settings : Form
@@ -76,13 +78,13 @@ namespace Pro_Swapper
             Restart.ForeColor = global.TextColor;
             label13.ForeColor = global.TextColor;
             label1.ForeColor = global.TextColor;
-
+            checkPing.BackColor = global.Button;
             AesKeySourceComboBox.BackColor = global.Button;
             AesKeySourceComboBox.ForeColor = global.TextColor;
             AesKeySourceComboBox.DataSource = Enum.GetNames(typeof(api.AESSource));
             AesKeySourceComboBox.Text = global.CurrentConfig.AESSource.ToString();
 
-            if (global.CurrentConfig.AESSource == api.AESSource.Manual)
+            if (global.CurrentConfig.AESSource == AESSource.Manual)
             {
                 
                 manualAES.Visible = true;
@@ -101,9 +103,40 @@ namespace Pro_Swapper
         private const string epicfnpath = "com.epicgames.launcher://apps/Fortnite?action=";
         private void button9_Click(object sender, EventArgs e)
         {
+            notifyIcon1.Visible = true;
+            notifyIcon1.Icon = Main.appIcon;
+            notifyIcon1.Text = "Pro Swapper";
+            notifyIcon1.Click += NotifyIcon1_Click;
             global.OpenUrl($"{epicfnpath}launch");
-            Main.Cleanup();
+            this.Hide();
+            Action safeClose = delegate { Main.Mainform.Hide(); };
+            Main.Mainform.Invoke(safeClose);
+            Process fngame = null;
+            
+            //Basically define fngame proc "searcher"
+            while (fngame == null)
+            {
+                Process[] thisproc = Process.GetProcessesByName("FortniteClient-Win64-Shipping");
+                if (thisproc.Length > 0)
+                        fngame = thisproc[0];
+
+                Thread.Sleep(1000);//Person probs gonna have the game opened for over 10 seconds yk yk
+            }
+
+            fngame.WaitForExit();
+            Task.Run(() => KillEpic());
+            Action safeShow = delegate { Main.Mainform.Show(); };
+            Main.Mainform.Invoke(safeShow);
+            this.Show();
+            this.BringToFront();
         }
+
+        private void NotifyIcon1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Pro Swapper is currently running while playing Fortnite so it closes Epic Games Launcher when you finish playing. If you want to close Pro Swapper end the process from task manager :'(", "Pro Swapper Notify Icon", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private static void KillEpic()=> Process.GetProcessesByName("EpicGamesLauncher").All(x => { x.Kill(); return true; });
         private void button7_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show("Do you want to verify Fortnite and revert your files to how they were before you used the swapper?", "Fortnite Verification", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
@@ -125,7 +158,22 @@ namespace Pro_Swapper
             MessageBox.Show("All configs for item reset! Now all items will show as OFF (This button should be used after verifying Fortnite)", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         private void button10_Click(object sender, EventArgs e) => new ThemeCreator().ShowDialog();
-        private void button5_Click(object sender, EventArgs e) => new Message("Credits And About", $"Pro Swapper made by Kye#5000. https://github.com/kyeondiscord. Credit to Tamely & Smoonthie for new Fortnite Swapping Method(s) \n\n\n\nProduct Information:\nLicense: MIT\nCopyright (©) 2019 - {DateTime.Now.ToString("yyyy")} Pro Swapper\nVersion: {global.version}\nMD5: {global.FileToMd5(Process.GetCurrentProcess().MainModule.FileName)}\nLast Update: {CalculateTimeSpan(UnixTimeStampToDateTime(API.api.apidata.timestamp))}\nNumber of swappable items: {API.api.apidata.items.Length}", false).ShowDialog();
+        private void button5_Click(object sender, EventArgs e)
+        {
+            List<string> PaksInfo = new List<string>(Directory.GetFiles(global.CurrentConfig.Paks, "*", SearchOption.AllDirectories));
+            for (int i = 0; i < PaksInfo.Count; i++)
+            {
+                try
+                {
+                    PaksInfo[i] = PaksInfo[i].Substring(PaksInfo[i].IndexOf("FortniteGame"));
+                }
+                catch {}
+            }
+            PaksInfo.Insert(0, $"Paks Information ({PaksInfo.Count}) Files: ");
+            string paksinfo = string.Join("\n", PaksInfo);
+            new Message("Credits And About", $"Pro Swapper made by Kye#5000. https://github.com/kyeondiscord. \nSource Code: https://github.com/Pro-Swapper/ProSwapper \nCredit to Tamely & Smoonthie for new Fortnite Swapping Method(s) \n\n\n\nProduct Information:\nLicense: MIT\nCopyright (©) 2019 - {DateTime.Now.ToString("yyyy")} Pro Swapper\nVersion: {global.version}\nMD5: {global.FileToMd5(Process.GetCurrentProcess().MainModule.FileName)}\nLast Update: {CalculateTimeSpan(UnixTimeStampToDateTime(apidata.timestamp))}\nNumber of swappable items: {apidata.items.Length}\n\n\n{paksinfo}", false).ShowDialog();
+
+        }
         public static DateTime UnixTimeStampToDateTime(long unixTimeStamp) => DateTimeOffset.FromUnixTimeSeconds(unixTimeStamp).DateTime;
         private void ConvertedItemsList(object sender, EventArgs e)
         {

@@ -10,8 +10,9 @@ namespace Pro_Swapper.Oodle.Utils
     {
         public static byte[]? SourceArray;
         private static readonly byte[] DestinationArray = new byte[4];
-        public static int SourceLength;
+        //public static int SourceLength;
 
+        /* Pro Swapper doesn't use filepath (uses byte array)
         public static void Prepare(string filePath)
         {
             SourceArray = null; // Note: (Tamely) Need to assign null for reuse... just in case
@@ -27,7 +28,7 @@ namespace Pro_Swapper.Oodle.Utils
             }
 
             SourceLength = SourceArray.Length;
-        }
+        }*/
         
         public static void Prepare(byte[] array)
         {
@@ -43,7 +44,7 @@ namespace Pro_Swapper.Oodle.Utils
                 Array.Copy(SourceArray, 24, targetArray, 0, targetLength);
             }
 
-            SourceLength = SourceArray.Length;
+          //  SourceLength = SourceArray.Length;
         }
     }
 }

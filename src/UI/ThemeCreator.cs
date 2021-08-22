@@ -3,14 +3,17 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Linq;
 namespace Pro_Swapper
 {
     public partial class ThemeCreator : Form
     {
+        private Panel[] Panels { get; set; }
         public ThemeCreator()
         {
             InitializeComponent();
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 50, 50));
+            Panels = new Panel[4] { panel1, panel2, panel3, panel4 };
         }
         private void ThemeCreator_MouseDown(object sender, MouseEventArgs e)
         {
@@ -33,10 +36,8 @@ namespace Pro_Swapper
                     if (filedata.Contains("["))
                     {
                         Color[] theme = global.FromJSON<Color[]>(filedata);
-                        panel1.BackColor = theme[0];
-                        panel2.BackColor = theme[1];
-                        panel3.BackColor = theme[2];
-                        panel4.BackColor = theme[3];
+                        for (int i = 0; i < Panels.Length; i++)
+                            Panels[i].BackColor = theme[i];
                     }
                     else
                     {
@@ -65,11 +66,9 @@ namespace Pro_Swapper
                 a.FileName = "Pro Swapper Theme.protheme";
                 a.Filter = "Pro Swapper Theme (.protheme)|*.protheme";
                 if (a.ShowDialog() == DialogResult.OK)
-                    File.WriteAllText(a.FileName, global.ToJson(AssignedThemes));
+                    File.WriteAllText(a.FileName, global.ToJson(Panels.Select(x => x.BackColor).ToArray()));
             }
         }
-
-        private Color[] AssignedThemes => new Color[4] { panel1.BackColor, panel2.BackColor, panel3.BackColor, panel4.BackColor };
 
         private void ColorPanel_Click(object sender, MouseEventArgs e)
         {
@@ -80,7 +79,7 @@ namespace Pro_Swapper
         private void button3_Click(object sender, EventArgs e)
         {
             //Set Theme
-            global.CurrentConfig.theme = AssignedThemes;
+            global.CurrentConfig.theme = Panels.Select(x => x.BackColor).ToArray();
             global.SaveConfig();
             MessageBox.Show("Pro Swapper needs to be restarted to load the theme. Restarting Pro Swapper now...", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Process.Start(AppDomain.CurrentDomain.FriendlyName);
@@ -92,6 +91,7 @@ namespace Pro_Swapper
             panel2.BackColor = global.ItemsBG;
             panel3.BackColor = global.Button;
             panel4.BackColor = global.TextColor;
+            button1.ForeColor = global.TextColor;
             button2.BackColor = global.Button;
             button2.ForeColor = global.TextColor;
 
@@ -105,15 +105,11 @@ namespace Pro_Swapper
             button4.ForeColor = global.TextColor;
             BackColor = global.MainMenu;
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
-            //Reset theme to default in panels
-            Color[] defaulttheme = new Color[4] { Color.FromArgb(0, 33, 113), Color.FromArgb(64, 85, 170), Color.FromArgb(65, 105, 255), Color.FromArgb(255, 255, 255) };
-            panel1.BackColor = defaulttheme[0];
-            panel2.BackColor = defaulttheme[1];
-            panel3.BackColor = defaulttheme[2];
-            panel4.BackColor = defaulttheme[3];
+            Color[] defaultTheme = new global.ConfigObj().theme;//Stored in our config by default so just make a new instance
+            for (int i = 0; i < Panels.Length; i++)
+                Panels[i].BackColor = defaultTheme[i];
         }
     }
 }

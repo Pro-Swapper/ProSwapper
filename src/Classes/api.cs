@@ -64,27 +64,37 @@ namespace Pro_Swapper.API
 
         public static void UpdateAPI()
         {
+            GlobalAPI.Root globalapi = null;
             #if DEBUG
             apidata = JsonConvert.DeserializeObject<APIRoot>(File.ReadAllText("api.json"));
             apidata.timestamp = global.GetEpochTime();
+            globalapi = JsonConvert.DeserializeObject<GlobalAPI.Root>(File.ReadAllText("global.json"));
             string json = JsonConvert.SerializeObject(apidata, Formatting.None, new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore//Makes filesize smaller hehe
             });
             byte[] compressedapi = MessagePackSerializer.ConvertFromJson(json, MessagePackSerializerOptions.Standard);
             File.WriteAllBytes($"{global.version}.json", ByteCompression.Compress(compressedapi));
+
             #else
             try
             {
-              byte[] apidatas = ByteCompression.Decompress(new WebClient().DownloadData($"{ProSwapperEndpoint}/{global.version}.json"));
-              string json = MessagePackSerializer.ConvertToJson(apidatas);
-              apidata = JsonConvert.DeserializeObject<APIRoot>(json);
+                using (WebClient web = new WebClient())
+                {
+                    byte[] apidatas = ByteCompression.Decompress(web.DownloadData($"{ProSwapperEndpoint}/{global.version}.json"));
+                    string json = MessagePackSerializer.ConvertToJson(apidatas);
+                    apidata = JsonConvert.DeserializeObject<APIRoot>(json);
+                    globalapi = JsonConvert.DeserializeObject<GlobalAPI.Root>(web.DownloadString($"{ProSwapperEndpoint}/global.json"));
+                }
             }
             catch (Exception ex)
             {
                 Main.ThrowError($"Pro Swapper needs an internet connection to run, if you are already connected to the internet Pro Swapper's API may be blocked in your country, please use a VPN or try disabling your firewall, if you are already doing this please refer to this error: \n\n{ex.Message}");
             }
             #endif
+            apidata.discordurl = globalapi.discordurl;
+            apidata.version = globalapi.version;
+            apidata.status[0] = globalapi.status[0];
         }
 
         public class Asset
@@ -131,8 +141,19 @@ namespace Pro_Swapper.API
             public string discordurl { get; set; }
             public long timestamp { get; set; }
             public Item[] items { get; set; }
-            public Status[] status { get; set; }
+            public Status[] status = new Status[1];
             public OptionMenu[] OptionMenu { get; set; }
+        }
+
+
+        public class GlobalAPI
+        {
+            public class Root
+            {
+                public Status[] status { get; set; }
+                public string version { get; set; }
+                public string discordurl { get; set; }
+            }
         }
     }
 }

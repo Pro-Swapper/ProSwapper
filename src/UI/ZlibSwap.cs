@@ -114,6 +114,8 @@ namespace Pro_Swapper
                 MessageBox.Show("Select your paks folder in Settings", "Pro Swapper");
                 return;
             }
+            if (!EpicGamesLauncher.CloseFNPrompt())
+                return;
             foreach (api.Asset asset in ThisItem.Asset)
             {
                 //Check if replace is longer

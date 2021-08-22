@@ -42,6 +42,7 @@ namespace CUE4Parse.Compression
                     gzip.Dispose();
                     return;
                 case CompressionMethod.Oodle:
+                    Pro_Swapper.Swap.RawExport = compressed;
                     Oodle.Decompress(compressed, compressedOffset, compressedSize, uncompressed, uncompressedOffset, uncompressedSize, reader);
                     return;
                 case CompressionMethod.LZ4:

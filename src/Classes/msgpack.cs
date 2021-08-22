@@ -35,7 +35,7 @@ namespace Pro_Swapper
         public static dynamic MsgPacklz4(string url)
         {
             var lz4Options = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray).WithSecurity(MessagePackSecurity.UntrustedData);
-            var allskinslz4 = MessagePackSerializer.Deserialize<dynamic>(global.web.DownloadData(url), lz4Options);
+            var allskinslz4 = MessagePackSerializer.Deserialize<dynamic>(new WebClient().DownloadData(url), lz4Options);
             string json = MessagePackSerializer.SerializeToJson(allskinslz4, lz4Options);
 
             return (dynamic)JObject.Parse(json);

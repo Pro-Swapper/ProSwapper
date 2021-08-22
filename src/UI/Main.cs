@@ -66,14 +66,10 @@ namespace Pro_Swapper
                 RPC.rpctimestamp = Timestamps.Now;
                 RPC.InitializeRPC();
 
-                //Async methods
-                Task.Run(() => CloseFN());
-
                 Icon = appIcon;
                 Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
                 versionlabel.Text = global.version;
-                if (!File.Exists(global.CurrentConfig.Paks + @"\pakchunk0-WindowsClient.sig"))
-                    EpicGamesLauncher.FindPakFiles();
+                
 
 
                 panelContainer.Controls.Add(Dashboard.Instance);
@@ -134,35 +130,7 @@ namespace Pro_Swapper
             int nLeftRect, int nTopRect, int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse
         );
         #endregion
-        #region CloseFN
-        private void CloseFN()
-        {
-            bool asked = false;
-            for (; ; )
-            {
-                try
-                {
-                    Process[] procs = Process.GetProcesses();
-                    string[] killdeez = { "easyanticheat", "fortnite", "epicgameslauncher", "unrealcefsubprocess" };
-                    if (asked == false)
-                    {
-                        asked = true;
-                        procs.Where(x => killdeez.Any(x.ProcessName.ToLower().StartsWith)).All(a => { a.Kill(); return true; });
-                        foreach (Process a in procs)
-                        {
-                            if (a.ProcessName == "FortniteClient-Win64-Shipping")
-                                MessageBox.Show("Fortnite needs to be closed to use Pro Swapper!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            if (a.ProcessName == "EpicGamesLauncher")
-                                MessageBox.Show("Epic Games Launcher cannot be opened with Pro Swapper for safety measures. Close Pro Swapper to access Epic Games Launcher", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                    }
-                    }
-                catch
-                { }
-                Thread.Sleep(3000);
-            }
-        }
-        #endregion
+        
         private void Main_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left) global.FormMove(Handle);

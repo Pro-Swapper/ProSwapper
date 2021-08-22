@@ -92,7 +92,6 @@ namespace Pro_Swapper
                 tasklist.Add(Task.Run(() => PasteInLocationBytes(pastes)));
 
 
-            
             await Task.WhenAll(tasklist);
         }
 
@@ -109,6 +108,8 @@ namespace Pro_Swapper
                 Offset = offset;
             }
         }
+
+        public static byte[] RawExport { get; set; }
 
         //Edits a byte array in memory
         public static byte[] EditAsset(byte[] file, api.Asset asset, bool Converting, out bool Compress)
@@ -161,7 +162,6 @@ namespace Pro_Swapper
 
             return result.ToArray();
         }
-
         public static byte[] SetLength(byte[] search, byte[] longerbyte)
         {
             List<byte> result = new List<byte>(search);

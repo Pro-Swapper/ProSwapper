@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Settings));
             this.button1 = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
@@ -49,6 +50,7 @@
             this.manualAESLabel = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.checkPing = new System.Windows.Forms.Button();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.folder)).BeginInit();
             this.SuspendLayout();
             // 
@@ -262,7 +264,7 @@
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(189, 47);
             this.button5.TabIndex = 117;
-            this.button5.Text = "Credits And About";
+            this.button5.Text = "Credits, About, Debug";
             this.button5.UseVisualStyleBackColor = false;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
@@ -364,6 +366,11 @@
             this.checkPing.UseVisualStyleBackColor = false;
             this.checkPing.Click += new System.EventHandler(this.button8_Click);
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Text = "notifyIcon1";
+            this.notifyIcon1.Visible = true;
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -427,5 +434,6 @@
         private System.Windows.Forms.Label manualAESLabel;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button checkPing;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
     }
 }

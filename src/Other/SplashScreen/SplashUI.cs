@@ -6,6 +6,7 @@ using System.Threading;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using Newtonsoft.Json;
+using System.Net;
 namespace Pro_Swapper.Splash
 {
     public partial class SplashUI : Form
@@ -114,7 +115,7 @@ namespace Pro_Swapper.Splash
                 string data = string.Empty;
             redo: try
                 {
-                    data = global.web.DownloadString(hosturls[url]);
+                    data = new WebClient().DownloadString(hosturls[url]);
                 }
                 catch
                 {

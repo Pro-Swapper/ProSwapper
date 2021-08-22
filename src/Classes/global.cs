@@ -18,8 +18,6 @@ namespace Pro_Swapper
     {
         public static string version = Assembly.GetExecutingAssembly().GetName().Version.ToString().Substring(2, 5);
 
-        public static WebClient web;
-
         //For lobby swapper
         public static SkinSearch.Root allskins = null;
 

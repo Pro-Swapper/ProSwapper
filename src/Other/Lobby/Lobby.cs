@@ -6,7 +6,6 @@ using System.IO;
 using Pro_Swapper.CID_Selector;
 using Newtonsoft.Json;
 using Pro_Swapper.API;
-using System.Threading.Tasks;
 namespace Pro_Swapper
 {
     public partial class Lobby : Form
@@ -106,23 +105,22 @@ namespace Pro_Swapper
             string lobbyswapperpath = $"{global.CurrentConfig.Paks}\\Pro Swapper Lobby";
             if (Directory.Exists(lobbyswapperpath))
             {
-
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-
                 Directory.Delete(lobbyswapperpath, true);
-
                 string swaplogs = global.CurrentConfig.swaplogs;
-
-                string[] swappeditems = swaplogs.Remove(swaplogs.Length - 1).Split(',');
-                string newconfig = "";
-                foreach (string item in swappeditems)
+                if (swaplogs.Length > 0)
                 {
-                    if (!item.Contains("(Lobby)"))
-                        newconfig += item + ",";
+                    string[] swappeditems = swaplogs.Remove(swaplogs.Length - 1).Split(',');
+                    string newconfig = "";
+                    foreach (string item in swappeditems)
+                    {
+                        if (!item.Contains("(Lobby)"))
+                            newconfig += item + ",";
+                    }
+                    global.CurrentConfig.swaplogs = newconfig;
+                    global.SaveConfig();
                 }
-                global.CurrentConfig.swaplogs = newconfig;
-                global.SaveConfig();
             }
         }
     }
