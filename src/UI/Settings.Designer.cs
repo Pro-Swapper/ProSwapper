@@ -51,6 +51,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.checkPing = new System.Windows.Forms.Button();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.OodleCompressBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.folder)).BeginInit();
             this.SuspendLayout();
             // 
@@ -371,12 +372,32 @@
             this.notifyIcon1.Text = "notifyIcon1";
             this.notifyIcon1.Visible = true;
             // 
+            // OodleCompressBtn
+            // 
+            this.OodleCompressBtn.BackColor = System.Drawing.Color.RoyalBlue;
+            this.OodleCompressBtn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.OodleCompressBtn.FlatAppearance.BorderSize = 0;
+            this.OodleCompressBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.OodleCompressBtn.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.OodleCompressBtn.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.OodleCompressBtn.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.OodleCompressBtn.Location = new System.Drawing.Point(413, 222);
+            this.OodleCompressBtn.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
+            this.OodleCompressBtn.Name = "OodleCompressBtn";
+            this.OodleCompressBtn.Size = new System.Drawing.Size(189, 47);
+            this.OodleCompressBtn.TabIndex = 125;
+            this.OodleCompressBtn.Text = "Oodle Compressor";
+            this.OodleCompressBtn.UseVisualStyleBackColor = false;
+            this.OodleCompressBtn.Visible = false;
+            this.OodleCompressBtn.Click += new System.EventHandler(this.button8_Click_1);
+            // 
             // Settings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(33)))), ((int)(((byte)(113)))));
             this.ClientSize = new System.Drawing.Size(652, 394);
+            this.Controls.Add(this.OodleCompressBtn);
             this.Controls.Add(this.checkPing);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.manualAESLabel);
@@ -435,5 +456,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button checkPing;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.Button OodleCompressBtn;
     }
 }

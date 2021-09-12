@@ -20,6 +20,9 @@ namespace Pro_Swapper
             RPC.SetState("Settings", true);
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
             Icon = Main.appIcon;
+            #if DEBUG
+            OodleCompressBtn.Visible = true;
+            #endif
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -142,9 +145,8 @@ namespace Pro_Swapper
             DialogResult result = MessageBox.Show("Do you want to verify Fortnite and revert your files to how they were before you used the swapper?", "Fortnite Verification", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
             if (result == DialogResult.Yes)
             {
-                string lobbyswapperpath = $"{global.CurrentConfig.Paks}\\Pro Swapper Lobby";
-                if (Directory.Exists(lobbyswapperpath))
-                    Directory.Delete(lobbyswapperpath, true);
+                Lobby.RevertAllLobbySwaps(true);
+                RevertAllSwaps();
                 global.CurrentConfig.swaplogs = "";
                 global.SaveConfig();
                 global.OpenUrl($"{epicfnpath}verify");
@@ -300,6 +302,30 @@ namespace Pro_Swapper
                 listtimes.Add(ping.Send(url, 5000).RoundtripTime);
 
             MessageBox.Show($"Sent request to {pingreply.Address} ({url})\nStatus: {pingreply.Status}\nPing (Average): {listtimes.Average()} / Min: {listtimes.Min()} / Max: {listtimes.Max()}", "Pro Swapper AES", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void button8_Click_1(object sender, EventArgs e)
+        {
+            using (OpenFileDialog a = new OpenFileDialog())
+            {
+                if (a.ShowDialog() == DialogResult.OK)
+                {
+                    
+                    byte[] newbyte = Oodle.OodleClass.Compress(File.ReadAllBytes(a.FileName));
+                    File.WriteAllBytes(a.FileName + "_compressed.uasset", newbyte);
+                }
+            }
+        }
+
+        public static void RevertAllSwaps()
+        {
+            string ProSwapperDupePath = $"{global.CurrentConfig.Paks}\\.ProSwapper";
+            if (Directory.Exists(ProSwapperDupePath))
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                Directory.Delete(ProSwapperDupePath, true);
+            }
         }
     }
 }

@@ -30,8 +30,7 @@ namespace Pro_Swapper
                 global.allskins = new SkinSearch.Root();
                 global.allskins.data = datalist;
             }
-            Action safeClose = delegate { splash.Close(); };
-            splash.Invoke(safeClose);
+            splash.Invoke(new Action(() => { splash.Close(); }));
         }
 
 
@@ -100,7 +99,7 @@ namespace Pro_Swapper
         }
 
 
-        public static void RevertAllLobbySwaps()
+        public static void RevertAllLobbySwaps(bool IsVerify = false)
         {
             string lobbyswapperpath = $"{global.CurrentConfig.Paks}\\Pro Swapper Lobby";
             if (Directory.Exists(lobbyswapperpath))
@@ -108,18 +107,21 @@ namespace Pro_Swapper
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
                 Directory.Delete(lobbyswapperpath, true);
-                string swaplogs = global.CurrentConfig.swaplogs;
-                if (swaplogs.Length > 0)
+                if (!IsVerify)
                 {
-                    string[] swappeditems = swaplogs.Remove(swaplogs.Length - 1).Split(',');
-                    string newconfig = "";
-                    foreach (string item in swappeditems)
+                    string swaplogs = global.CurrentConfig.swaplogs;
+                    if (swaplogs.Length > 0)
                     {
-                        if (!item.Contains("(Lobby)"))
-                            newconfig += item + ",";
+                        string[] swappeditems = swaplogs.Remove(swaplogs.Length - 1).Split(',');
+                        string newconfig = "";
+                        foreach (string item in swappeditems)
+                        {
+                            if (!item.Contains("(Lobby)"))
+                                newconfig += item + ",";
+                        }
+                        global.CurrentConfig.swaplogs = newconfig;
+                        global.SaveConfig();
                     }
-                    global.CurrentConfig.swaplogs = newconfig;
-                    global.SaveConfig();
                 }
             }
         }

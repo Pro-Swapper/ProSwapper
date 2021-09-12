@@ -31,7 +31,7 @@ namespace Pro_Swapper
             newstext.Font = newstext.Font = new System.Drawing.Font("Segoe UI", float.Parse(api.apidata.newstext.Split(';')[1]), System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 
             string AutoPatchNotes = string.Empty;
-            foreach (api.Item item in api.apidata.items.Skip(122))
+            foreach (api.Item item in api.apidata.items.Skip(128))
             {
                 AutoPatchNotes += $"Added {item.SwapsFrom} to {item.SwapsTo}\n";
             }

@@ -6,7 +6,7 @@ using System.IO;
 using Pro_Swapper.API;
 using System.Threading.Tasks;
 using CUE4Parse.FileProvider;
-
+using System.Windows.Forms;
 namespace Pro_Swapper
 {
     public static class Swap
@@ -14,37 +14,55 @@ namespace Pro_Swapper
         private static string PaksLocation = global.CurrentConfig.Paks;
         public static async Task SwapItem(api.Item item, bool Converting)
         {
-            //global.CreateDir(PaksLocation + "\\Pro_Swapper");
-
+            const string ProSwapperPakFolder = ".ProSwapper";
+            Directory.CreateDirectory(PaksLocation + $"\\{ProSwapperPakFolder}");
             //Load the exporter
             List<string> thesefiles = new List<string>();
             foreach (var Asset in item.Asset)
                 thesefiles.Add(Path.GetFileNameWithoutExtension(Asset.UcasFile));
 
             List<string> UsingFiles = thesefiles.Distinct().ToList();
-           /* foreach (string file in UsingFiles)
+            if (UsingFiles.Count > 2)
             {
-                string BaseFileName = $"{PaksLocation}\\Pro_Swapper\\{file}";
+                DialogResult result = MessageBox.Show("This swap modifies more than 2 files which can lead to kicking, continue?", "Continue the Swap?", MessageBoxButtons.YesNo);
+                if (result == DialogResult.No)
+                    return;
+            }
+
+            foreach (string file in UsingFiles)
+            {
+                string BaseFileName = $"{PaksLocation}\\{ProSwapperPakFolder}\\{file}";
+
+                //Check if it may be old game version
+                string OriginalSig = global.FileToMd5($"{PaksLocation}\\{file}.sig");
+                string ModifiedSig = global.FileToMd5(BaseFileName + ".sig");
+                if (OriginalSig != ModifiedSig)
+                {
+                    global.DeleteFile(BaseFileName + ".sig");
+                    global.DeleteFile(BaseFileName + ".utoc");
+                    global.DeleteFile(BaseFileName + ".ucas");
+                    global.DeleteFile(BaseFileName + ".pak");
+                }
+
+
                 if (!File.Exists(BaseFileName + ".ucas"))
                 {
+                    Directory.CreateDirectory(PaksLocation + $"\\{ProSwapperPakFolder}");
                     File.Copy($"{PaksLocation}\\{file}.sig", BaseFileName + ".sig", true);
                     File.Copy($"{PaksLocation}\\{file}.utoc", BaseFileName + ".utoc", true);
-                    File.Copy($"{PaksLocation}\\{file}.pak", BaseFileName + ".pak", true);
                     File.Copy($"{PaksLocation}\\{file}.ucas", BaseFileName + ".ucas", true);
+                    File.Copy($"{PaksLocation}\\{file}.pak", BaseFileName + ".pak", true);
                 }
-                    
-            }*/
-
-            
+            }
 
 
-           // var Provider = new DefaultFileProvider($"{PaksLocation}\\Pro_Swapper", SearchOption.TopDirectoryOnly);
-            var Provider = new DefaultFileProvider(PaksLocation, SearchOption.TopDirectoryOnly);
+
+
+            var Provider = new DefaultFileProvider($"{PaksLocation}\\{ProSwapperPakFolder}", SearchOption.TopDirectoryOnly);
             Provider.Initialize(UsingFiles);
 
             if (api.fAesKey == null)
                 api.fAesKey = api.AESKey;
-
 
             //Load all aes keys for required files, cleaner in linq than doing a loop
             Provider.UnloadedVfs.All(x => { Provider.SubmitKey(x.EncryptionKeyGuid, api.fAesKey);return true;});
@@ -54,7 +72,7 @@ namespace Pro_Swapper
             foreach (api.Asset asset in item.Asset)
             {
                // string ucasfile = $"{PaksLocation}\\Pro_Swapper\\{asset.UcasFile}";
-                string ucasfile = $"{PaksLocation}\\{asset.UcasFile}";
+                string ucasfile = $"{PaksLocation}\\{ProSwapperPakFolder}\\{asset.UcasFile}";
 
                 //Checking if file is readonly coz we wouldn't be able to do shit with it
                 File.SetAttributes(ucasfile, global.RemoveAttribute(File.GetAttributes(ucasfile), FileAttributes.ReadOnly));

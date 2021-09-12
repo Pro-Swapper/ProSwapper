@@ -21,9 +21,6 @@ namespace Pro_Swapper.UI
             if (e.Button == MouseButtons.Left) global.FormMove(Handle);
         }
 
-        private void Splash_Load(object sender, System.EventArgs e)
-        {
-            Activate();
-        }
+        private void Splash_Load(object sender, System.EventArgs e)=> Activate();
     }
 }

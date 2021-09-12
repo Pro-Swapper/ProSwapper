@@ -16,11 +16,10 @@ namespace Pro_Swapper
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            global.CreateDir(global.ProSwapperFolder);
-            global.CreateDir(global.ProSwapperFolder + "\\Config");
-            global.CreateDir(global.ProSwapperFolder + "\\Images");
+            Directory.CreateDirectory(global.ProSwapperFolder + "\\Config");
+            Directory.CreateDirectory(global.ProSwapperFolder + "\\Images");
             global.InitConfig();
-
+            
             UI.Splash splash = new UI.Splash();
             Task.Run(() => Application.Run(splash));
 
@@ -29,11 +28,10 @@ namespace Pro_Swapper
 
             if (!File.Exists(oodledll))
             {
-                string FortniteOodleDLL = EpicGamesLauncher.GetOodleDll();
-                if (FortniteOodleDLL == null)
-                    File.WriteAllBytes(oodledll, new WebClient().DownloadData("https://cdn.proswapper.xyz/oo2core_5_win64.dll"));
+                if (EpicGamesLauncher.GetOodleDll(out string oodleFilePath))
+                    File.Copy(oodleFilePath, oodledll);
                 else
-                    File.Copy(FortniteOodleDLL, oodledll);
+                    File.WriteAllBytes(oodledll, new WebClient().DownloadData("https://cdn.proswapper.xyz/oo2core_5_win64.dll"));
             }
             Application.Run(new Main(splash));
         }

@@ -15,9 +15,8 @@ namespace Pro_Swapper
 {
     public partial class Main : Form
     {
-        public static void ThrowError(string ex, bool close = true) => new Message("Error!", ex, close).ShowDialog();
+        private static void ThrowError(string ex, bool close = true) => new Message("Error!", ex, close).ShowDialog();
         public static Icon appIcon = Icon.ExtractAssociatedIcon(Process.GetCurrentProcess().MainModule.FileName);
-
         public static Form Mainform;
         
         public Main(UI.Splash splash)
@@ -28,7 +27,6 @@ namespace Pro_Swapper
             {
                 api.UpdateAPI();
                 string apiversion = api.apidata.version;
-
                 double TimeNow = global.GetEpochTime();
 
                 if (global.CurrentConfig.lastopened + 7200 < TimeNow)
@@ -118,10 +116,7 @@ namespace Pro_Swapper
             {
                 ThrowError($"Source: {ex.Source} | Message: {ex.Message} | Stack Trace: {ex.StackTrace}");
             }
-
-            Action safeClose = delegate { splash.Close(); };
-            splash.Invoke(safeClose);
-            
+            splash.Invoke(new Action(() => { splash.Close(); }));
         }
         #region RoundedCorners
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
@@ -151,7 +146,11 @@ namespace Pro_Swapper
                 panelContainer.Controls.Add(Dashboard.Instance);
             Dashboard.Instance.BringToFront();
         }
-        public static void Cleanup() => Process.GetCurrentProcess().Kill();
+        public static void Cleanup() 
+        {
+            RPC.client.Dispose();
+            Process.GetCurrentProcess().Kill();
+        } 
         private void Main_Load(object sender, EventArgs e)=> Activate();//Bring forward
     }
 }

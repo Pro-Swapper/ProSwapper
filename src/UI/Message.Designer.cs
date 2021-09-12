@@ -70,7 +70,6 @@
             this.ExitButton.TabStop = false;
             this.ExitButton.Text = "X";
             this.ExitButton.UseVisualStyleBackColor = true;
-            this.ExitButton.Click += new System.EventHandler(this.ExitButton_Click);
             // 
             // Message
             // 
@@ -87,7 +86,6 @@
             this.Name = "Message";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Pro Swapper Error!";
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ThemeCreator_MouseDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

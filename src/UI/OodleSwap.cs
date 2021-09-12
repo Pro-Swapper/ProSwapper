@@ -15,6 +15,7 @@ namespace Pro_Swapper
         public OodleSwap(api.Item item)
         {
             InitializeComponent();
+            this.Icon = Main.appIcon;
             RPC.SetState(item.SwapsFrom + " To " + item.SwapsTo, true);
             ThisItem = item;
             string swaptext = ThisItem.SwapsFrom + " --> " + ThisItem.SwapsTo;
@@ -51,46 +52,32 @@ namespace Pro_Swapper
                 if (ThisItem.Note != null) MessageBox.Show("Warning for " + ThisItem.SwapsTo + ": " + ThisItem.Note, ThisItem.SwapsFrom + " - " + ThisItem.SwapsTo, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-        private void Log(string text)
-        {
-            Action writelogbox = delegate { logbox.Text += $"{text}{Environment.NewLine}"; };
-            logbox.Invoke(writelogbox);
-            Action ScrollDown = delegate { logbox.ScrollToCaret(); };
-            logbox.Invoke(ScrollDown);
-        }
-
-
-        private void ThreadSafe(Control control, Action action)=> control.Invoke((Delegate)action);
-
+        private void Log(string text)=> logbox.Invoke(new Action(() => { logbox.Text += $"{text}{Environment.NewLine}"; logbox.ScrollToCaret(); }));
         private async void ButtonbgWorker(bool Converting)
         {
             try
             {
-                ThreadSafe(ConvertB, () => { ConvertB.Enabled = false; });
-                ThreadSafe(RevertB, () => { RevertB.Enabled = false; });
-                ThreadSafe(label3, () => { label3.Text = "Loading..."; });
-                ThreadSafe(label3, () => { label3.ForeColor = Color.White; });
-                Stopwatch s = new Stopwatch();
-                s.Start();
+                ConvertB.Invoke(new Action(() => { ConvertB.Enabled = false; }));
+                RevertB.Invoke(new Action(() => { RevertB.Enabled = false; }));
+                label3.Invoke(new Action(() => { label3.Text = "Loading..."; label3.ForeColor = Color.White; }));
+               
+                Stopwatch s = Stopwatch.StartNew();
                 await Swap.SwapItem(ThisItem, Converting);
-                ThreadSafe(ConvertB, () => { ConvertB.Enabled = true; });
-                ThreadSafe(RevertB, () => { RevertB.Enabled = true; });
                 s.Stop();
-                ThreadSafe(logbox, () => { logbox.Clear();});
+                ConvertB.Invoke(new Action(() => { ConvertB.Enabled = true; }));
+                RevertB.Invoke(new Action(() => { RevertB.Enabled = true; }));
+                logbox.Invoke(new Action(() => { logbox.Clear(); }));
                 string swaplogs = global.CurrentConfig.swaplogs;
                 if (Converting)
                 {
                     Log($"[+] Converted item in {s.Elapsed.Milliseconds}ms");
-                    ThreadSafe(label3, () => { label3.Text = "ON"; });
-                    ThreadSafe(label3, () => { label3.ForeColor = Color.Lime; });
-                    s.Stop();
+                    label3.Invoke(new Action(() => { label3.Text = "ON"; label3.ForeColor = Color.Lime; }));
                     global.CurrentConfig.swaplogs += ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",";
                 }
                 else
                 {
                     Log($"[-] Reverted item in {s.Elapsed.Milliseconds}ms");
-                    ThreadSafe(label3, () => { label3.Text = "OFF"; });
-                    ThreadSafe(label3, () => { label3.ForeColor = Color.Red; });
+                    label3.Invoke(new Action(() => { label3.Text = "OFF"; label3.ForeColor = Color.Red; }));
                     global.CurrentConfig.swaplogs = swaplogs.Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",", "");
                 }
                 global.SaveConfig();

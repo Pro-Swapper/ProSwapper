@@ -43,36 +43,31 @@ namespace Pro_Swapper
         }
 
 
-        public static string GetOodleDll()
+        /// <summary>
+        /// Returns true on successful oodle file found.
+        /// </summary>
+        /// <param name="oodlefile"></param>
+        /// <returns></returns>
+        public static bool GetOodleDll(out string oodlefile)
         {
             Root launcherdata = JsonConvert.DeserializeObject<Root>(File.ReadAllText(LauncherJson));
             InstallationList fortnite = launcherdata.InstallationList.Where(x => x.AppName == "Fortnite").First();
 
-            string oodlefile = fortnite.InstallLocation + @"\FortniteGame\Binaries\Win64\oo2core_5_win64.dll";
+            oodlefile = fortnite.InstallLocation + @"\FortniteGame\Binaries\Win64\oo2core_5_win64.dll";
             if (File.Exists(oodlefile))
-                return oodlefile;
+                return true;
             else
-                return null;
+                return false;
         }
 
         public static bool CloseFNPrompt()
         {
-            Process[] procs = Process.GetProcesses();
-            string[] blacklistedprocs = { "easyanticheat", "FortniteClient-Win64-Shipping", "epicgameslauncher"};
-            foreach (var proc in procs)
+            Process.GetProcessesByName("EpicGamesLauncher").All(x => { x.Kill(); return true; });
+            Process[] fnproc = Process.GetProcessesByName("FortniteClient-Win64-Shipping.exe");
+            if (fnproc.Length > 0)
             {
-                if (blacklistedprocs.Any(proc.ProcessName.ToLower().Contains))
-                {
-                    try
-                    {
-                        proc.Kill();
-                    }
-                    catch
-                    {
-                        MessageBox.Show($"{proc.ProcessName} ({proc.Id}) is running! Please close this before swapping anything!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        return false;
-                    }
-                }
+                MessageBox.Show($"Fortnite running! Please close this before swapping anything!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return false;
             }
             return true;
         }

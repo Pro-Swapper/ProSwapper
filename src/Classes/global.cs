@@ -131,11 +131,6 @@ namespace Pro_Swapper
 
         public static FileAttributes RemoveAttribute(FileAttributes attributes, FileAttributes attributesToRemove) => attributes & ~attributesToRemove;
         public static string ProSwapperFolder => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Pro_Swapper\";
-        public static void CreateDir(string dir)
-        {
-            if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-        }
         #region Config Handler
         private static string ConfigPath => ProSwapperFolder + @"Config\" + version + "_config.json";
 
