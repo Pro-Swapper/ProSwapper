@@ -15,7 +15,7 @@ namespace Pro_Swapper
 {
     public partial class Main : Form
     {
-        private static void ThrowError(string ex, bool close = true) => new Message("Error!", ex, close).ShowDialog();
+        public static void ThrowError(string ex, bool close = true) => new Message("Error!", ex, close).ShowDialog();
         public static Icon appIcon = Icon.ExtractAssociatedIcon(Process.GetCurrentProcess().MainModule.FileName);
         public static Form Mainform;
         
