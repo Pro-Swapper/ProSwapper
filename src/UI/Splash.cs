@@ -8,9 +8,8 @@ namespace Pro_Swapper.UI
         public Splash()
         {
             InitializeComponent();
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            pictureBox1.Image = Properties.Resources.Eclipse_0_7s_104px__1_;
             BackgroundImage = Properties.Resources.pro_swapper_splash;
+            pictureBox1.Image = Properties.Resources.Eclipse_0_7s_104px__1_;
             Icon = Main.appIcon;
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 50,50));
             WindowState = FormWindowState.Normal;
