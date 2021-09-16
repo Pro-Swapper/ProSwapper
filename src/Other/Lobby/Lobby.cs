@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
@@ -21,14 +20,8 @@ namespace Pro_Swapper
             if (global.allskins == null)
             {
                 SkinSearch.Root allitems = msgpack.MsgPacklz4<SkinSearch.Root>($"{api.FNAPIEndpoint}v2/cosmetics/br?responseFormat=msgpack_lz4&responseOptions=ignore_null");
-                var datalist = new List<SkinSearch.Datum>();
-                foreach (var item in allitems.data)
-                {
-                    if (CIDSelection.actuallyUsingBackends.Any(item.type.backendValue.Equals))
-                        datalist.Add(item);
-                }
                 global.allskins = new SkinSearch.Root();
-                global.allskins.data = datalist;
+                global.allskins.data = allitems.data.Where(x => CIDSelection.actuallyUsingBackends.Any(x.type.backendValue.Equals)).ToArray();
             }
             splash.Invoke(new Action(() => { splash.Close(); }));
         }
@@ -38,7 +31,7 @@ namespace Pro_Swapper
 
         private void button1_Click(object sender, EventArgs e)
         {
-           if (CurrentCID != null)
+            if (CurrentCID != null)
             {
                 new ZlibSwap(CurrentCID).ShowDialog();
             }

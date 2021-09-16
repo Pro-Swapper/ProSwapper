@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using static Pro_Swapper.CID_Selector.CIDSelection.BackendTypes;
@@ -12,7 +10,7 @@ namespace Pro_Swapper.CID_Selector
         private BackendTypes currentBackEndType = AthenaCharacter;
 
         //Use only the following backend types
-        public static string[] actuallyUsingBackends = { AthenaCharacter.ToString(), AthenaBackpack.ToString(), AthenaDance.ToString(), AthenaMusicPack.ToString(), AthenaPickaxe.ToString() };
+        public static readonly string[] actuallyUsingBackends = { AthenaCharacter.ToString(), AthenaBackpack.ToString(), AthenaDance.ToString(), AthenaMusicPack.ToString(), AthenaPickaxe.ToString() };
         public enum BackendTypes
         {
             AthenaCharacter,//
@@ -45,78 +43,58 @@ namespace Pro_Swapper.CID_Selector
         }
         private void button2_Click(object sender, EventArgs e)
         {
+            flowLayoutPanel1.Controls.Clear();
             SearchedSkin = ParseSkinInfo(textBox1.Text);
             if (SearchedSkin != null)
             {
-                flowLayoutPanel1.Controls.Clear();
-                List<SkinSearch.Datum> itemlist = new List<SkinSearch.Datum>();
-                SortItemList(ref itemlist);
-                var skinlist = itemlist.Where(x => x.id.Length <= SearchedSkin.id.Length).Where(x => x.images.icon != null).ToList();
-                
-                for (int i = 0; i < skinlist.Count; i++)
-                {
-                    if (currentBackEndType.ToString() == skinlist[i].type.backendValue)
-                        flowLayoutPanel1.Controls.Add(new GridItem(skinlist[i]));
-                }    
-                    
+                string currentBackendType = currentBackEndType.ToString();
+                SortItemList(out SkinSearch.Datum[] itemlist);
+                GridItem[] skinlist = itemlist.Where(x => x.id.Length <= SearchedSkin.id.Length).Where(x => x.images.icon != null).Where(x => x.type.backendValue == currentBackendType).Select(x => new GridItem(x)).ToArray();
+                flowLayoutPanel1.Controls.AddRange(skinlist);
                 label1.Text = $"Found {flowLayoutPanel1.Controls.Count} cosmetics compatible with {SearchedSkin.name}";
             }
             else
-            {
-                flowLayoutPanel1.Controls.Clear();
                 label1.Text = $"That cosmetic cannot be found ({textBox1.Text})";
-            }
         }
 
 
         private SkinSearch.Datum ParseSkinInfo(string searchinfo)
         {
-            //Using our local list to get our stuff so it's SUPER fast.
+            //Using our local list to get our stuff so it's SUPER fast.s
+            string BackendType = currentBackEndType.ToString();
             try
             {
                 if (searchinfo.Contains("ID"))
                 {
-                    foreach (var item in global.allskins.data)
-                    {
-                        BackendTypes thisbackendtype = (BackendTypes)Enum.Parse(typeof(BackendTypes), item.type.backendValue);
-                        if (currentBackEndType == thisbackendtype && item.id.ToLower() == searchinfo.ToLower())
-                            return item;
-                    }
-                    goto error;
-                }
+                    searchinfo = searchinfo.ToLower();
+                    return global.allskins.data.First(x => x.type.backendValue == BackendType && x.id.ToLower() == searchinfo);
+                } 
                 else
                 {
-                    foreach (var item in global.allskins.data)
-                    {
-                        BackendTypes thisbackendtype = (BackendTypes)Enum.Parse(typeof(BackendTypes), item.type.backendValue);
-                        if (currentBackEndType == thisbackendtype && item.name.ToLower().StartsWith(searchinfo.ToLower()))
-                            return item;  
-                    }
-                    goto error;
+                    searchinfo = searchinfo.ToLower();
+                    return global.allskins.data.First(x => x.type.backendValue == BackendType && x.name.ToLower().StartsWith(searchinfo));
                 }
-                    
             }
             catch
             {
-                goto error;
+                MessageBox.Show("That skin doesn't exist! Are you sure you spelt it right?", "Pro Swapper Lobby");
             }
-            error: MessageBox.Show("That skin doesn't exist! Are you sure you spelt it right?", "Pro Swapper Lobby");
             return null;
         }
 
         //Basically reload the current items with the new sort
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)=> button2_Click(this, new EventArgs());
 
-        private void SortItemList(ref List<SkinSearch.Datum> itemlist)
+        private void SortItemList(out SkinSearch.Datum[] itemlist)
         {
             switch (comboBox1.Text)
             {
                 case "Alphabetical":
-                    itemlist = global.allskins.data.OrderBy(x => x.name).ToList();
+                    itemlist = global.allskins.data.OrderBy(x => x.name).ToArray();
                     break;
 
                 case "Rarity":
-                    itemlist = global.allskins.data.OrderBy(x => x.rarity.backendValue).ToList();
+                    itemlist = global.allskins.data.OrderBy(x => x.rarity.backendValue).ToArray();
                     break;
                 case "Season":
                 default:

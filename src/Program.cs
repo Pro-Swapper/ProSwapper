@@ -7,7 +7,7 @@ namespace Pro_Swapper
 {
     static class Program
     {
-        const string oodledll = "oo2core_5_win64.dll";
+        public const string oodledll = "oo2core_5_win64.dll";
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

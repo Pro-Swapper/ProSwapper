@@ -95,12 +95,12 @@ namespace Pro_Swapper
 
         public static string BoolToInt(string boolean)
         {
-            if (boolean == "false")
-                return "0";
-            else if (boolean == "true")
-                return "1";
-
-            return null;
+            switch (boolean)
+            {
+                case "false": return "0";
+                case "true": return "1";
+                default:return null;
+            }
         }
 
 

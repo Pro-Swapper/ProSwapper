@@ -2,14 +2,11 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using System.IO;
-using System.Threading;
 using System.Diagnostics;
 using DiscordRPC;
 using System.Linq;
 using Bunifu.Framework.UI;
 using Pro_Swapper.API;
-using System.Threading.Tasks;
 
 namespace Pro_Swapper
 {

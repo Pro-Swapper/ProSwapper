@@ -85,7 +85,7 @@ namespace Pro_Swapper.CID_Selector
         public class Root
         {
             public int status { get; set; }
-            public List<Datum> data { get; set; }
+            public Datum[] data { get; set; }
         }
     }
 

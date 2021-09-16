@@ -73,7 +73,6 @@ https://proswapper.xyz</Description>
 
   <ItemGroup>
     <Compile Remove="src\Classes\Items.cs" />
-    <Compile Remove="src\Classes\Oodle\Utils\CompressionType.cs" />
     <Compile Remove="src\UI\swap.cs" />
     <Compile Remove="src\UI\swap.Designer.cs" />
   </ItemGroup>
