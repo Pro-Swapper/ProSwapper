@@ -42,13 +42,15 @@ namespace Pro_Swapper
         {
             using (FolderBrowserDialog paks = new FolderBrowserDialog())
             {
-                paks.RootFolder = Environment.SpecialFolder.MyComputer;
-                paks.Description = "Select your Fortnite paks folder. By default it's located in C:\\Program Files\\Epic Games\\Fortnite\\FortniteGame\\Content\\Paks";
+                paks.UseDescriptionForTitle = true;
+                paks.Description = "Select your Fortnite Paks folder";
                 paks.ShowNewFolderButton = false;
-                paks.ShowDialog();
-                paksBox.Text = paks.SelectedPath;
-                global.CurrentConfig.Paks = paks.SelectedPath;
-                global.SaveConfig();
+                if (paks.ShowDialog() == DialogResult.OK)
+                {
+                    paksBox.Text = paks.SelectedPath;
+                    global.CurrentConfig.Paks = paks.SelectedPath;
+                    global.SaveConfig();
+                }
             }
         }
 

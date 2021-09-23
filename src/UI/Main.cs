@@ -94,8 +94,6 @@ namespace Pro_Swapper
                 Program.logger.LogError(ex.Message);
                 ThrowError($"Source: {ex.Source} | Message: {ex.Message} | Stack Trace: {ex.StackTrace}", true);
             }
-            this.BringToFront();
-            this.Activate();
         }
         #region RoundedCorners
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
@@ -129,7 +127,11 @@ namespace Pro_Swapper
             RPC.client.Dispose();
             Process.GetCurrentProcess().Kill();
         } 
-        private void Main_Load(object sender, EventArgs e)=> Activate();//Bring forward
+        private void Main_Load(object sender, EventArgs e)
+        {
+            this.TopMost = true;
+            this.TopMost = false;
+        }
         private void ExitButton_Click(object sender, EventArgs e)=> Cleanup();
         private void Main_FormClosing(object sender, FormClosingEventArgs e)=> Cleanup();
         private void button2_Click(object sender, EventArgs e)=> WindowState = FormWindowState.Minimized;
