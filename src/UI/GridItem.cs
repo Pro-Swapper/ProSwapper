@@ -36,5 +36,20 @@ namespace Pro_Swapper
             label1.Text = i.Title.Split('|')[0];
             backgroundWorker1.Dispose();
         }
+
+        public GridItem(string imageURL, string Text, string ClickURL)
+        {
+            InitializeComponent();
+            backgroundWorker1.DoWork += delegate
+            {
+                pictureBox1.Load(imageURL);
+            };
+            backgroundWorker1.RunWorkerAsync();
+            label1.Text = Text;
+            pictureBox1.Click += delegate
+            {
+                global.OpenUrl(ClickURL);
+            };
+        }
     }
 }

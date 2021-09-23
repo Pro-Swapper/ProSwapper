@@ -57,11 +57,7 @@ namespace Pro_Swapper
             new Lobby(splash).Show();
         }
 
-        private void OtherTab_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-                global.FormMove(Main.Mainform.Handle);
-        }
+        private void OtherTab_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Main.Mainform.Handle);
 
         private void pictureBox3_Click_1(object sender, EventArgs e)
         {

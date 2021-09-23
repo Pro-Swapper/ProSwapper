@@ -9,6 +9,7 @@ namespace Pro_Swapper
         {
             InitializeComponent();
             label1.Text = title;
+            Text = title;
             richTextBox1.Text = error;
             Icon = Main.appIcon;
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 50, 50));
@@ -22,13 +23,8 @@ namespace Pro_Swapper
 
             this.MouseDown += delegate (object sender, MouseEventArgs e)
             {
-                if (e.Button == MouseButtons.Left) 
-                    global.FormMove(Handle);
+                global.MoveForm(e, Handle);
             };
-        }
-        private void ThemeCreator_MouseDown(object sender, MouseEventArgs e)
-        {
-            
         }
     }
 }

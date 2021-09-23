@@ -127,6 +127,9 @@
   <data name="Eclipse_0_7s_104px__1_" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Eclipse-0.7s-104px (1).gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ProSwapperLogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ProSwapperLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="pro_swapper_splash" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pro swapper splash.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

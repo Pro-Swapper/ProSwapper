@@ -20,10 +20,6 @@ namespace Pro_Swapper
                 MessageBox.Show($"{tab} is currently disabled, please be patient for the developer(s) of Pro Swapper to add this feature. If you would like to request a feature please send a message on the Discord server", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void ItemTab_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-                global.FormMove(Main.Mainform.Handle);
-        }
+        private void ItemTab_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Main.Mainform.Handle);
     }
 }

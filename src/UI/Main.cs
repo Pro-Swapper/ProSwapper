@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using DiscordRPC;
-using System.Linq;
 using Bunifu.Framework.UI;
 using Pro_Swapper.API;
 
@@ -65,55 +64,38 @@ namespace Pro_Swapper
                 Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
                 versionlabel.Text = global.version;
                 
-
-
                 panelContainer.Controls.Add(Dashboard.Instance);
-                #region ThemeColors
-                Control.ControlCollection panel1buttons = Controls["panel1"].Controls;
-                foreach (BunifuFlatButton c in panel1buttons.OfType<BunifuFlatButton>().Where(c => c.Tag.Equals("TabButton")).Distinct())
+                Control.ControlCollection MenuButtons = Controls["panel1"].Controls;
+                for (int i = 0; i < MenuButtons.Count; i++)
                 {
-                    c.BackColor = global.Button;
-                    c.Normalcolor = global.Button;
-                    c.OnHovercolor = global.Button;
-                    c.Activecolor = global.Button;
-                    c.Textcolor = global.TextColor;
-                    c.OnHoverTextColor = global.TextColor;
-                    if (c.Text == "Settings")
-                        c.Click += delegate
+                    if (MenuButtons[i].GetType().Name == "BunifuFlatButton" && MenuButtons[i].Tag.Equals("TabButton"))
+                    {
+                        BunifuFlatButton btn = (BunifuFlatButton)MenuButtons[i];
+                        btn.BackColor = btn.Normalcolor = btn.OnHovercolor = btn.Activecolor = global.Button;
+                        btn.Textcolor = btn.OnHoverTextColor = global.TextColor;
+                        if (btn.Text == "Settings")
+                            continue;
+                        
+                        btn.Click += delegate
                         {
-                            new Settings().Show();
+                            NewPanel(btn.Text);
                         };
-                    else
-                        c.Click += delegate
-                        {
-                            NewPanel(c.Text);
-                        };
+                    }
                 }
-                FormClosing += delegate
-                {
-                    Cleanup();
-                };
-                ExitButton.Click += delegate
-                {
-                    Cleanup();
-                };
-                button2.Click += delegate
-                {
-                    WindowState = FormWindowState.Minimized;
-                };
-
+                
                 BackColor = global.MainMenu;
                 panel1.BackColor = global.MainMenu;
                 versionlabel.ForeColor = global.TextColor;
-                #endregion
                 global.SaveConfig();
-                
+                splash.Invoke(new Action(() => { splash.Close(); }));
             }
             catch (Exception ex)
             {
-                ThrowError($"Source: {ex.Source} | Message: {ex.Message} | Stack Trace: {ex.StackTrace}");
+                Program.logger.LogError(ex.Message);
+                ThrowError($"Source: {ex.Source} | Message: {ex.Message} | Stack Trace: {ex.StackTrace}", true);
             }
-            splash.Invoke(new Action(() => { splash.Close(); }));
+            this.BringToFront();
+            this.Activate();
         }
         #region RoundedCorners
         [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
@@ -123,10 +105,7 @@ namespace Pro_Swapper
         );
         #endregion
         
-        private void Main_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left) global.FormMove(Handle);
-        }
+        private void Main_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
         private void NewPanel(string tab)
         {
             RPC.SetState(tab, true);
@@ -145,9 +124,16 @@ namespace Pro_Swapper
         }
         public static void Cleanup() 
         {
+            Program.logger.Log("Closing Pro Swapper");
+            Program.logger.Dispose();
             RPC.client.Dispose();
             Process.GetCurrentProcess().Kill();
         } 
         private void Main_Load(object sender, EventArgs e)=> Activate();//Bring forward
+        private void ExitButton_Click(object sender, EventArgs e)=> Cleanup();
+        private void Main_FormClosing(object sender, FormClosingEventArgs e)=> Cleanup();
+        private void button2_Click(object sender, EventArgs e)=> WindowState = FormWindowState.Minimized;
+
+        private void bunifuFlatButton6_Click(object sender, EventArgs e)=> new Settings().Show();
     }
 }

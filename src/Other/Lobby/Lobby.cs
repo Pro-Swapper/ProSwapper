@@ -5,6 +5,7 @@ using System.IO;
 using Pro_Swapper.CID_Selector;
 using Newtonsoft.Json;
 using Pro_Swapper.API;
+using static Pro_Swapper.API.api;
 namespace Pro_Swapper
 {
     public partial class Lobby : Form
@@ -15,11 +16,43 @@ namespace Pro_Swapper
         public Lobby(UI.Splash splash)
         {
             InitializeComponent();
+            string FNCosmeticsPath = global.ProSwapperFolder + "lobby.ProSwapper";
             Icon = Main.appIcon;
             BackColor = global.MainMenu;
+
+
+            CurrentCID = new Item();
+            var asset = new Asset();
+            asset.AssetPath = "FortniteGame/AssetRegistry.bin";
+            asset.UcasFile = "pakchunk0-WindowsClient.pak";//Asset registry is always in pakchunk0 coz ue4 moment
+            asset.Search = new string[1] { $"" };
+            asset.Replace = new string[1] { $"" };
+            CurrentCID.Asset = new Asset[1] { asset };
+
             if (global.allskins == null)
             {
-                SkinSearch.Root allitems = msgpack.MsgPacklz4<SkinSearch.Root>($"{api.FNAPIEndpoint}v2/cosmetics/br?responseFormat=msgpack_lz4&responseOptions=ignore_null");
+                SkinSearch.Root allitems = new();
+                download: double TimeNow = global.GetEpochTime();
+                if (global.CurrentConfig.LobbyLastOpened + 86400 < TimeNow)
+                {
+                    //More than 24hrs have passed
+                    allitems = msgpack.MsgPacklz4<SkinSearch.Root>($"{api.FNAPIEndpoint}v2/cosmetics/br?responseFormat=msgpack_lz4&responseOptions=ignore_null");
+                    File.WriteAllText(FNCosmeticsPath, JsonConvert.SerializeObject(allitems));
+                    global.CurrentConfig.LobbyLastOpened = TimeNow;
+                    global.SaveConfig();
+                }
+                else
+                {
+                    if (!File.Exists(FNCosmeticsPath))
+                    {
+                        global.CurrentConfig.LobbyLastOpened = 0;
+                        goto download;
+                    }
+                    allitems = JsonConvert.DeserializeObject<SkinSearch.Root>(File.ReadAllText(FNCosmeticsPath));
+
+                }
+                    
+
                 global.allskins = new SkinSearch.Root();
                 global.allskins.data = allitems.data.Where(x => CIDSelection.actuallyUsingBackends.Any(x.type.backendValue.Equals)).ToArray();
             }
@@ -31,13 +64,38 @@ namespace Pro_Swapper
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (CurrentCID != null)
+            string Search = textBox1.Text;
+            string Replace = textBox2.Text;
+
+            if (CurrentCID.Asset[0].Search[0].Split('.')[0] == Search && CurrentCID.Asset[0].Replace[0].Split('.')[0] == Replace)
             {
+                if (CurrentCID.Asset[0].Search[0].Length == 0)
+                    return;
+                
                 new ZlibSwap(CurrentCID).ShowDialog();
+                return;
             }
-           else
+            if (CurrentCID.Asset[0].Search[0].Split('.')[0] != Search || CurrentCID.Asset[0].Replace[0].Split('.')[0] != Replace)
             {
-                MessageBox.Show("You haven't chosen a CID");
+                if (Search.Length < Replace.Length)
+                {
+                    MessageBox.Show("The ID you own must be longer than the ID you replace it for!", "Pro Swapper Lobby", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                Item CustomID = new Item();
+                CustomID.SwapsFrom = Search;
+                CustomID.SwapsTo = Replace;
+                CustomID.FromImage = "K9KWU5h.png";
+                CustomID.ToImage = "K9KWU5h.png";
+                CustomID.Zlib = true;
+                var asset = new Asset();
+                asset.AssetPath = "FortniteGame/AssetRegistry.bin";
+                asset.UcasFile = "pakchunk0-WindowsClient.pak";//Asset registry is always in pakchunk0 coz ue4 moment
+                asset.Search = new string[1] { $"{Search}.{Replace}" };
+                asset.Replace = new string[1] { $"{Replace}.{Replace}" };
+                CustomID.Asset = new Asset[1] { asset };
+                new ZlibSwap(CustomID).ShowDialog();
             }
         }
 
@@ -66,11 +124,6 @@ namespace Pro_Swapper
                 }
             }
             
-        }
-
-        private void textBox1_KeyDown(object sender, KeyEventArgs e)
-        {
-            MessageBox.Show("Press the button above to select the lobby swap skins");
         }
 
         private void button3_Click(object sender, EventArgs e)

@@ -22,10 +22,7 @@ namespace Pro_Swapper.UI
             WindowState = FormWindowState.Normal;
         }
 
-        private void Splash_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left) global.FormMove(Handle);
-        }
+        private void Splash_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
 
         private void Splash_Load(object sender, EventArgs e)
         {

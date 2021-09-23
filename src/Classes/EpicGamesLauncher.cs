@@ -31,8 +31,8 @@ namespace Pro_Swapper
                 try
                 {
                     Root launcherdata = JsonConvert.DeserializeObject<Root>(File.ReadAllText(LauncherJson));
-                    InstallationList fortnite = launcherdata.InstallationList.Where(x => x.AppName == "Fortnite").FirstOrDefault();
-                    global.CurrentConfig.Paks = fortnite.InstallLocation + @"\FortniteGame\Content\Paks";
+                    string InstallLocation = launcherdata.InstallationList.First(x => x.AppName == "Fortnite").InstallLocation;
+                    global.CurrentConfig.Paks = InstallLocation + @"\FortniteGame\Content\Paks";
                     global.SaveConfig();
                 }
                 catch

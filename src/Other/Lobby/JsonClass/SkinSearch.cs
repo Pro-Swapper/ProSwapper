@@ -65,8 +65,8 @@ namespace Pro_Swapper.CID_Selector
             public string name { get; set; }
             public string description { get; set; }
             public Type type { get; set; }
-            public Rarity rarity { get; set; }
-            public object series { get; set; }
+            public Rarity rarity { get; set; } 
+            public object series { get; set; } 
             public Set set { get; set; }
             public Introduction introduction { get; set; }
             public Images images { get; set; }

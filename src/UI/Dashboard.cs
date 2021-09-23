@@ -49,10 +49,6 @@ namespace Pro_Swapper
         private void pictureBox1_Click(object sender, EventArgs e)=> global.OpenUrl("https://github.com/Pro-Swapper");
         private void pictureBox2_Click(object sender, EventArgs e)=> global.OpenUrl("https://tiktok.com/@proswapperofficial");
 
-        private void news_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left) 
-                global.FormMove(Main.Mainform.Handle);
-        }
+        private void news_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Main.Mainform.Handle);
     }
 }

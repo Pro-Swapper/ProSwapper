@@ -20,6 +20,9 @@
     <Compile Update="src\Other\SplashScreen\SplashSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="src\UI\About.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="src\UI\Dashboard.cs">
       <SubType>UserControl</SubType>
     </Compile>

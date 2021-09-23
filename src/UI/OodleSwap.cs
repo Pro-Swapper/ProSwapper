@@ -52,7 +52,12 @@ namespace Pro_Swapper
                 if (ThisItem.Note != null) MessageBox.Show("Warning for " + ThisItem.SwapsTo + ": " + ThisItem.Note, ThisItem.SwapsFrom + " - " + ThisItem.SwapsTo, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-        private void Log(string text)=> logbox.Invoke(new Action(() => { logbox.Text += $"{text}{Environment.NewLine}"; logbox.ScrollToCaret(); }));
+        private void Log(string text) 
+        {
+            logbox.Invoke(new Action(() => { logbox.Text += $"{text}{Environment.NewLine}"; logbox.ScrollToCaret(); }));
+            Program.logger.Log(text);
+        }
+        
         private async void ButtonbgWorker(bool Converting)
         {
             try
@@ -62,29 +67,32 @@ namespace Pro_Swapper
                 label3.Invoke(new Action(() => { label3.Text = "Loading..."; label3.ForeColor = Color.White; }));
                
                 Stopwatch s = Stopwatch.StartNew();
+                Program.logger.Log($"(OodleSwap.cs) (Converting = {Converting}) Starting to convert {this.Text}");
                 await Swap.SwapItem(ThisItem, Converting);
                 s.Stop();
                 ConvertB.Invoke(new Action(() => { ConvertB.Enabled = true; }));
                 RevertB.Invoke(new Action(() => { RevertB.Enabled = true; }));
                 logbox.Invoke(new Action(() => { logbox.Clear(); }));
-                string swaplogs = global.CurrentConfig.swaplogs;
+                string LogMsg = string.Empty;
                 if (Converting)
                 {
-                    Log($"[+] Converted item in {s.Elapsed.Milliseconds}ms");
+                    LogMsg = $"[+] Converted {ThisItem.SwapsFrom} to {ThisItem.SwapsTo} in {s.ElapsedMilliseconds}ms";
                     label3.Invoke(new Action(() => { label3.Text = "ON"; label3.ForeColor = Color.Lime; }));
                     global.CurrentConfig.swaplogs += ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",";
                 }
                 else
                 {
-                    Log($"[-] Reverted item in {s.Elapsed.Milliseconds}ms");
+                    LogMsg = $"[-] Reverted {ThisItem.SwapsFrom} to {ThisItem.SwapsTo} in {s.ElapsedMilliseconds}ms";
                     label3.Invoke(new Action(() => { label3.Text = "OFF"; label3.ForeColor = Color.Red; }));
-                    global.CurrentConfig.swaplogs = swaplogs.Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",", "");
+                    global.CurrentConfig.swaplogs = global.CurrentConfig.swaplogs.Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ",", "");
                 }
+                Log(LogMsg);
                 global.SaveConfig();
             }
             catch (Exception ex)
             {
-                Log($"Restart the swapper or refer to this error: {ex.Message} | {ex.StackTrace}");
+                Program.logger.LogError(ex.Message);
+                Log($"Please send this error in #help on the Pro Swapper Discord: {ex.Message} | {ex.StackTrace}");
             }
         }
 
@@ -106,7 +114,7 @@ namespace Pro_Swapper
                 {
                     if (asset.Search[i].Length < asset.Replace[i].Length)
                     {
-                        string error = "The replace length is longer than the search, pleaes make sure the search is greater than or equal to the replace length";
+                        string error = $"The replace length is longer than the search, please make sure the search is greater than or equal to the replace length ({asset.Replace[i]})";
                         MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         Log(error);
                         return;
@@ -120,10 +128,6 @@ namespace Pro_Swapper
         }
         private void ExitButton_Click(object sender, EventArgs e) => Close();
         private void button2_Click(object sender, EventArgs e) => WindowState = FormWindowState.Minimized;
-        private void swap_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-                global.FormMove(Handle);
-        }
+        private void swap_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
     }
 }

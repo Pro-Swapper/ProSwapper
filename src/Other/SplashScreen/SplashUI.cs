@@ -55,11 +55,7 @@ namespace Pro_Swapper.Splash
                 items.Controls.Add(picturebox);
             }
         }
-        private void ThemeCreator_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-                global.FormMove(Handle);
-        }
+        private void ThemeCreator_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
         private void button1_Click(object sender, EventArgs e) => Close();
         private void CustomSplash(object sender, EventArgs e)
         {

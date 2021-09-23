@@ -32,6 +32,7 @@ namespace Pro_Swapper
 		}
 		public static void SetState(string state, bool watching = false)
 		{
+			Program.logger.Log($"Set Discord RPC to {state}");
 			if (watching) 
 				state = "Watching " + state;
 

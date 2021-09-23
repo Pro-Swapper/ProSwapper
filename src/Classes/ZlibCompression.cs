@@ -1,5 +1,5 @@
 ﻿using System.IO;
-
+using Ionic.Zlib;
 namespace Pro_Swapper
 {
     public static class ByteCompression
@@ -8,7 +8,7 @@ namespace Pro_Swapper
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                using (Ionic.Zlib.ZlibStream zls = new Ionic.Zlib.ZlibStream(ms, Ionic.Zlib.CompressionMode.Decompress, Ionic.Zlib.CompressionLevel.BestCompression))
+                using (ZlibStream zls = new ZlibStream(ms, CompressionMode.Decompress, CompressionLevel.BestCompression))
                     zls.Write(input, 0, input.Length);
 
                 return ms.ToArray();
@@ -18,7 +18,7 @@ namespace Pro_Swapper
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                using (Ionic.Zlib.ZlibStream zls = new Ionic.Zlib.ZlibStream(ms, Ionic.Zlib.CompressionMode.Compress, Ionic.Zlib.CompressionLevel.BestCompression))
+                using (ZlibStream zls = new ZlibStream(ms, CompressionMode.Compress, CompressionLevel.BestCompression))
                     zls.Write(input, 0, input.Length);
 
                 return ms.ToArray();

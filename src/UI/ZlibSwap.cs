@@ -59,7 +59,11 @@ namespace Pro_Swapper
             }
 
         }
-        private void Log(string text) => logbox.Invoke(new Action(() => { logbox.Text += $"{text}{Environment.NewLine}"; logbox.ScrollToCaret(); }));
+        private void Log(string text) 
+        {
+            logbox.Invoke(new Action(() => { logbox.Text += $"{text}{Environment.NewLine}"; logbox.ScrollToCaret(); }));
+            Program.logger.Log(text);  
+         }
         private async void ButtonbgWorker(bool Converting)
         {
             try
@@ -67,31 +71,34 @@ namespace Pro_Swapper
                 ConvertB.Invoke(new Action(() => { ConvertB.Enabled = false; }));
                 RevertB.Invoke(new Action(() => { RevertB.Enabled = false; }));
                 label3.Invoke(new Action(() => { label3.Text = "Loading..."; label3.ForeColor = Color.White; }));
-
                 Stopwatch s = Stopwatch.StartNew();
+                Program.logger.Log($"(ZlibSwap.cs) (Converting = {Converting}) Starting to convert {this.Text}");
                 await Task.Run(() => SwapAsync(ThisItem, Converting));
                 s.Stop();
                 ConvertB.Invoke(new Action(() => { ConvertB.Enabled = true; }));
                 RevertB.Invoke(new Action(() => { RevertB.Enabled = true; }));
                 logbox.Invoke(new Action(() => { logbox.Clear(); }));
-                string swaplogs = global.CurrentConfig.swaplogs;
+                string LogMsg = string.Empty;
+
                 if (Converting)
                 {
-                    Log($"[+] Converted item in {s.Elapsed.Milliseconds}ms");
+                    LogMsg = $"[+] Converted {ThisItem.SwapsFrom} to {ThisItem.SwapsTo} in {s.ElapsedMilliseconds}ms";
                     label3.Invoke(new Action(() => { label3.Text = "ON"; label3.ForeColor = Color.Lime; }));
                     global.CurrentConfig.swaplogs += ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + " (Lobby),";
                 }
                 else
                 {
-                    Log($"[-] Reverted item in {s.Elapsed.Milliseconds}ms");
+                    LogMsg = $"[-] Reverted {ThisItem.SwapsFrom} to {ThisItem.SwapsTo} in {s.ElapsedMilliseconds}ms";
                     label3.Invoke(new Action(() => { label3.Text = "OFF"; label3.ForeColor = Color.Red; }));
-                    global.CurrentConfig.swaplogs = swaplogs.Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + " (Lobby),", "");
+                    global.CurrentConfig.swaplogs = global.CurrentConfig.swaplogs.Replace(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + " (Lobby),", "");
                 }
+                Log(LogMsg);
                 global.SaveConfig();
             }
             catch (Exception ex)
             {
-                Log($"Restart the swapper or refer to this error: {ex.Message} | {ex.StackTrace}");
+                Program.logger.LogError(ex.Message);
+                Log($"Please send this error in #help on the Pro Swapper Discord: {ex.Message} | {ex.StackTrace}");
             }
         }
 
@@ -126,11 +133,7 @@ namespace Pro_Swapper
         }
         private void ExitButton_Click(object sender, EventArgs e) => Close();
         private void button2_Click(object sender, EventArgs e) => WindowState = FormWindowState.Minimized;
-        private void swap_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-                global.FormMove(Handle);
-        }
+        private void swap_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
 
 
         public static string SearchString = null;
@@ -193,10 +196,9 @@ namespace Pro_Swapper
             var Provider = new DefaultFileProvider($"{PaksLocation}\\Pro Swapper Lobby", SearchOption.TopDirectoryOnly);
             Provider.Initialize(UsingFiles);
 
-            if (api.fAesKey == null)
-                api.fAesKey = api.AESKey;
+            
             //Load all aes keys for required files, cleaner in linq than doing a loop
-            Provider.UnloadedVfs.All(x => { Provider.SubmitKey(x.EncryptionKeyGuid, api.fAesKey); return true; });
+            Provider.UnloadedVfs.All(x => { Provider.SubmitKey(x.EncryptionKeyGuid, api.AESKey); return true; });
 
 
             List<FinalPastes> finalPastes = new List<FinalPastes>();
@@ -227,7 +229,7 @@ namespace Pro_Swapper
                     continue;
 
 
-                byte[] towrite = ZlibCompress(edited);
+                byte[] towrite = ByteCompression.Compress(edited);//Compress to zlib
 
                 towrite = SetLength(towrite, zlibblock.compressed);
 
@@ -249,18 +251,5 @@ namespace Pro_Swapper
 
             await Task.WhenAll(tasklist);
         }
-
-
-        public static byte[] ZlibCompress(byte[] input)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                using (ZlibStream zls = new ZlibStream(ms, CompressionMode.Compress, CompressionLevel.BestCompression))
-                    zls.Write(input, 0, input.Length);
-                
-                return ms.ToArray();
-            }
-        }
-
     }
 }

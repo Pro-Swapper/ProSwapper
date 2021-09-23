@@ -4,22 +4,28 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using System.Linq;
+using System.Drawing.Drawing2D;
+
 namespace Pro_Swapper
 {
     public partial class ThemeCreator : Form
     {
-        private Panel[] Panels { get; set; }
+        private Panel[] Panels = new Panel[4];
         public ThemeCreator()
         {
             InitializeComponent();
-            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 50, 50));
+            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 10, 10));
+            this.Paint += (sender, e) =>
+            {
+                Graphics g = e.Graphics;
+                GraphicsPath GP = new GraphicsPath();
+                GP.AddRectangle(Region.GetBounds(g));
+                g.DrawPath(new Pen(global.ChangeColorBrightness(BackColor, 0.15f)) { Width = 10f }, GP);
+            };
+            
             Panels = new Panel[4] { panel1, panel2, panel3, panel4 };
         }
-        private void ThemeCreator_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-                global.FormMove(Handle);
-        }
+        private void ThemeCreator_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
         private void button1_Click(object sender, EventArgs e)=> Close();
         private void button9_Click(object sender, EventArgs e)
         {

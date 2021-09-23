@@ -103,6 +103,16 @@ namespace Pro_Swapper.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ProSwapperLogo {
+            get {
+                object obj = ResourceManager.GetObject("ProSwapperLogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap top_left {
             get {
                 object obj = ResourceManager.GetObject("top_left", resourceCulture);

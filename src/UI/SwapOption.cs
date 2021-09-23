@@ -24,10 +24,7 @@ namespace Pro_Swapper
         //Either a swap option or style option
         private bool IsSwapOption = false;
 
-        private void ThemeCreator_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left) global.FormMove(Handle);
-        }
+        private void ThemeCreator_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
         private void ExitButton_Click(object sender, EventArgs e) => Close();
         private void AddItem(api.Item item)
         {
