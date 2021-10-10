@@ -107,20 +107,6 @@ namespace Pro_Swapper
             if (!EpicGamesLauncher.CloseFNPrompt())
                 return;
 
-            foreach (api.Asset asset in ThisItem.Asset)
-            {
-                //Check if replace is longer
-                for (int i = 0; i < asset.Search.Length; i++)
-                {
-                    if (asset.Search[i].Length < asset.Replace[i].Length)
-                    {
-                        string error = $"The replace length is longer than the search, please make sure the search is greater than or equal to the replace length ({asset.Replace[i]})";
-                        MessageBox.Show(error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        Log(error);
-                        return;
-                    }
-                }
-            }
             logbox.Clear();
             Log("Loading...");
             bool isconverting = ((BunifuFlatButton)(sender)).Text == "Convert";

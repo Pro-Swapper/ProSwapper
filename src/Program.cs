@@ -3,6 +3,8 @@ using System.IO;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Net;
+using System.Diagnostics;
+using System.Linq;
 namespace Pro_Swapper
 {
     static class Program
@@ -17,6 +19,13 @@ namespace Pro_Swapper
         {
             try
             {
+                //Kill duplicate Pro Swapper's
+                Process CurrentProc = Process.GetCurrentProcess();
+                foreach (Process proc in Process.GetProcessesByName(CurrentProc.ProcessName))
+                    if (proc.Id != CurrentProc.Id)
+                        proc.Kill();
+   
+
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Directory.CreateDirectory(global.ProSwapperFolder + "\\Config");

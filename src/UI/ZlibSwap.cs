@@ -231,8 +231,7 @@ namespace Pro_Swapper
 
                 byte[] towrite = ByteCompression.Compress(edited);//Compress to zlib
 
-                towrite = SetLength(towrite, zlibblock.compressed);
-
+                towrite = FillEnd(towrite, zlibblock.compressed.Length);
 #if DEBUG
                 //Logging stuff for devs hehe
                 File.WriteAllBytes($"Exports\\Edited_{smallname}.pak", edited);//Edited export

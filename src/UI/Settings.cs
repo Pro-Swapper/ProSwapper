@@ -122,15 +122,14 @@ namespace Pro_Swapper
             Action safeClose = delegate { Main.Mainform.Hide(); };
             Main.Mainform.Invoke(safeClose);
             Process fngame = null;
-            
+
             //Basically define fngame proc "searcher"
             while (fngame == null)
             {
+                Task.Delay(1000);
                 Process[] thisproc = Process.GetProcessesByName("FortniteClient-Win64-Shipping");
                 if (thisproc.Length > 0)
                         fngame = thisproc[0];
-
-                Thread.Sleep(1000);//Person probs gonna have the game opened for over 10 seconds yk yk
             }
 
             fngame.WaitForExit();
@@ -253,7 +252,11 @@ namespace Pro_Swapper
             {
                 if (a.ShowDialog() == DialogResult.OK)
                 {
-                    byte[] newbyte = Oodle.OodleClass.Compress(File.ReadAllBytes(a.FileName));
+                    byte[] file = File.ReadAllBytes(a.FileName);
+                  //  string Path1 = "/Game/Characters/Player/Female/Medium/Bodies/F_MED_Renegade_Skull/Materials/F_MED_Renegade_Skull.F_MED_Renegade_Skull";
+                   // string Path2 = "/Game/Characters/Player/Female/Medium/Heads/F_MED_ASN_Sarah_Head_01/Materials/F_MED_ASN_Sarah_Head_02.F_MED_ASN_Sarah_Head_02";
+                  //  Swap.ReplaceAnyLength(file, System.Text.Encoding.Default.GetBytes(Path1), System.Text.Encoding.Default.GetBytes(Path2));
+                    byte[] newbyte = Oodle.OodleClass.Compress(file);
                     File.WriteAllBytes(a.FileName + "_compressed.uasset", newbyte);
                 }
             }

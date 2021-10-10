@@ -16,12 +16,8 @@ namespace Pro_Swapper
         {
             const string ProSwapperPakFolder = ".ProSwapper";
             Directory.CreateDirectory(PaksLocation + $"\\{ProSwapperPakFolder}");
-            //Load the exporter
-            List<string> thesefiles = new List<string>();
-            foreach (var Asset in item.Asset)
-                thesefiles.Add(Path.GetFileNameWithoutExtension(Asset.UcasFile));
-
-            List<string> UsingFiles = thesefiles.Distinct().ToList();
+            List<string> UsingFiles = new List<string>();
+            UsingFiles.AddRange(item.Asset.Select(x => Path.GetFileNameWithoutExtension(x.UcasFile)).Distinct());
             if (UsingFiles.Count > 2)
             {
                 DialogResult result = MessageBox.Show("This swap modifies more than 2 files which can lead to kicking, continue?", "Continue the Swap?", MessageBoxButtons.YesNo);
@@ -55,68 +51,42 @@ namespace Pro_Swapper
                 }
             }
 
-
-
-
             var Provider = new DefaultFileProvider($"{PaksLocation}\\{ProSwapperPakFolder}", SearchOption.TopDirectoryOnly);
             Provider.Initialize(UsingFiles);
-
 
             //Load all aes keys for required files, cleaner in linq than doing a loop
             Provider.UnloadedVfs.All(x => { Provider.SubmitKey(x.EncryptionKeyGuid, api.AESKey);return true;});
 
-
             List<FinalPastes> finalPastes = new List<FinalPastes>();
             foreach (api.Asset asset in item.Asset)
             {
-               // string ucasfile = $"{PaksLocation}\\Pro_Swapper\\{asset.UcasFile}";
                 string ucasfile = $"{PaksLocation}\\{ProSwapperPakFolder}\\{asset.UcasFile}";
-
-                //Checking if file is readonly coz we wouldn't be able to do shit with it
                 File.SetAttributes(ucasfile, global.RemoveAttribute(File.GetAttributes(ucasfile), FileAttributes.ReadOnly));
-
-
                 byte[] exportasset = Fortnite.FortniteExport.ExportAsset(Provider, asset.UcasFile, asset.AssetPath);
-#if DEBUG
-                Directory.CreateDirectory("Exports");
+               // Directory.CreateDirectory("Exports");
 
                 string smallname = Path.GetFileName(asset.AssetPath);
-                File.WriteAllBytes($"Exports\\Exported_{smallname}.pak", exportasset);//Just simple export
-               // File.WriteAllBytes($"Exports\\RawExport_{smallname}.pak", RawExported);//Uncompress exported by CUE4Parse
-                
-#endif
-                //edit files and compress with oodle and replace
-                byte[] edited = EditAsset(exportasset, asset, Converting, out bool Compress);//Compressed edited path
-
-                if (!Compress)//File hasnt gotten any changes, no need to edit files that havent changed
-                    continue;
-
-
-                byte[] towrite = Oodle.OodleClass.Compress(edited);
-#if DEBUG
-                //Logging stuff for devs hehe
-                File.WriteAllBytes($"Exports\\Edited_{smallname}.pak", edited);//Edited export
-                File.WriteAllBytes($"Exports\\Compressed{smallname}.pak", towrite);//Compressed edited export
-
-#endif
-                finalPastes.Add(new FinalPastes(ucasfile, towrite, Fortnite.FortniteExport.Offset));
+               // File.WriteAllBytes($"Exports\\Exported_{smallname}.pak", exportasset);//Just simple export
+                if (EditAsset(ref exportasset, asset, Converting))
+                {
+                    //File.WriteAllBytes($"Exports\\Edited_{smallname}.pak", exportasset);//Edited export
+                    exportasset = Oodle.OodleClass.Compress(exportasset);
+                    //Logging stuff for devs hehe
+                   // File.WriteAllBytes($"Exports\\Compressed{smallname}.pak", exportasset);//Compressed edited export
+                    finalPastes.Add(new FinalPastes(ucasfile, exportasset, Fortnite.FortniteExport.Offset));
+                }
             }
             Provider.Dispose();
-            List<Task> tasklist = new List<Task>();
-            //Actually put into game files:
             foreach (FinalPastes pastes in finalPastes)
-                tasklist.Add(Task.Run(() => PasteInLocationBytes(pastes)));
-
-
-            await Task.WhenAll(tasklist);
+                PasteInLocationBytes(pastes);
         }
 
 
         public class FinalPastes
         {
-            public string ucasfile { get; set; }
-            public byte[] towrite { get; set; }
-            public long Offset { get; set; }
+            public string ucasfile { get; private set; }
+            public byte[] towrite { get; private set; }
+            public long Offset { get; private set; }
             public FinalPastes(string Ucasfile, byte[] ToWrite, long offset)
             {
                 ucasfile = Ucasfile;
@@ -144,15 +114,15 @@ namespace Pro_Swapper
 
                         if (Converting)
                         {
-                            //Search is in the byte array
-                            RealReplace = SameLength(searchB, replaceB);
+                        //Search is in the byte array
+                            RealReplace = FillEnd(replaceB, searchB.Length);
                             SearchIndex = IndexOfSequence(file, searchB);
                             if (SearchIndex == -1)//replace cannot be found so that means it is already swapped so skip it.
                                 continue;
                         }
                         else
                         {
-                        RealReplace = SameLength(replaceB, searchB);
+                        RealReplace = FillEnd(searchB, replaceB.Length);
                         ReplaceIndex = IndexOfSequence(file, replaceB);
                         if (ReplaceIndex == -1)//search cannot be found so that means it is already swapped so skip it.
                             continue;
@@ -166,28 +136,126 @@ namespace Pro_Swapper
             }
         }
 
-        
 
-        public static byte[] SameLength(byte[] search, byte[] replace)
+
+        public static bool EditAsset(ref byte[] file, api.Asset Asset, bool Converting)
         {
-            List<byte> result = new List<byte>(replace);
-            int difference = search.Length - replace.Length;
-            for (int i = 0; i < difference; i++)
-                result.Add(0);
+            using (MemoryStream stream = new MemoryStream(file))
+            {
+                bool Ready = false;
+                int ReplaceCount = Asset.Search.Length;
+                for (int i = 0; i < ReplaceCount; i++)
+                {
+                    byte[] searchB = ParseByteArray(Asset.Search[i]);
+                    byte[] replaceB = ParseByteArray(Asset.Replace[i]);
+
+                    int SearchOffset = IndexOfSequence(file, searchB);
+                    int ReplaceOffset = IndexOfSequence(file, replaceB);
+
+                    if (SearchOffset != -1 || ReplaceOffset != -1)
+                    {
+                        Ready = true;
+
+                        if (searchB.Length >= replaceB.Length)
+                        {
+                            replaceB = FillEnd(replaceB, searchB.Length);
+
+                            if (Converting)
+                            {
+                                stream.Position = SearchOffset;
+                                stream.Write(replaceB, 0, replaceB.Length);
+                                continue;
+                            }
+                            else
+                            {
+                                stream.Position = ReplaceOffset;
+                                stream.Write(searchB, 0, searchB.Length);
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            if (Converting)
+                            {
+                                stream.Position = SearchOffset;
+                                byte[] ConvertCheck = stream.ToArray();
+                                if (ConvertCheck[SearchOffset + 2] == Convert.ToByte(0))
+                                {
+                                    int SearchLengthWeHave = SearchOffset;
+                                    while (true)
+                                    {
+                                        if (Convert.ToByte(stream.ReadByte()) == 0)
+                                        {
+                                            SearchLengthWeHave++;
+                                        }
+                                        else
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    SearchLengthWeHave--;//Last char is to represent end of string in uasset
+                                    if (SearchLengthWeHave > replaceB.Length)
+                                    {
+                                        stream.Position = SearchOffset;
+                                        replaceB = FillEnd(replaceB, SearchLengthWeHave);
+                                        stream.Write(replaceB, 0, replaceB.Length);
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        searchB = FillEnd(searchB, SearchLengthWeHave);
+                                        byte[] tmp = ReplaceAnyLength(stream.ToArray(), searchB, replaceB);
+                                        stream.Position = 0;
+                                        stream.Write(tmp, 0, tmp.Length);
+                                        continue;
+                                    }
+                                }
+                                else
+                                {
+                                    byte[] tmp = ReplaceAnyLength(stream.ToArray(), searchB, replaceB);
+                                    stream.Position = 0;
+                                    stream.Write(tmp, 0, tmp.Length);
+                                    continue;
+                                }
 
 
+                                
+                            }
+                            else
+                            {
+                                //Just paste in the replace
+                                stream.Position = ReplaceOffset;
+                                stream.Write(FillEnd(searchB, replaceB.Length), 0, replaceB.Length);
+                                continue;
+                            }
+                        }
+                    }
+                }
+                file = stream.ToArray();
+                return Ready;
+            }
+        }
+
+        private static readonly byte[] FileEnd = new byte[] { 248, 112 };
+        public static byte[] ReplaceAnyLength(byte[] file, byte[] search, byte[] replace)
+        {
+            List<byte> File = new List<byte>(file);
+            
+            int SearchOffset = IndexOfSequence(file, search);//Get our search offset
+            File.RemoveRange(SearchOffset, search.Length);//Delete our search string
+            File.InsertRange(SearchOffset, replace);//Insert our new replace string
+            File[SearchOffset - 1] = Convert.ToByte(replace.Length);//Change the 1 byte int of the search length
+            File.RemoveRange(IndexOfSequence(File.ToArray(), FileEnd) - 245, replace.Length - search.Length);//Remove the difference in length
+
+            return File.ToArray();
+        }
+
+        public static byte[] FillEnd(byte[] buffer, int len)
+        {
+            List<byte> result = new List<byte>(buffer);
+            result.AddRange(Enumerable.Repeat((byte)0, len - buffer.Length));
             return result.ToArray();
         }
-        public static byte[] SetLength(byte[] search, byte[] longerbyte)
-        {
-            List<byte> result = new List<byte>(search);
-            int difference = longerbyte.Length - search.Length;
-            for (int i = 0; i < difference; i++)
-                result.Add(0);
-
-            return result.ToArray();
-        }
-        //private static byte[] OodleChar = global.HexToByte("8C");
         public static void PasteInLocationBytes(FinalPastes finalpaste)
         {
             //Define our pak editor stream
