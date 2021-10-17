@@ -14,7 +14,7 @@
   <PropertyGroup>
  <OutputType>WinExe</OutputType>
  <TargetFramework>net5.0-windows</TargetFramework>
- <Version>0.0.9.5</Version>
+ <Version>0.0.9.6</Version>
  <Company>Pro Swapper</Company>
  <Authors>Pro Swapper</Authors>
  <Product>Pro Swapper</Product>
@@ -25,7 +25,7 @@ https://proswapper.xyz</Description>
  <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
  <PackageProjectUrl>https://proswapper.xyz</PackageProjectUrl>
  <NeutralLanguage>en</NeutralLanguage>
- <PackageLicenseExpression></PackageLicenseExpression>
+ <PackageLicenseExpression>MIT License</PackageLicenseExpression>
  <PackageLicenseFile></PackageLicenseFile>
 </PropertyGroup>
 

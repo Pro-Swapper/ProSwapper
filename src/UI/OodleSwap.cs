@@ -68,7 +68,18 @@ namespace Pro_Swapper
                
                 Stopwatch s = Stopwatch.StartNew();
                 Program.logger.Log($"(OodleSwap.cs) (Converting = {Converting}) Starting to convert {this.Text}");
-                await Swap.SwapItem(ThisItem, Converting);
+                bool Swapped = Task.Run(() => Swap.SwapItem(ThisItem, Converting)).Result;
+
+                if (!Swapped)
+                {
+                    ConvertB.Invoke(new Action(() => { ConvertB.Enabled = true; }));
+                    RevertB.Invoke(new Action(() => { RevertB.Enabled = true; }));
+                    label3.Invoke(new Action(() => { label3.Text = "OFF"; label3.ForeColor = Color.Red; }));
+                    Log("[/] Canceled Swap");
+                    s.Stop();
+                    return;
+                }
+
                 s.Stop();
                 ConvertB.Invoke(new Action(() => { ConvertB.Enabled = true; }));
                 RevertB.Invoke(new Action(() => { RevertB.Enabled = true; }));

@@ -12,18 +12,13 @@ namespace Pro_Swapper
     public static class Swap
     {
         private static string PaksLocation = global.CurrentConfig.Paks;
-        public static async Task SwapItem(api.Item item, bool Converting)
+        public static bool SwapItem(api.Item item, bool Converting)
         {
             const string ProSwapperPakFolder = ".ProSwapper";
-            Directory.CreateDirectory(PaksLocation + $"\\{ProSwapperPakFolder}");
             List<string> UsingFiles = new List<string>();
             UsingFiles.AddRange(item.Asset.Select(x => Path.GetFileNameWithoutExtension(x.UcasFile)).Distinct());
-            if (UsingFiles.Count > 2)
-            {
-                DialogResult result = MessageBox.Show("This swap modifies more than 2 files which can lead to kicking, continue?", "Continue the Swap?", MessageBoxButtons.YesNo);
-                if (result == DialogResult.No)
-                    return;
-            }
+            if (!global.CanSwap(UsingFiles))
+                return false;
 
             foreach (string file in UsingFiles)
             {
@@ -66,10 +61,14 @@ namespace Pro_Swapper
                // Directory.CreateDirectory("Exports");
 
                 string smallname = Path.GetFileName(asset.AssetPath);
-               // File.WriteAllBytes($"Exports\\Exported_{smallname}.pak", exportasset);//Just simple export
+#if DEBUG
+                File.WriteAllBytes($"Exports\\Exported_{smallname}.pak", exportasset);//Just simple export
+#endif
                 if (EditAsset(ref exportasset, asset, Converting))
                 {
-                    //File.WriteAllBytes($"Exports\\Edited_{smallname}.pak", exportasset);//Edited export
+#if DEBUG
+                    File.WriteAllBytes($"Exports\\Edited_{smallname}.pak", exportasset);//Edited export
+#endif
                     exportasset = Oodle.OodleClass.Compress(exportasset);
                     //Logging stuff for devs hehe
                    // File.WriteAllBytes($"Exports\\Compressed{smallname}.pak", exportasset);//Compressed edited export
@@ -79,6 +78,8 @@ namespace Pro_Swapper
             Provider.Dispose();
             foreach (FinalPastes pastes in finalPastes)
                 PasteInLocationBytes(pastes);
+
+            return true;
         }
 
 
@@ -177,6 +178,7 @@ namespace Pro_Swapper
                         {
                             if (Converting)
                             {
+
                                 stream.Position = SearchOffset;
                                 byte[] ConvertCheck = stream.ToArray();
                                 if (ConvertCheck[SearchOffset + 2] == Convert.ToByte(0))
@@ -219,13 +221,16 @@ namespace Pro_Swapper
                                 }
 
 
-                                
+
                             }
                             else
                             {
                                 //Just paste in the replace
-                                stream.Position = ReplaceOffset;
-                                stream.Write(FillEnd(searchB, replaceB.Length), 0, replaceB.Length);
+                                if (ReplaceOffset != -1)
+                                {
+                                    stream.Position = ReplaceOffset;
+                                    stream.Write(FillEnd(searchB, replaceB.Length), 0, replaceB.Length);
+                                }
                                 continue;
                             }
                         }

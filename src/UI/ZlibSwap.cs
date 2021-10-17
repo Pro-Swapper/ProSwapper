@@ -73,7 +73,18 @@ namespace Pro_Swapper
                 label3.Invoke(new Action(() => { label3.Text = "Loading..."; label3.ForeColor = Color.White; }));
                 Stopwatch s = Stopwatch.StartNew();
                 Program.logger.Log($"(ZlibSwap.cs) (Converting = {Converting}) Starting to convert {this.Text}");
-                await Task.Run(() => SwapAsync(ThisItem, Converting));
+                bool Swapped = Task.Run(() => SwapZlib(ThisItem, Converting)).Result;
+
+                if (!Swapped)
+                {
+                    ConvertB.Invoke(new Action(() => { ConvertB.Enabled = true; }));
+                    RevertB.Invoke(new Action(() => { RevertB.Enabled = true; }));
+                    label3.Invoke(new Action(() => { label3.Text = "OFF"; label3.ForeColor = Color.Red; }));
+                    Log("[/] Canceled Swap");
+                    s.Stop();
+                    return;
+                }
+
                 s.Stop();
                 ConvertB.Invoke(new Action(() => { ConvertB.Enabled = true; }));
                 RevertB.Invoke(new Action(() => { RevertB.Enabled = true; }));
@@ -158,20 +169,22 @@ namespace Pro_Swapper
 
 
 
-        public static async Task SwapAsync(api.Item item, bool Converting)
+        public static bool SwapZlib(api.Item item, bool Converting)
         {
+            const string ProSwapperPakFolder = "Pro Swapper Lobby";
             string PaksLocation = global.CurrentConfig.Paks;
-            
             //Load the exporter
             List<string> thesefiles = new List<string>();
                 foreach (var Asset in item.Asset)
                     thesefiles.Add(Path.GetFileNameWithoutExtension(Asset.UcasFile));
 
             List<string> UsingFiles = thesefiles.Distinct().ToList();
+            if (!global.CanSwap(UsingFiles))
+                return false;
 
             foreach (string file in UsingFiles)
             {
-                string BaseFileName = $"{PaksLocation}\\Pro Swapper Lobby\\{file}";
+                string BaseFileName = $"{PaksLocation}\\{ProSwapperPakFolder}\\{file}";
 
 
                 //Check if it may be old game version
@@ -183,7 +196,7 @@ namespace Pro_Swapper
 
                 if (!File.Exists(BaseFileName + ".pak"))
                 {
-                    Directory.CreateDirectory(PaksLocation + "\\Pro Swapper Lobby");
+                    Directory.CreateDirectory(PaksLocation + $"\\{ProSwapperPakFolder}");
                     File.Copy($"{PaksLocation}\\{file}.sig", BaseFileName + ".sig", true);
                     File.Copy($"{PaksLocation}\\{file}.utoc", BaseFileName + ".utoc", true);
                     File.Copy($"{PaksLocation}\\{file}.ucas", BaseFileName + ".ucas", true);
@@ -193,7 +206,7 @@ namespace Pro_Swapper
                 
             }
 
-            var Provider = new DefaultFileProvider($"{PaksLocation}\\Pro Swapper Lobby", SearchOption.TopDirectoryOnly);
+            var Provider = new DefaultFileProvider($"{PaksLocation}\\{ProSwapperPakFolder}", SearchOption.TopDirectoryOnly);
             Provider.Initialize(UsingFiles);
 
             
@@ -204,7 +217,7 @@ namespace Pro_Swapper
             List<FinalPastes> finalPastes = new List<FinalPastes>();
             foreach (api.Asset asset in item.Asset)
               {
-                string ucasfile = $"{PaksLocation}\\Pro Swapper Lobby\\{asset.UcasFile}";
+                string ucasfile = $"{PaksLocation}\\{ProSwapperPakFolder}\\{asset.UcasFile}";
 
                 //Checking if file is readonly coz we wouldn't be able to do shit with it
                 File.SetAttributes(ucasfile, global.RemoveAttribute(File.GetAttributes(ucasfile), FileAttributes.ReadOnly));
@@ -243,12 +256,10 @@ namespace Pro_Swapper
             }
 
             Provider.Dispose();
-            List<Task> tasklist = new List<Task>();
-            //Actually put into game files:
             foreach (FinalPastes pastes in finalPastes)
-                tasklist.Add(Task.Run(() => PasteInLocationBytes(pastes)));
+                PasteInLocationBytes(pastes);
 
-            await Task.WhenAll(tasklist);
+            return true;
         }
     }
 }

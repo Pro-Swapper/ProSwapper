@@ -24,22 +24,22 @@ namespace Pro_Swapper
         {
             public List<InstallationList> InstallationList { get; set; }
         }
-        public static void FindPakFiles()
+        public static bool FindPakFiles()
         {
-            if (File.Exists(LauncherJson))
+            try
             {
-                try
+                if (File.Exists(LauncherJson))
                 {
+
                     Root launcherdata = JsonConvert.DeserializeObject<Root>(File.ReadAllText(LauncherJson));
                     string InstallLocation = launcherdata.InstallationList.First(x => x.AppName == "Fortnite").InstallLocation;
                     global.CurrentConfig.Paks = InstallLocation + @"\FortniteGame\Content\Paks";
                     global.SaveConfig();
-                }
-                catch
-                {
-                    MessageBox.Show("Could not find your pak files! Please select them manually!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return true;
                 }
             }
+            catch { }
+            return false;
         }
 
 

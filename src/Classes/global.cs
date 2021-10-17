@@ -65,6 +65,38 @@ namespace Pro_Swapper
             }
         }
 
+        public static bool CanSwap(List<string> UsingFiles)
+        {
+            Directory.CreateDirectory(CurrentConfig.Paks + $"\\Pro Swapper Lobby");
+            Directory.CreateDirectory(CurrentConfig.Paks + $"\\.ProSwapper");
+            if (CurrentConfig.AntiKick)
+            {
+                List<string> files = Directory.GetFiles($"{CurrentConfig.Paks}\\.ProSwapper", "*.pak").ToList();
+                List<string> filesLobby = Directory.GetFiles($"{CurrentConfig.Paks}\\Pro Swapper Lobby", "*.pak").ToList();
+                files = files.Select(x => Path.GetFileNameWithoutExtension(x)).ToList();
+                filesLobby = filesLobby.Select(x => Path.GetFileNameWithoutExtension(x)).ToList();
+                files.AddRange(filesLobby);
+                files.AddRange(UsingFiles);
+                
+                if (files.Distinct().Count() > 2)
+                {
+                    DialogResult result = MessageBox.Show("Converting this next swap will kick you out of Fortnite. Would you like to revert your previous swap(s) and convert this swap?", "Revert All and Continue Swap?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (result == DialogResult.Yes)
+                    {
+                        Lobby.RevertAllLobbySwaps(true);
+                        Settings.RevertAllSwaps();
+                        CurrentConfig.swaplogs = "";
+                        SaveConfig();
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+                return true;
+            }
+            else
+                return true;
+        }
 
         public static string GetPaksList
         {
@@ -166,6 +198,7 @@ namespace Pro_Swapper
             public double LobbyLastOpened { get; set; }
             public string swaplogs { get; set; } = "";
             public string ManualAESKey { get; set; } = "";
+            public bool AntiKick { get; set; } = true;
             public API.api.AESSource AESSource { get; set; } = API.api.AESSource.FortniteAPIV1;
             }
         #endregion

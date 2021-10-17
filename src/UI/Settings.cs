@@ -85,7 +85,6 @@ namespace Pro_Swapper
         }
         private void SettingsForm_Load(object sender, EventArgs e)
         {
-            
             paksBox.Text = global.CurrentConfig.Paks;
             ApplyTheme(this.Controls);
             ApplyTheme(groupBox1.Controls);
@@ -93,7 +92,7 @@ namespace Pro_Swapper
             button1.BackColor = this.BackColor;
             AesKeySourceComboBox.DataSource = Enum.GetNames(typeof(AESSource));
             AesKeySourceComboBox.Text = global.CurrentConfig.AESSource.ToString();
-
+            anitkickbox.Checked = global.CurrentConfig.AntiKick;
             if (global.CurrentConfig.AESSource == AESSource.Manual)
             {
                 
@@ -117,7 +116,7 @@ namespace Pro_Swapper
             notifyIcon1.Icon = Main.appIcon;
             notifyIcon1.Text = "Pro Swapper";
             notifyIcon1.Click += NotifyIcon1_Click;
-            global.OpenUrl($"{epicfnpath}launch");
+            global.OpenUrl($"com.epicgames.launcher://apps/fn%3A4fe75bbc5a674f4f9b356b5c90567da5%3AFortnite?action=launch&silent=true");
             this.Hide();
             Action safeClose = delegate { Main.Mainform.Hide(); };
             Main.Mainform.Invoke(safeClose);
@@ -289,6 +288,12 @@ namespace Pro_Swapper
         private void button3_Click(object sender, EventArgs e)
         {
             Process.Start("explorer.exe", global.ProSwapperFolder);
+        }
+
+        private void anitkickbox_CheckedChanged(object sender, EventArgs e)
+        {
+            global.CurrentConfig.AntiKick = anitkickbox.Checked;
+            global.SaveConfig();
         }
     }
 }

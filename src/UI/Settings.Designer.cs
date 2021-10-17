@@ -53,6 +53,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button3 = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.anitkickbox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.folder)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -373,6 +374,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.anitkickbox);
             this.groupBox1.Controls.Add(this.button3);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.button6);
@@ -423,6 +425,18 @@
             this.checkBox1.Text = "Show Advanced Settings";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // anitkickbox
+            // 
+            this.anitkickbox.AutoSize = true;
+            this.anitkickbox.ForeColor = System.Drawing.Color.White;
+            this.anitkickbox.Location = new System.Drawing.Point(248, 65);
+            this.anitkickbox.Name = "anitkickbox";
+            this.anitkickbox.Size = new System.Drawing.Size(264, 19);
+            this.anitkickbox.TabIndex = 128;
+            this.anitkickbox.Text = "Limit Number of Pak Swaps (Recommended)";
+            this.anitkickbox.UseVisualStyleBackColor = true;
+            this.anitkickbox.CheckedChanged += new System.EventHandler(this.anitkickbox_CheckedChanged);
             // 
             // Settings
             // 
@@ -486,5 +500,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.CheckBox anitkickbox;
     }
 }

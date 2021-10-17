@@ -57,7 +57,6 @@ namespace Pro_Swapper
                 global.ItemsBG = theme[1];
                 global.Button = theme[2];
                 global.TextColor = theme[3];
-                RPC.rpctimestamp = Timestamps.Now;
                 RPC.InitializeRPC();
 
                 Icon = appIcon;

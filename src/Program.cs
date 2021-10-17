@@ -40,19 +40,18 @@ namespace Pro_Swapper
                 if (!File.Exists(global.CurrentConfig.Paks + @"\pakchunk0-WindowsClient.sig"))
                 {
                     logger.Log("Fortnite paks have not been found! Searching for paks now");
-                    EpicGamesLauncher.FindPakFiles();
-                    if (global.CurrentConfig.Paks.Contains("Paks"))
+                    if (EpicGamesLauncher.FindPakFiles() && global.CurrentConfig.Paks.Contains("Paks"))
                     {
                         logger.Log($"Found paks folder -> {global.CurrentConfig.Paks}");
                     }
                     else
                     {
                         logger.Log($"ERROR -> Paks folder could not be found!");
+                        MessageBox.Show("Your Fortnite install location could not be found! Please make sure you have Fortnite installed!","Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
                 logger.Log(global.GetPaksList);
-                    
-
+                   
                 if (!File.Exists(oodledll))
                 {
                     if (EpicGamesLauncher.GetOodleDll(out string oodleFilePath))
