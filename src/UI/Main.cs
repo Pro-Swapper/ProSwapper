@@ -136,5 +136,6 @@ namespace Pro_Swapper
         private void button2_Click(object sender, EventArgs e)=> WindowState = FormWindowState.Minimized;
 
         private void bunifuFlatButton6_Click(object sender, EventArgs e)=> new Settings().Show();
+
     }
 }

@@ -59,11 +59,11 @@ namespace Pro_Swapper
             }
 
         }
-        private void Log(string text) 
+        private void Log(string text)
         {
             logbox.Invoke(new Action(() => { logbox.Text += $"{text}{Environment.NewLine}"; logbox.ScrollToCaret(); }));
-            Program.logger.Log(text);  
-         }
+            Program.logger.Log(text);
+        }
         private async void ButtonbgWorker(bool Converting)
         {
             try
@@ -144,7 +144,7 @@ namespace Pro_Swapper
         }
         private void ExitButton_Click(object sender, EventArgs e) => Close();
         private void button2_Click(object sender, EventArgs e) => WindowState = FormWindowState.Minimized;
-        private void swap_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
+        private void swap_MouseDown(object sender, MouseEventArgs e) => global.MoveForm(e, Handle);
 
 
         public static string SearchString = null;
@@ -175,8 +175,8 @@ namespace Pro_Swapper
             string PaksLocation = global.CurrentConfig.Paks;
             //Load the exporter
             List<string> thesefiles = new List<string>();
-                foreach (var Asset in item.Asset)
-                    thesefiles.Add(Path.GetFileNameWithoutExtension(Asset.UcasFile));
+            foreach (var Asset in item.Asset)
+                thesefiles.Add(Path.GetFileNameWithoutExtension(Asset.UcasFile));
 
             List<string> UsingFiles = thesefiles.Distinct().ToList();
             if (!global.CanSwap(UsingFiles))
@@ -203,55 +203,70 @@ namespace Pro_Swapper
                     File.Copy($"{PaksLocation}\\{file}.pak", BaseFileName + ".pak", true);
                 }
 
-                
+
             }
 
             var Provider = new DefaultFileProvider($"{PaksLocation}\\{ProSwapperPakFolder}", SearchOption.TopDirectoryOnly);
             Provider.Initialize(UsingFiles);
 
-            
+
             //Load all aes keys for required files, cleaner in linq than doing a loop
             Provider.UnloadedVfs.All(x => { Provider.SubmitKey(x.EncryptionKeyGuid, api.AESKey); return true; });
 
 
             List<FinalPastes> finalPastes = new List<FinalPastes>();
             foreach (api.Asset asset in item.Asset)
-              {
+            {
                 string ucasfile = $"{PaksLocation}\\{ProSwapperPakFolder}\\{asset.UcasFile}";
 
                 //Checking if file is readonly coz we wouldn't be able to do shit with it
                 File.SetAttributes(ucasfile, global.RemoveAttribute(File.GetAttributes(ucasfile), FileAttributes.ReadOnly));
 
-                if (Converting)
-                    SearchString = asset.Search[0];
-                else
-                    SearchString = asset.Replace[0];
-                //Use this to define zlibblock var
-                Fortnite.FortniteExport.ExportAsset(Provider, asset.UcasFile, asset.AssetPath);
-#if DEBUG
-                Directory.CreateDirectory("Exports");
+                foreach (string srch in asset.Search)
+                {
+                    SearchString = srch;
 
-                string smallname = Path.GetFileName(asset.AssetPath);
-                File.WriteAllBytes($"Exports\\Exported_{smallname}.pak", zlibblock.decompressed);//Just simple export
-                                                                                                   // File.WriteAllBytes($"Exports\\RawExport_{smallname}.pak", RawExported);//Uncompress exported by CUE4Parse
+                    Fortnite.FortniteExport.ExportAsset(Provider, asset.UcasFile, asset.AssetPath);
 
-#endif
-                //edit files and compress with oodle and replace
-                byte[] edited = EditAsset(zlibblock.decompressed, asset, Converting, out bool Compress);//Compressed edited path
-                if (!Compress)//File hasnt gotten any changes, no need to edit files that havent changed
-                    continue;
+                    byte[] edited = EditAsset(zlibblock.decompressed, asset, Converting, out bool Compress);//Compressed edited path
+
+                    byte[] towrite = ByteCompression.Compress(edited);//Compress to zlib
+
+                    towrite = FillEnd(towrite, zlibblock.compressed.Length);
+
+                    finalPastes.Add(new FinalPastes(ucasfile, towrite, zlibblock.BlockStart));
+                }
+
+                //                if (Converting)
+                //                    SearchString = asset.Search[0];
+                //                else
+                //                    SearchString = asset.Replace[0];
+                //                //Use this to define zlibblock var
+                //                Fortnite.FortniteExport.ExportAsset(Provider, asset.UcasFile, asset.AssetPath);
+                //#if DEBUG
+                //                Directory.CreateDirectory("Exports");
+
+                //                string smallname = Path.GetFileName(asset.AssetPath);
+                //                File.WriteAllBytes($"Exports\\Exported_{smallname}.pak", zlibblock.decompressed);//Just simple export
+                //                                                                                                 // File.WriteAllBytes($"Exports\\RawExport_{smallname}.pak", RawExported);//Uncompress exported by CUE4Parse
+
+                //#endif
+                //                //edit files and compress with oodle and replace
+                //                byte[] edited = EditAsset(zlibblock.decompressed, asset, Converting, out bool Compress);//Compressed edited path
+                //                if (!Compress)//File hasnt gotten any changes, no need to edit files that havent changed
+                //                    continue;
 
 
-                byte[] towrite = ByteCompression.Compress(edited);//Compress to zlib
+                //                byte[] towrite = ByteCompression.Compress(edited);//Compress to zlib
 
-                towrite = FillEnd(towrite, zlibblock.compressed.Length);
-#if DEBUG
-                //Logging stuff for devs hehe
-                File.WriteAllBytes($"Exports\\Edited_{smallname}.pak", edited);//Edited export
-                File.WriteAllBytes($"Exports\\Compressed{smallname}.pak", towrite);//Compressed edited export
+                //                towrite = FillEnd(towrite, zlibblock.compressed.Length);
+                //#if DEBUG
+                //                //Logging stuff for devs hehe
+                //                File.WriteAllBytes($"Exports\\Edited_{smallname}.pak", edited);//Edited export
+                //                File.WriteAllBytes($"Exports\\Compressed{smallname}.pak", towrite);//Compressed edited export
 
-#endif
-                finalPastes.Add(new FinalPastes(ucasfile, towrite, zlibblock.BlockStart));
+                //#endif
+                //                finalPastes.Add(new FinalPastes(ucasfile, towrite, zlibblock.BlockStart));
 
             }
 
