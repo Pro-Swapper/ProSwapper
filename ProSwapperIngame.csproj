@@ -1,0 +1,123 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <LangVersion>preview</LangVersion>
+    <OutputType>WinExe</OutputType>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>Pro_Swapper</AssemblyName>
+    <RootNamespace>Pro_Swapper</RootNamespace>
+    <StartupObject>Pro_Swapper.Program</StartupObject>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <PropertyGroup>
+ <OutputType>WinExe</OutputType>
+ <TargetFramework>net6.0-windows</TargetFramework>
+ <Version>0.0.9.7</Version>
+ <Company>Pro Swapper</Company>
+ <Authors>Pro Swapper</Authors>
+ <Product>Pro Swapper</Product>
+ <Description>Pro Swapper the BEST Fortnite Skin Swapper
+https://proswapper.xyz</Description>
+ <Copyright>Copyright © 2019 - 2022</Copyright>
+ <SignAssembly>false</SignAssembly>
+ <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+ <PackageProjectUrl>https://proswapper.xyz</PackageProjectUrl>
+ <NeutralLanguage>en</NeutralLanguage>
+ <PackageLicenseExpression>MIT License</PackageLicenseExpression>
+ <PackageLicenseFile></PackageLicenseFile>
+</PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\</OutputPath>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\</OutputPath>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\</OutputPath>
+    <Optimize>true</Optimize>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\</OutputPath>
+    <Optimize>true</Optimize>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="bin\**" />
+    <Compile Remove="CUE4Parse\CUE4Parse-Conversion\**" />
+    <Compile Remove="CUE4Parse\CUE4Parse-Fortnite\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <EmbeddedResource Remove="CUE4Parse\CUE4Parse-Conversion\**" />
+    <EmbeddedResource Remove="CUE4Parse\CUE4Parse-Fortnite\**" />
+    <None Remove="bin\**" />
+    <None Remove="CUE4Parse\CUE4Parse-Conversion\**" />
+    <None Remove="CUE4Parse\CUE4Parse-Fortnite\**" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Remove="src\Classes\Items.cs" />
+    <Compile Remove="src\UI\swap.cs" />
+    <Compile Remove="src\UI\swap.Designer.cs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Remove="CUE4Parse\.gitattributes" />
+    <None Remove="CUE4Parse\.gitignore" />
+    <None Remove="CUE4Parse\README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DiscordRichPresence" Version="1.0.175" />
+    <PackageReference Include="DotNetZip" Version="1.15.0" />
+    <PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.2.6" />
+    <PackageReference Include="LZMA-SDK" Version="19.0.0" />
+    <PackageReference Include="MessagePack" Version="2.3.75" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="src\Other\Map\Map.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\UI\SwapOption.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="src\UI\OodleSwap.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+
+</Project>

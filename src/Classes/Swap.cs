@@ -46,11 +46,11 @@ namespace Pro_Swapper
                 }
             }
 
-            var Provider = new DefaultFileProvider($"{PaksLocation}\\{ProSwapperPakFolder}", SearchOption.TopDirectoryOnly);
-            Provider.Initialize(UsingFiles);
+            var Provider = new DefaultFileProvider($"{PaksLocation}\\{ProSwapperPakFolder}", SearchOption.TopDirectoryOnly, false, new CUE4Parse.UE4.Versions.VersionContainer(CUE4Parse.UE4.Versions.EGame.GAME_UE5_LATEST));
+            Provider.Initialize();
 
             //Load all aes keys for required files, cleaner in linq than doing a loop
-            Provider.UnloadedVfs.All(x => { Provider.SubmitKey(x.EncryptionKeyGuid, api.AESKey);return true;});
+            Provider.UnloadedVfs.All(x => { Provider.SubmitKey(x.EncryptionKeyGuid, api.AESKey); return true; });
 
             List<FinalPastes> finalPastes = new List<FinalPastes>();
             foreach (api.Asset asset in item.Asset)
@@ -58,7 +58,7 @@ namespace Pro_Swapper
                 string ucasfile = $"{PaksLocation}\\{ProSwapperPakFolder}\\{asset.UcasFile}";
                 File.SetAttributes(ucasfile, global.RemoveAttribute(File.GetAttributes(ucasfile), FileAttributes.ReadOnly));
                 byte[] exportasset = Fortnite.FortniteExport.ExportAsset(Provider, asset.UcasFile, asset.AssetPath);
-               // Directory.CreateDirectory("Exports");
+                // Directory.CreateDirectory("Exports");
 
                 string smallname = Path.GetFileName(asset.AssetPath);
 #if DEBUG
@@ -71,7 +71,7 @@ namespace Pro_Swapper
 #endif
                     exportasset = Oodle.OodleClass.Compress(exportasset);
                     //Logging stuff for devs hehe
-                   // File.WriteAllBytes($"Exports\\Compressed{smallname}.pak", exportasset);//Compressed edited export
+                    // File.WriteAllBytes($"Exports\\Compressed{smallname}.pak", exportasset);//Compressed edited export
                     finalPastes.Add(new FinalPastes(ucasfile, exportasset, Fortnite.FortniteExport.Offset));
                 }
             }
@@ -104,35 +104,35 @@ namespace Pro_Swapper
             Compress = false;
             using (MemoryStream stream = new MemoryStream(file))
             {
-                    int NumberOfReplaces = asset.Search.Length;
-                    for (int i = 0; i < NumberOfReplaces; i++)
+                int NumberOfReplaces = asset.Search.Length;
+                for (int i = 0; i < NumberOfReplaces; i++)
+                {
+                    byte[] searchB = ParseByteArray(asset.Search[i]);
+                    byte[] replaceB = ParseByteArray(asset.Replace[i]);
+                    byte[] RealReplace;
+                    int ReplaceIndex = 0, SearchIndex = 0;
+
+
+                    if (Converting)
                     {
-                        byte[] searchB = ParseByteArray(asset.Search[i]);
-                        byte[] replaceB = ParseByteArray(asset.Replace[i]);
-                        byte[] RealReplace;
-                        int ReplaceIndex = 0, SearchIndex = 0;
-
-
-                        if (Converting)
-                        {
                         //Search is in the byte array
-                            RealReplace = FillEnd(replaceB, searchB.Length);
-                            SearchIndex = IndexOfSequence(file, searchB);
-                            if (SearchIndex == -1)//replace cannot be found so that means it is already swapped so skip it.
-                                continue;
-                        }
-                        else
-                        {
+                        RealReplace = FillEnd(replaceB, searchB.Length);
+                        SearchIndex = IndexOfSequence(file, searchB);
+                        if (SearchIndex == -1)//replace cannot be found so that means it is already swapped so skip it.
+                            continue;
+                    }
+                    else
+                    {
                         RealReplace = FillEnd(searchB, replaceB.Length);
                         ReplaceIndex = IndexOfSequence(file, replaceB);
                         if (ReplaceIndex == -1)//search cannot be found so that means it is already swapped so skip it.
                             continue;
-                        }
-                        Compress = true;//Change has been made so compress it
-
-                        stream.Position = Math.Max(SearchIndex, ReplaceIndex);
-                        stream.Write(RealReplace, 0, RealReplace.Length);
                     }
+                    Compress = true;//Change has been made so compress it
+
+                    stream.Position = Math.Max(SearchIndex, ReplaceIndex);
+                    stream.Write(RealReplace, 0, RealReplace.Length);
+                }
                 return stream.ToArray();
             }
         }
@@ -245,7 +245,7 @@ namespace Pro_Swapper
         public static byte[] ReplaceAnyLength(byte[] file, byte[] search, byte[] replace)
         {
             List<byte> File = new List<byte>(file);
-            
+
             int SearchOffset = IndexOfSequence(file, search);//Get our search offset
             File.RemoveRange(SearchOffset, search.Length);//Delete our search string
             File.InsertRange(SearchOffset, replace);//Insert our new replace string
@@ -275,7 +275,7 @@ namespace Pro_Swapper
             }
         }
         private static byte[] ParseByteArray(string encodedtxt)
-            {
+        {
             if (encodedtxt.StartsWith("hex="))
                 return global.HexToByte(encodedtxt);
             else//eww using text but atleast we can read it

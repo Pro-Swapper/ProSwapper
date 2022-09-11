@@ -4,7 +4,6 @@ using System.IO;
 using System.Diagnostics;
 using System.Drawing;
 using Pro_Swapper.API;
-using Bunifu.Framework.UI;
 using System.Threading.Tasks;
 namespace Pro_Swapper
 {
@@ -30,14 +29,10 @@ namespace Pro_Swapper
 
             ConvertB.ForeColor = global.TextColor;
             ConvertB.BackColor = global.Button;
-            ConvertB.Activecolor = global.Button;
-            ConvertB.Normalcolor = global.Button;
 
 
             RevertB.ForeColor = global.TextColor;
             RevertB.BackColor = global.Button;
-            RevertB.Activecolor = global.Button;
-            RevertB.Normalcolor = global.Button;
 
             logbox.ForeColor = global.TextColor;
             if (global.CurrentConfig.swaplogs.Contains(ThisItem.SwapsFrom + " To " + ThisItem.SwapsTo + ","))
@@ -52,12 +47,12 @@ namespace Pro_Swapper
                 if (ThisItem.Note != null) MessageBox.Show("Warning for " + ThisItem.SwapsTo + ": " + ThisItem.Note, ThisItem.SwapsFrom + " - " + ThisItem.SwapsTo, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-        private void Log(string text) 
+        private void Log(string text)
         {
             logbox.Invoke(new Action(() => { logbox.Text += $"{text}{Environment.NewLine}"; logbox.ScrollToCaret(); }));
             Program.logger.Log(text);
         }
-        
+
         private async void ButtonbgWorker(bool Converting)
         {
             try
@@ -65,7 +60,7 @@ namespace Pro_Swapper
                 ConvertB.Invoke(new Action(() => { ConvertB.Enabled = false; }));
                 RevertB.Invoke(new Action(() => { RevertB.Enabled = false; }));
                 label3.Invoke(new Action(() => { label3.Text = "Loading..."; label3.ForeColor = Color.White; }));
-               
+
                 Stopwatch s = Stopwatch.StartNew();
                 Program.logger.Log($"(OodleSwap.cs) (Converting = {Converting}) Starting to convert {this.Text}");
                 bool Swapped = Task.Run(() => Swap.SwapItem(ThisItem, Converting)).Result;
@@ -120,11 +115,11 @@ namespace Pro_Swapper
 
             logbox.Clear();
             Log("Loading...");
-            bool isconverting = ((BunifuFlatButton)(sender)).Text == "Convert";
+            bool isconverting = ((Button)(sender)).Text == "Convert";
             Task.Run(() => ButtonbgWorker(isconverting));
         }
         private void ExitButton_Click(object sender, EventArgs e) => Close();
         private void button2_Click(object sender, EventArgs e) => WindowState = FormWindowState.Minimized;
-        private void swap_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
+        private void swap_MouseDown(object sender, MouseEventArgs e) => global.MoveForm(e, Handle);
     }
 }

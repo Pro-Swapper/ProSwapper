@@ -9,7 +9,6 @@ using System.Security.Cryptography;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
-using Pro_Swapper.CID_Selector;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -18,9 +17,6 @@ namespace Pro_Swapper
     public class global
     {
         public static string version = Assembly.GetExecutingAssembly().GetName().Version.ToString().Substring(2, 5);
-
-        //For lobby swapper
-        public static SkinSearch.Root allskins = null;
 
         private const string ImgurCDN = "https://i.imgur.com/";
         public static Image ItemIcon(string url)
@@ -34,9 +30,9 @@ namespace Pro_Swapper
                     return SaveImage(url, path, ImageFormat.Png);
                 else
                 {
-                        return Image.FromFile(path);
+                    return Image.FromFile(path);
                 }
-                   
+
 
             }
             else
@@ -77,13 +73,12 @@ namespace Pro_Swapper
                 filesLobby = filesLobby.Select(x => Path.GetFileNameWithoutExtension(x)).ToList();
                 files.AddRange(filesLobby);
                 files.AddRange(UsingFiles);
-                
+
                 if (files.Distinct().Count() > 2)
                 {
                     DialogResult result = MessageBox.Show("Converting this next swap will kick you out of Fortnite. Would you like to revert your previous swap(s) and convert this swap?", "Revert All and Continue Swap?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (result == DialogResult.Yes)
                     {
-                        Lobby.RevertAllLobbySwaps(true);
                         Settings.RevertAllSwaps();
                         CurrentConfig.swaplogs = "";
                         SaveConfig();
@@ -143,7 +138,7 @@ namespace Pro_Swapper
             {
                 case "false": return "0";
                 case "true": return "1";
-                default:return null;
+                default: return null;
             }
         }
 
@@ -153,10 +148,10 @@ namespace Pro_Swapper
         {
             if (Process.GetCurrentProcess().ProcessName.Contains("Pro_Swapper"))
                 return false;
-            else 
+            else
                 return true;
         }
-            
+
         public static Color MainMenu, Button, TextColor, ItemsBG;
 
         public static void OpenUrl(string url)
@@ -178,29 +173,29 @@ namespace Pro_Swapper
         private static string ConfigPath => ProSwapperFolder + @"Config\" + version + "_config.json";
 
         public static ConfigObj CurrentConfig;
-            public static void InitConfig()
-            {
-                if (!File.Exists(ConfigPath))
-                    File.WriteAllText(ConfigPath, ToJson(new ConfigObj()));
-                CurrentConfig = FromJSON<ConfigObj>(File.ReadAllText(ConfigPath));
-            }
-            public static void SaveConfig() => File.WriteAllText(ConfigPath, ToJson(CurrentConfig));
-            public static T FromJSON<T>(string json) => JsonConvert.DeserializeObject<T>(json);
-            public static string ToJson(Object config) => JsonConvert.SerializeObject(config);
+        public static void InitConfig()
+        {
+            if (!File.Exists(ConfigPath))
+                File.WriteAllText(ConfigPath, ToJson(new ConfigObj()));
+            CurrentConfig = FromJSON<ConfigObj>(File.ReadAllText(ConfigPath));
+        }
+        public static void SaveConfig() => File.WriteAllText(ConfigPath, ToJson(CurrentConfig));
+        public static T FromJSON<T>(string json) => JsonConvert.DeserializeObject<T>(json);
+        public static string ToJson(Object config) => JsonConvert.SerializeObject(config);
 
-            public class ConfigObj
-            {
+        public class ConfigObj
+        {
             public string Paks { get; set; } = "";
             public string ConfigIni { get; set; } = "";
-            public Color[] theme { get; set; } = new Color[4] { Color.FromArgb(0, 33, 113), Color.FromArgb(64, 85, 170), Color.FromArgb(65,105,255), Color.FromArgb(255,255,255) };//0,33,113;    64,85,170;    65,105,255;   255,255,255
+            public Color[] theme { get; set; } = new Color[4] { Color.FromArgb(0, 33, 113), Color.FromArgb(64, 85, 170), Color.FromArgb(65, 105, 255), Color.FromArgb(255, 255, 255) };//0,33,113;    64,85,170;    65,105,255;   255,255,255
             public double lastopened { get; set; }
             public double LastOpenedAPI { get; set; }
             public double LobbyLastOpened { get; set; }
             public string swaplogs { get; set; } = "";
             public string ManualAESKey { get; set; } = "";
             public bool AntiKick { get; set; } = true;
-            public API.api.AESSource AESSource { get; set; } = API.api.AESSource.FortniteAPIV1;
-            }
+            public API.api.AESSource AESSource { get; set; } = API.api.AESSource.FortniteCentral;
+        }
         #endregion
 
 
@@ -255,7 +250,7 @@ namespace Pro_Swapper
 
         public static void MoveForm(MouseEventArgs e, IntPtr Handle)
         {
-            if (e.Button == MouseButtons.Left) 
+            if (e.Button == MouseButtons.Left)
                 FormMove(Handle);
         }
 

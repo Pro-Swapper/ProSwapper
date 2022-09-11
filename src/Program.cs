@@ -10,7 +10,7 @@ namespace Pro_Swapper
     static class Program
     {
         public static Logger.Logger logger;
-        public const string oodledll = "oo2core_5_win64.dll";
+        public const string oodledll = "oo2core_9_win64.dll";
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -24,7 +24,7 @@ namespace Pro_Swapper
                 foreach (Process proc in Process.GetProcessesByName(CurrentProc.ProcessName))
                     if (proc.Id != CurrentProc.Id)
                         proc.Kill();
-   
+
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
@@ -47,23 +47,15 @@ namespace Pro_Swapper
                     else
                     {
                         logger.Log($"ERROR -> Paks folder could not be found!");
-                        MessageBox.Show("Your Fortnite install location could not be found! Please make sure you have Fortnite installed!","Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Your Fortnite install location could not be found! Please make sure you have Fortnite installed!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
                 logger.Log(global.GetPaksList);
-                   
+
                 if (!File.Exists(oodledll))
                 {
-                    if (EpicGamesLauncher.GetOodleDll(out string oodleFilePath))
-                    {
-                        File.Copy(oodleFilePath, oodledll);
-                        logger.Log($"Copied {oodledll} from {oodleFilePath}!");
-                    }
-                    else
-                    {
-                        File.WriteAllBytes(oodledll, new WebClient().DownloadData("https://cdn.proswapper.xyz/oo2core_5_win64.dll"));
-                        logger.Log($"Downloaded {oodledll} from Pro Swapper cdn. ??? Not found in user's game files");
-                    }
+                    File.WriteAllBytes(oodledll, new WebClient().DownloadData("https://cdn.proswapper.xyz/oo2core_9_win64.dll"));
+                    logger.Log($"Downloaded {oodledll} from Pro Swapper cdn. ??? Not found in user's game files");
                 }
                 else
                 {
@@ -76,7 +68,7 @@ namespace Pro_Swapper
             {
                 logger.LogError(ex.Message);
             }
-            
+
         }
     }
 }

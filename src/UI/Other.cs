@@ -19,11 +19,11 @@ namespace Pro_Swapper
             pictureBox8.Image = global.ItemIcon("90ZggOY.png");
         }
         private void pictureBox2_Click(object sender, EventArgs e) => new FOV.FOV().ShowDialog();
-        private void pictureBox3_Click(object sender, EventArgs e)=> global.OpenUrl(yturl + "dQw4w9WgXcQ");
+        private void pictureBox3_Click(object sender, EventArgs e) => global.OpenUrl(yturl + "dQw4w9WgXcQ");
         private void pictureBox4_Click_1(object sender, EventArgs e) => new Splash.SplashUI().ShowDialog();
-        private void pictureBox8_Click(object sender, EventArgs e)=> global.OpenUrl("https://api.nitestats.com/v1/shop/image?header=Pro%20Swapper&textcolor=03c6fc&background=3262a8");
-        private void label12_Click(object sender, EventArgs e)=> global.OpenUrl($"https://docs.proswapper.xyz");
-        private void pictureBox1_Click(object sender, EventArgs e)=> global.OpenUrl(yturl + "I_alZqXJgec");
+        private void pictureBox8_Click(object sender, EventArgs e) => global.OpenUrl("https://api.nitestats.com/v1/shop/image?header=Pro%20Swapper&textcolor=03c6fc&background=3262a8");
+        private void label12_Click(object sender, EventArgs e) => global.OpenUrl($"https://docs.proswapper.xyz");
+        private void pictureBox1_Click(object sender, EventArgs e) => global.OpenUrl(yturl + "I_alZqXJgec");
         private void label2_Click(object sender, EventArgs e) => global.OpenUrl($"{githuburl}Plugins-Json");
         private void pictureBox1_Click_1(object sender, EventArgs e)
         {
@@ -38,10 +38,7 @@ namespace Pro_Swapper
                         string filedata = File.ReadAllText(o.FileName);
                         api.Item pluginitem = JsonConvert.DeserializeObject<api.Item>(filedata);
 
-                        if (pluginitem.Zlib == true)
-                            new ZlibSwap(pluginitem).ShowDialog();
-                        else
-                            new OodleSwap(pluginitem).ShowDialog();
+                        new OodleSwap(pluginitem).ShowDialog();
                     }
                     catch
                     {
@@ -52,12 +49,10 @@ namespace Pro_Swapper
         }
         private void pictureBox2_Click_1(object sender, EventArgs e)
         {
-            UI.Splash splash = new UI.Splash();
-            Task.Run(() => Application.Run(splash));
-            new Lobby(splash).Show();
+            //open lobby swapper url
         }
 
-        private void OtherTab_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Main.Mainform.Handle);
+        private void OtherTab_MouseDown(object sender, MouseEventArgs e) => global.MoveForm(e, Main.Mainform.Handle);
 
         private void pictureBox3_Click_1(object sender, EventArgs e)
         {
@@ -65,4 +60,3 @@ namespace Pro_Swapper
         }
     }
 }
- 

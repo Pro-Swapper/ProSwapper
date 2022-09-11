@@ -31,8 +31,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.logbox = new System.Windows.Forms.RichTextBox();
             this.image = new System.Windows.Forms.PictureBox();
-            this.ConvertB = new Bunifu.Framework.UI.BunifuFlatButton();
-            this.RevertB = new Bunifu.Framework.UI.BunifuFlatButton();
+            this.ConvertB = new System.Windows.Forms.Button();
+            this.RevertB = new System.Windows.Forms.Button();
             this.ExitButton = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -85,74 +85,36 @@
             // 
             // ConvertB
             // 
-            this.ConvertB.Activecolor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(139)))), ((int)(((byte)(87)))));
             this.ConvertB.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(139)))), ((int)(((byte)(87)))));
             this.ConvertB.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ConvertB.BorderRadius = 0;
-            this.ConvertB.ButtonText = "Convert";
+            this.ConvertB.Text = "Convert";
             this.ConvertB.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.ConvertB.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(56)))), ((int)(((byte)(56)))));
-            this.ConvertB.Iconcolor = System.Drawing.Color.Transparent;
-            this.ConvertB.Iconimage = null;
-            this.ConvertB.Iconimage_right = null;
-            this.ConvertB.Iconimage_right_Selected = null;
-            this.ConvertB.Iconimage_Selected = null;
-            this.ConvertB.IconMarginLeft = 0;
-            this.ConvertB.IconMarginRight = 0;
-            this.ConvertB.IconRightVisible = true;
-            this.ConvertB.IconRightZoom = 0D;
-            this.ConvertB.IconVisible = true;
-            this.ConvertB.IconZoom = 90D;
-            this.ConvertB.IsTab = false;
             this.ConvertB.Location = new System.Drawing.Point(12, 172);
             this.ConvertB.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ConvertB.Name = "ConvertB";
-            this.ConvertB.Normalcolor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(139)))), ((int)(((byte)(87)))));
-            this.ConvertB.OnHovercolor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(129)))), ((int)(((byte)(77)))));
-            this.ConvertB.OnHoverTextColor = System.Drawing.Color.White;
-            this.ConvertB.selected = false;
             this.ConvertB.Size = new System.Drawing.Size(344, 39);
             this.ConvertB.TabIndex = 11;
             this.ConvertB.Text = "Convert";
             this.ConvertB.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.ConvertB.Textcolor = System.Drawing.Color.White;
-            this.ConvertB.TextFont = new System.Drawing.Font("Segoe UI Semibold", 9.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.ConvertB.ForeColor = System.Drawing.Color.White;
+            this.ConvertB.Font = new System.Drawing.Font("Segoe UI Semibold", 9.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.ConvertB.Click += new System.EventHandler(this.SwapButton_Click);
             // 
             // RevertB
             // 
-            this.RevertB.Activecolor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(139)))), ((int)(((byte)(87)))));
             this.RevertB.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(139)))), ((int)(((byte)(87)))));
             this.RevertB.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.RevertB.BorderRadius = 0;
-            this.RevertB.ButtonText = "Revert";
+            this.RevertB.Text = "Revert";
             this.RevertB.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.RevertB.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(56)))), ((int)(((byte)(56)))));
-            this.RevertB.Iconcolor = System.Drawing.Color.Transparent;
-            this.RevertB.Iconimage = null;
-            this.RevertB.Iconimage_right = null;
-            this.RevertB.Iconimage_right_Selected = null;
-            this.RevertB.Iconimage_Selected = null;
-            this.RevertB.IconMarginLeft = 0;
-            this.RevertB.IconMarginRight = 0;
-            this.RevertB.IconRightVisible = true;
-            this.RevertB.IconRightZoom = 0D;
-            this.RevertB.IconVisible = true;
-            this.RevertB.IconZoom = 90D;
-            this.RevertB.IsTab = false;
             this.RevertB.Location = new System.Drawing.Point(12, 217);
             this.RevertB.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.RevertB.Name = "RevertB";
-            this.RevertB.Normalcolor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(139)))), ((int)(((byte)(87)))));
-            this.RevertB.OnHovercolor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(129)))), ((int)(((byte)(77)))));
-            this.RevertB.OnHoverTextColor = System.Drawing.Color.White;
-            this.RevertB.selected = false;
             this.RevertB.Size = new System.Drawing.Size(344, 39);
             this.RevertB.TabIndex = 12;
             this.RevertB.Text = "Revert";
             this.RevertB.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.RevertB.Textcolor = System.Drawing.Color.White;
-            this.RevertB.TextFont = new System.Drawing.Font("Segoe UI Semibold", 9.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.RevertB.ForeColor = System.Drawing.Color.White;
+            this.RevertB.Font = new System.Drawing.Font("Segoe UI Semibold", 9.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.RevertB.Click += new System.EventHandler(this.SwapButton_Click);
             // 
             // ExitButton
@@ -259,8 +221,8 @@
         private System.Windows.Forms.PictureBox image;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.RichTextBox logbox;
-        private Bunifu.Framework.UI.BunifuFlatButton ConvertB;
-        private Bunifu.Framework.UI.BunifuFlatButton RevertB;
+        private System.Windows.Forms.Button ConvertB;
+        private System.Windows.Forms.Button RevertB;
         private System.Windows.Forms.Button ExitButton;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label1;

@@ -43,23 +43,6 @@ namespace Pro_Swapper
         }
 
 
-        /// <summary>
-        /// Returns true on successful oodle file found.
-        /// </summary>
-        /// <param name="oodlefile"></param>
-        /// <returns></returns>
-        public static bool GetOodleDll(out string oodlefile)
-        {
-            Root launcherdata = JsonConvert.DeserializeObject<Root>(File.ReadAllText(LauncherJson));
-            InstallationList fortnite = launcherdata.InstallationList.Where(x => x.AppName == "Fortnite").First();
-
-            oodlefile = fortnite.InstallLocation + @"\FortniteGame\Binaries\Win64\oo2core_5_win64.dll";
-            if (File.Exists(oodlefile))
-                return true;
-            else
-                return false;
-        }
-
         public static bool CloseFNPrompt()
         {
             Process.GetProcessesByName("EpicGamesLauncher").All(x => { x.Kill(); return true; });
