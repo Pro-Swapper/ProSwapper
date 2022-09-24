@@ -3,6 +3,7 @@
 bin/
 .vs/
 obj/
+.idea
 Properties/PublishProfiles/FolderProfile.pubxml
 Properties/PublishProfiles/FolderProfile.pubxml
 Properties/PublishProfiles/FolderProfile.pubxml

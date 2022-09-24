@@ -22,11 +22,11 @@ namespace Pro_Swapper
                 GP.AddRectangle(Region.GetBounds(g));
                 g.DrawPath(new Pen(global.ChangeColorBrightness(BackColor, 0.15f)) { Width = 10f }, GP);
             };
-            
+
             Panels = new Panel[4] { panel1, panel2, panel3, panel4 };
         }
-        private void ThemeCreator_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
-        private void button1_Click(object sender, EventArgs e)=> Close();
+        private void ThemeCreator_MouseDown(object sender, MouseEventArgs e) => global.MoveForm(e, Handle);
+        private void button1_Click(object sender, EventArgs e) => Close();
         private void button9_Click(object sender, EventArgs e)
         {
             //Import theme
@@ -87,7 +87,7 @@ namespace Pro_Swapper
             //Set Theme
             global.CurrentConfig.theme = Panels.Select(x => x.BackColor).ToArray();
             global.SaveConfig();
-            MessageBox.Show("Pro Swapper needs to be restarted to load the theme. Restarting Pro Swapper now...", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(@"Pro Swapper needs to be restarted to load the theme. Restarting Pro Swapper now...", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Process.Start(AppDomain.CurrentDomain.FriendlyName);
             Main.Cleanup();
         }

@@ -11,7 +11,7 @@ namespace Pro_Swapper.Fortnite
 {
     public static class FortniteExport
     {
-        public static byte[] ExportAsset(DefaultFileProvider Provider, string filename, string Asset)
+        public static byte[] ExportAsset(DefaultFileProvider Provider, string Asset)
         {
             try
             {
@@ -19,7 +19,7 @@ namespace Pro_Swapper.Fortnite
             }
             catch (Exception ex)
             {
-                throw new Exception($"Asset {Asset} in {filename} could not be exported: {ex.Message}");
+                throw new Exception($"Asset {Asset}could not be exported: {ex.Message}");
             }
         }
 

@@ -10,7 +10,7 @@ namespace Pro_Swapper
     static class Program
     {
         public static Logger.Logger logger;
-        public const string oodledll = "oo2core_9_win64.dll";
+        public const string Oodledll = "oo2core_9_win64.dll";
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -47,19 +47,19 @@ namespace Pro_Swapper
                     else
                     {
                         logger.Log($"ERROR -> Paks folder could not be found!");
-                        MessageBox.Show("Your Fortnite install location could not be found! Please make sure you have Fortnite installed!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show(@"Your Fortnite install location could not be found! Please make sure you have Fortnite installed!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
                 logger.Log(global.GetPaksList);
 
-                if (!File.Exists(oodledll))
+                if (!File.Exists(Oodledll))
                 {
-                    File.WriteAllBytes(oodledll, new WebClient().DownloadData("https://cdn.proswapper.xyz/oo2core_9_win64.dll"));
-                    logger.Log($"Downloaded {oodledll} from Pro Swapper cdn. ??? Not found in user's game files");
+                    File.WriteAllBytes(Oodledll, new WebClient().DownloadData("https://cdn.proswapper.xyz/oo2core_9_win64.dll"));
+                    logger.Log($"Downloaded {Oodledll} from Pro Swapper cdn. ??? Not found in user's game files");
                 }
                 else
                 {
-                    logger.Log($"{oodledll} already exists so no need to fetch it!");
+                    logger.Log($"{Oodledll} already exists so no need to fetch it!");
                 }
                 logger.Log("Running main form");
                 Application.Run(new Main(splash));

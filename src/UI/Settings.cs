@@ -141,7 +141,7 @@ namespace Pro_Swapper
 
         private void NotifyIcon1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Pro Swapper is currently running while playing Fortnite so it closes Epic Games Launcher when you finish playing. If you want to close Pro Swapper end the process from task manager :'(", "Pro Swapper Notify Icon", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(@"Pro Swapper is currently running while playing Fortnite so it closes Epic Games Launcher when you finish playing. If you want to close Pro Swapper end the process from task manager :'(", "Pro Swapper Notify Icon", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private static void KillEpic() => Process.GetProcessesByName("EpicGamesLauncher").All(x => { x.Kill(); return true; });
@@ -162,7 +162,7 @@ namespace Pro_Swapper
             if (converteditemno > 0)
                 MessageBox.Show("You currently have " + converteditemno + " item(s) converted. The items you have converted are: " + swaplogs.Remove(swaplogs.Length - 1), "Converted Items List", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
-                MessageBox.Show("You have no items converted!", "Converted Items List", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(@"You have no items converted!", "Converted Items List", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -239,7 +239,9 @@ namespace Pro_Swapper
             for (int i = 0; i < 5; i++)
                 listtimes.Add(ping.Send(url, 5000).RoundtripTime);
 
-            MessageBox.Show($"Sent request to {pingreply.Address} ({url})\nStatus: {pingreply.Status}\nPing (Average): {listtimes.Average()} / Min: {listtimes.Min()} / Max: {listtimes.Max()}", "Pro Swapper AES", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($@"Sent request to {pingreply.Address} ({url})
+Status: {pingreply.Status}
+Ping (Average): {listtimes.Average()} / Min: {listtimes.Min()} / Max: {listtimes.Max()}", "Pro Swapper AES", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
 

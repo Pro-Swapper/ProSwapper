@@ -45,17 +45,17 @@ namespace Pro_Swapper.Splash
                     try
                     {
                         File.Copy(global.ProSwapperFolder + @"Images\" + image, SplashPath + "SplashScreen.png", true);
-                        MessageBox.Show("Set Splash Screen!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(@"Set Splash Screen!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Your Fortnite game folder could not be found! Please contact support and give them this info: {Directory.Exists(SplashPath)} | {SplashPath} | {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($@"Your Fortnite game folder could not be found! Please contact support and give them this info: {Directory.Exists(SplashPath)} | {SplashPath} | {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 };
                 items.Controls.Add(picturebox);
             }
         }
-        private void ThemeCreator_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
+        private void ThemeCreator_MouseDown(object sender, MouseEventArgs e) => global.MoveForm(e, Handle);
         private void button1_Click(object sender, EventArgs e) => Close();
         private void CustomSplash(object sender, EventArgs e)
         {
@@ -63,9 +63,9 @@ namespace Pro_Swapper.Splash
             {
                 if (a.ShowDialog() == DialogResult.OK)
                 {
-                    Image splash = ResizeImage(Image.FromFile(a.FileName), 640,360);
+                    Image splash = ResizeImage(Image.FromFile(a.FileName), 640, 360);
                     splash.Save(SplashPath + "SplashScreen.png");
-                    MessageBox.Show("Set Splash Screen!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(@"Set Splash Screen!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
@@ -95,7 +95,7 @@ namespace Pro_Swapper.Splash
             return destImage;
         }
         #endregion
-      
+
 
 
         private class api

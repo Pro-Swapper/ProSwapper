@@ -49,7 +49,7 @@ namespace Pro_Swapper
             Process[] fnproc = Process.GetProcessesByName("FortniteClient-Win64-Shipping.exe");
             if (fnproc.Length > 0)
             {
-                MessageBox.Show($"Fortnite running! Please close this before swapping anything!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($@"Fortnite running! Please close this before swapping anything!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return false;
             }
             return true;

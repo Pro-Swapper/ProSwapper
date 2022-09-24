@@ -7,46 +7,43 @@ using Pro_Swapper.API;
 using System.Threading.Tasks;
 using CUE4Parse.FileProvider;
 using System.Windows.Forms;
+using static System.Net.WebRequestMethods;
+using File = System.IO.File;
+
 namespace Pro_Swapper
 {
     public static class Swap
     {
         private static string PaksLocation = global.CurrentConfig.Paks;
-        public static bool SwapItem(api.Item item, bool Converting)
+        private const string ProSwapperPakFolder = ".ProSwapper";
+        private static void DuplicateFile(string file)
         {
-            const string ProSwapperPakFolder = ".ProSwapper";
-            List<string> UsingFiles = new List<string>();
-            UsingFiles.AddRange(item.Asset.Select(x => Path.GetFileNameWithoutExtension(x.UcasFile)).Distinct());
-            if (!global.CanSwap(UsingFiles))
-                return false;
+            string BaseFileName = $"{PaksLocation}\\{ProSwapperPakFolder}\\{file}";
 
-            foreach (string file in UsingFiles)
+            //Check if it may be old game version
+            string OriginalSig = global.FileToMd5($"{PaksLocation}\\{file}.sig");
+            string ModifiedSig = global.FileToMd5(BaseFileName + ".sig");
+            if (OriginalSig != ModifiedSig)
             {
-                string BaseFileName = $"{PaksLocation}\\{ProSwapperPakFolder}\\{file}";
-
-                //Check if it may be old game version
-                string OriginalSig = global.FileToMd5($"{PaksLocation}\\{file}.sig");
-                string ModifiedSig = global.FileToMd5(BaseFileName + ".sig");
-                if (OriginalSig != ModifiedSig)
-                {
-                    global.DeleteFile(BaseFileName + ".sig");
-                    global.DeleteFile(BaseFileName + ".utoc");
-                    global.DeleteFile(BaseFileName + ".ucas");
-                    global.DeleteFile(BaseFileName + ".pak");
-                }
-
-
-                if (!File.Exists(BaseFileName + ".ucas"))
-                {
-                    Directory.CreateDirectory(PaksLocation + $"\\{ProSwapperPakFolder}");
-                    File.Copy($"{PaksLocation}\\{file}.sig", BaseFileName + ".sig", true);
-                    File.Copy($"{PaksLocation}\\{file}.utoc", BaseFileName + ".utoc", true);
-                    File.Copy($"{PaksLocation}\\{file}.ucas", BaseFileName + ".ucas", true);
-                    File.Copy($"{PaksLocation}\\{file}.pak", BaseFileName + ".pak", true);
-                }
+                global.DeleteFile(BaseFileName + ".sig");
+                global.DeleteFile(BaseFileName + ".utoc");
+                global.DeleteFile(BaseFileName + ".ucas");
+                global.DeleteFile(BaseFileName + ".pak");
             }
 
-            var Provider = new DefaultFileProvider($"{PaksLocation}\\{ProSwapperPakFolder}", SearchOption.TopDirectoryOnly, false, new CUE4Parse.UE4.Versions.VersionContainer(CUE4Parse.UE4.Versions.EGame.GAME_UE5_LATEST));
+
+            if (!File.Exists(BaseFileName + ".ucas"))
+            {
+                Directory.CreateDirectory(PaksLocation + $"\\{ProSwapperPakFolder}");
+                File.Copy($"{PaksLocation}\\{file}.sig", BaseFileName + ".sig", true);
+                File.Copy($"{PaksLocation}\\{file}.utoc", BaseFileName + ".utoc", true);
+                File.Copy($"{PaksLocation}\\{file}.ucas", BaseFileName + ".ucas", true);
+                File.Copy($"{PaksLocation}\\{file}.pak", BaseFileName + ".pak", true);
+            }
+        }
+        public static bool SwapItem(api.Item item, bool Converting)
+        {
+            var Provider = new DefaultFileProvider($"{PaksLocation}", SearchOption.TopDirectoryOnly, false, new CUE4Parse.UE4.Versions.VersionContainer(CUE4Parse.UE4.Versions.EGame.GAME_UE5_LATEST));
             Provider.Initialize();
 
             //Load all aes keys for required files, cleaner in linq than doing a loop
@@ -55,9 +52,11 @@ namespace Pro_Swapper
             List<FinalPastes> finalPastes = new List<FinalPastes>();
             foreach (api.Asset asset in item.Asset)
             {
-                string ucasfile = $"{PaksLocation}\\{ProSwapperPakFolder}\\{asset.UcasFile}";
-                File.SetAttributes(ucasfile, global.RemoveAttribute(File.GetAttributes(ucasfile), FileAttributes.ReadOnly));
-                byte[] exportasset = Fortnite.FortniteExport.ExportAsset(Provider, asset.UcasFile, asset.AssetPath);
+#if DEBUG
+                string fileeeeeee = "pakchunk10-WindowsClient_s2.ucas";
+#endif
+                string ucasfile = $"{PaksLocation}\\{ProSwapperPakFolder}\\{fileeeeeee}";
+                byte[] exportasset = Fortnite.FortniteExport.ExportAsset(Provider, asset.AssetPath);
                 // Directory.CreateDirectory("Exports");
 
                 string smallname = Path.GetFileName(asset.AssetPath);
@@ -72,6 +71,8 @@ namespace Pro_Swapper
                     exportasset = Oodle.OodleClass.Compress(exportasset);
                     //Logging stuff for devs hehe
                     // File.WriteAllBytes($"Exports\\Compressed{smallname}.pak", exportasset);//Compressed edited export
+                    File.SetAttributes(ucasfile, global.RemoveAttribute(File.GetAttributes(ucasfile), FileAttributes.ReadOnly));
+                    DuplicateFile(ucasfile);
                     finalPastes.Add(new FinalPastes(ucasfile, exportasset, Fortnite.FortniteExport.Offset));
                 }
             }

@@ -42,7 +42,7 @@ namespace Pro_Swapper
                     }
                     catch
                     {
-                        MessageBox.Show("That's not a valid plugin! Plugins must be in a Json format! Please read Plugins Tutorial for more information", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBox.Show(@"That's not a valid plugin! Plugins must be in a Json format! Please read Plugins Tutorial for more information", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
                 }
             }

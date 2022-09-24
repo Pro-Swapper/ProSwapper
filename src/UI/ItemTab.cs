@@ -18,7 +18,7 @@ namespace Pro_Swapper
             skinsflowlayout.Controls.AddRange(SwapOptions.Select(x => new GridItem(x)).ToArray());
 
             if (skinsflowlayout.Controls.Count == 0)
-                MessageBox.Show($"{tab} is currently disabled, please be patient for the developer(s) of Pro Swapper to add this feature. If you would like to request a feature please send a message on the Discord server", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($@"{tab} is currently disabled, please be patient for the developer(s) of Pro Swapper to add this feature. If you would like to request a feature please send a message on the Discord server", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         public string Tab { get; set; }

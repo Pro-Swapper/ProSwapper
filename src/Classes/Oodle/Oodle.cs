@@ -22,14 +22,14 @@ namespace Pro_Swapper.Oodle
                 @uint = 64U; // Just in case there is protected memory
             }
 
-            return OodleStream.OodleCompress(buffer, buffer.Length,OodleFormat.Kraken, OodleCompressionLevel.Level5, @uint); // Writing the data
+            return OodleStream.OodleCompress(buffer, buffer.Length, OodleFormat.Kraken, OodleCompressionLevel.Level5, @uint); // Writing the data
         }
     }
 
     public class OodleStream
     {
-        [DllImport(Program.oodledll)]
-        public static extern int OodleLZ_Compress(OodleFormat format, byte[]? decompressedBuffer, long decompressedSize,byte[] compressedBuffer, OodleCompressionLevel compressionLevel, uint a, uint b, uint c,ThreadModule threadModule); // Oodle dll method
+        [DllImport(Program.Oodledll)]
+        public static extern int OodleLZ_Compress(OodleFormat format, byte[]? decompressedBuffer, long decompressedSize, byte[] compressedBuffer, OodleCompressionLevel compressionLevel, uint a, uint b, uint c, ThreadModule threadModule); // Oodle dll method
 
         public static byte[] OodleCompress(byte[]? decompressedBuffer, int decompressedSize, OodleFormat format, OodleCompressionLevel compressionLevel, uint a)
         {
