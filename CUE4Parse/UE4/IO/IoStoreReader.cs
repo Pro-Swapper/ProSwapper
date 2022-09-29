@@ -269,6 +269,10 @@ namespace CUE4Parse.UE4.IO
                 dstOffset += sizeInBlock;
 
                 reader.Position = 0;
+                //https://github.com/Tamely/SaturnSwapper/blob/cbe79e66fcbc900f8bb6c45387f01a39fa127b01/CUE4Parse/CUE4Parse/UE4/IO/IoStoreReader.cs#L275
+                //Thanks Tamely
+                if (Pro_Swapper.Swap.IsExporting)
+                    Pro_Swapper.Swap.exportData = new Pro_Swapper.Swap.ExportData(partitionOffset, reader.Name, TocResource.CompressionMethods[compressionBlock.CompressionMethodIndex]) { compressedBuffer = compressedBuffer};
             }
 
             return dst;

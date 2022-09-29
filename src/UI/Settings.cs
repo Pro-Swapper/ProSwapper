@@ -256,7 +256,7 @@ Ping (Average): {listtimes.Average()} / Min: {listtimes.Min()} / Max: {listtimes
                     //  string Path1 = "/Game/Characters/Player/Female/Medium/Bodies/F_MED_Renegade_Skull/Materials/F_MED_Renegade_Skull.F_MED_Renegade_Skull";
                     // string Path2 = "/Game/Characters/Player/Female/Medium/Heads/F_MED_ASN_Sarah_Head_01/Materials/F_MED_ASN_Sarah_Head_02.F_MED_ASN_Sarah_Head_02";
                     //  Swap.ReplaceAnyLength(file, System.Text.Encoding.Default.GetBytes(Path1), System.Text.Encoding.Default.GetBytes(Path2));
-                    byte[] newbyte = Oodle.OodleClass.Compress(file);
+                    byte[] newbyte = Oodle.Compress(file, OodleFormat.Leviathan);
                     File.WriteAllBytes(a.FileName + "_compressed.uasset", newbyte);
                 }
             }

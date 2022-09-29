@@ -10,7 +10,7 @@ namespace Pro_Swapper
     static class Program
     {
         public static Logger.Logger logger;
-        public const string Oodledll = "oo2core_9_win64.dll";
+        public const string Oodledll = "oo2core_5_win64.dll";
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

@@ -15,14 +15,15 @@ namespace Pro_Swapper.Fortnite
         {
             try
             {
-                return Provider.SaveAsset(Asset);
+                Swap.IsExporting = true;
+                byte[] asset =  Provider.SaveAsset(Asset);
+                Swap.IsExporting = false;
+                return asset;
             }
             catch (Exception ex)
             {
                 throw new Exception($"Asset {Asset}could not be exported: {ex.Message}");
             }
         }
-
-        public static long Offset = 0;
     }
 }

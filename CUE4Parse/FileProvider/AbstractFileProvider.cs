@@ -37,7 +37,7 @@ namespace CUE4Parse.FileProvider
         public virtual bool IsCaseInsensitive { get; } // fabian? is this reversed?
         public bool ReadScriptData { get; set; } = false;
         public virtual bool UseLazySerialization { get; set; } = true;
-
+        
         protected AbstractFileProvider(bool isCaseInsensitive = false, VersionContainer? versions = null)
         {
             IsCaseInsensitive = isCaseInsensitive;
