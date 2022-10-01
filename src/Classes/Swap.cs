@@ -115,7 +115,15 @@ namespace Pro_Swapper
 #endif
                     //DuplicateFile(ucasfile);
                     File.SetAttributes(ucasfile, global.RemoveAttribute(File.GetAttributes(ucasfile), FileAttributes.ReadOnly));
-                    finalPastes.Add(new FinalPastes(ucasfile, exportasset, exportData.offset));
+                    if (exportasset.Length <= exportData.compressedBuffer.Length)
+                    {
+                        finalPastes.Add(new FinalPastes(ucasfile, exportasset, exportData.offset));
+                    }
+                    else
+                    {
+                        MessageBox.Show("The edited asset is larger than the original one");
+                    } 
+                    
                 }
             }
             Provider.Dispose();
