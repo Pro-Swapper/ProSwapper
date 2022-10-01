@@ -111,7 +111,7 @@ namespace Pro_Swapper
                             break;
                     }
 #if DEBUG
-                    File.WriteAllBytes($"Exports\\{smallname}_Compress_Edited.pak", exportasset);//Compressed edited export
+                    File.WriteAllBytes($"Exports\\{smallname}_Compress_Edited_{exportData.compressionMethod}.pak", exportasset);//Compressed edited export
 #endif
                     //DuplicateFile(ucasfile);
                     File.SetAttributes(ucasfile, global.RemoveAttribute(File.GetAttributes(ucasfile), FileAttributes.ReadOnly));
@@ -149,7 +149,7 @@ namespace Pro_Swapper
                 {
                     byte[] searchB = ParseByteArray(Asset.Search[i]);
                     byte[] replaceB = ParseByteArray(Asset.Replace[i]);
-                    
+                    FillEnd(ref replaceB,searchB.Length);
                     if (Converting)
                     {
                         int SearchOffset = IndexOfSequence(file, searchB);
