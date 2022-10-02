@@ -42,9 +42,9 @@ namespace CUE4Parse.FileProvider
         {
             if (!_workingDirectory.Exists) throw new ArgumentException("Given directory must exist", nameof(_workingDirectory));
 
-            var availableFiles = new List<Dictionary<string, GameFile>> {IterateFiles(_workingDirectory, _searchOption)};
+            var availableFiles = new List<Dictionary<string, GameFile>> { IterateFiles(_workingDirectory, _searchOption) };
 
-            if (_extraDirectories is {Count: > 0})
+            if (_extraDirectories is { Count: > 0 })
             {
                 availableFiles.AddRange(_extraDirectories.Select(directory => IterateFiles(directory, _searchOption)));
             }
@@ -99,12 +99,12 @@ namespace CUE4Parse.FileProvider
             var ext = file.FullName.SubstringAfterLast('.');
             if (ext.Equals("pak", StringComparison.OrdinalIgnoreCase))
             {
-                RegisterFile(file.FullName, new Stream[] { file.OpenRead() });
+                RegisterFile(file.FullName, new Stream[] { file.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite) });
             }
             else if (ext.Equals("utoc", StringComparison.OrdinalIgnoreCase))
             {
-                RegisterFile(file.FullName, new Stream[] { file.OpenRead() },
-                    it => new FStreamArchive(it, File.OpenRead(it), Versions));
+                RegisterFile(file.FullName, new Stream[] { file.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite) },
+                    it => new FStreamArchive(it, File.Open(it, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite), Versions));
             }
             else if (ext.Equals("apk", StringComparison.OrdinalIgnoreCase))
             {
@@ -146,7 +146,7 @@ namespace CUE4Parse.FileProvider
 
                                 foreach (var ucas in container.Entries) // look for ucas file
                                 {
-                                    if(ucas.FileName.Equals(fileentry.FileName.SubstringBeforeLast('.') + ".ucas"))
+                                    if (ucas.FileName.Equals(fileentry.FileName.SubstringBeforeLast('.') + ".ucas"))
                                     {
                                         streams[1] = new MemoryStream();
                                         ucas.Extract(streams[1]);

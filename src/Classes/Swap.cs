@@ -63,13 +63,24 @@ namespace Pro_Swapper
         //    }
         //}
         #endregion
-        public static DefaultFileProvider Provider;
+        public static DefaultFileProvider Provider = null;
+
+        public static DefaultFileProvider GetProvider()
+        {
+            if (Provider == null)
+            {
+                Provider = new DefaultFileProvider($"{PaksLocation}", SearchOption.TopDirectoryOnly, false, new CUE4Parse.UE4.Versions.VersionContainer(CUE4Parse.UE4.Versions.EGame.GAME_UE5_LATEST));
+                Provider.Initialize();
+
+            }
+
+
+            return Provider;
+        }
+
         public static bool SwapItem(api.Item item, bool Converting)
         {
-            Provider = new DefaultFileProvider($"{PaksLocation}", SearchOption.TopDirectoryOnly, false, new CUE4Parse.UE4.Versions.VersionContainer(CUE4Parse.UE4.Versions.EGame.GAME_UE5_LATEST));
-
-            Provider.Initialize();
-
+            DefaultFileProvider Provider = GetProvider();
 
 
             //Load all aes keys for required files
@@ -110,6 +121,9 @@ namespace Pro_Swapper
                         case CompressionMethod.Oodle:
                             exportasset = Oodle.Compress(exportasset);
                             break;
+                        case CompressionMethod.Zlib:
+                            ByteCompression.Compress(exportasset);
+                            break;
                     }
 #if DEBUG
                     File.WriteAllBytes($"Exports\\{smallname}_Compress_Edited_{exportData.compressionMethod}.pak", exportasset);//Compressed edited export
@@ -128,7 +142,7 @@ namespace Pro_Swapper
 
                 }
             }
-            Provider.Dispose();
+            //Provider.Dispose();, we don't need to dispose it anymore because CUE4Parse is modified with FileShare.ReadWrite
             foreach (FinalPastes pastes in finalPastes)
                 PasteInLocationBytes(pastes);
 
