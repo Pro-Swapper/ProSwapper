@@ -86,8 +86,10 @@
             // ConvertB
             // 
             this.ConvertB.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(139)))), ((int)(((byte)(87)))));
-            this.ConvertB.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ConvertB.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ConvertB.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ConvertB.FlatAppearance.BorderSize = 0;
+            this.ConvertB.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ConvertB.Font = new System.Drawing.Font("Segoe UI Semibold", 9.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.ConvertB.ForeColor = System.Drawing.Color.White;
             this.ConvertB.Location = new System.Drawing.Point(12, 172);
@@ -102,8 +104,10 @@
             // RevertB
             // 
             this.RevertB.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(139)))), ((int)(((byte)(87)))));
-            this.RevertB.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.RevertB.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.RevertB.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.RevertB.FlatAppearance.BorderSize = 0;
+            this.RevertB.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.RevertB.Font = new System.Drawing.Font("Segoe UI Semibold", 9.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.RevertB.ForeColor = System.Drawing.Color.White;
             this.RevertB.Location = new System.Drawing.Point(12, 217);
