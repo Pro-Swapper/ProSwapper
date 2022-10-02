@@ -38,7 +38,7 @@ namespace Pro_Swapper
             };
                 picturebox.Click += delegate
                 {
-                    new OodleSwap(item).Show();
+                    new SwapForm(item).Show();
                     Close();
                 };
             Label lbl = new Label

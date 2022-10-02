@@ -14,7 +14,7 @@ namespace Pro_Swapper
             backgroundWorker1.RunWorkerAsync();
             pictureBox1.Click += delegate
             {
-               new OodleSwap(i).Show();
+               new SwapForm(i).Show();
             };
             label1.Text = i.SwapsTo.Split('|')[0];
             backgroundWorker1.Dispose();

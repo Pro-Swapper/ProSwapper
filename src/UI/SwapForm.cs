@@ -5,13 +5,15 @@ using System.Diagnostics;
 using System.Drawing;
 using Pro_Swapper.API;
 using System.Threading.Tasks;
+using Pro_Swapper.src.Classes;
+
 namespace Pro_Swapper
 {
-    public partial class OodleSwap : Form
+    public partial class SwapForm : Form
     {
         private api.Item ThisItem;
 
-        public OodleSwap(api.Item item)
+        public SwapForm(api.Item item)
         {
             InitializeComponent();
             this.Icon = Main.appIcon;
@@ -62,8 +64,18 @@ namespace Pro_Swapper
                 label3.Invoke(new Action(() => { label3.Text = "Loading..."; label3.ForeColor = Color.White; }));
 
                 Stopwatch s = Stopwatch.StartNew();
-                Program.logger.Log($"(OodleSwap.cs) (Converting = {Converting}) Starting to convert {this.Text}");
-                bool Swapped = Task.Run(() => Swap.SwapItem(ThisItem, Converting)).Result;
+                Program.logger.Log($"(SwapForm.cs) (Converting = {Converting}) Starting to convert {this.Text}");
+                bool Swapped = false;
+                if (Converting)
+                {
+                    //Converting
+                    Swapped = Task.Run(() => Swap.SwapItem(ThisItem, Converting)).Result;
+                }
+                else
+                {
+                    //Reverting
+                    Swapped = RevertEngine.RevertItem(ThisItem);
+                }
 
                 if (!Swapped)
                 {
@@ -102,24 +114,40 @@ namespace Pro_Swapper
             }
         }
 
-        private void SwapButton_Click(object sender, EventArgs e)
+        public bool PrepareToSwap()
         {
-            string path = global.CurrentConfig.Paks + @"\pakchunk0-WindowsClient.sig";
-            if (!File.Exists(path))
+            bool CorrectPaksFolder = File.Exists($"{global.CurrentConfig.Paks}\\global.utoc") || File.Exists($"{global.CurrentConfig.Paks}\\global.ucas") || File.Exists($"{global.CurrentConfig.Paks}\\pakchunk0-WindowsClient.pak");
+            if (!CorrectPaksFolder)
             {
                 MessageBox.Show("Select your paks folder in Settings", "Pro Swapper");
-                return;
+                return false;
             }
-            if (!EpicGamesLauncher.CloseFNPrompt())
-                return;
-
             logbox.Clear();
             Log("Loading...");
-            bool isconverting = ((Button)(sender)).Text == "Convert";
-            Task.Run(() => ButtonbgWorker(isconverting));
+
+            return EpicGamesLauncher.CloseFNPrompt();
+        }
+
+        private void ConvertB_Click(object sender, EventArgs e)
+        {
+            if (PrepareToSwap())
+            {
+                Task.Run(() => ButtonbgWorker(true));
+            }
+
+        }
+
+        private void RevertB_Click(object sender, EventArgs e)
+        {
+            if (PrepareToSwap())
+            {
+                Task.Run(() => ButtonbgWorker(false));
+            }
         }
         private void ExitButton_Click(object sender, EventArgs e) => Close();
         private void button2_Click(object sender, EventArgs e) => WindowState = FormWindowState.Minimized;
         private void swap_MouseDown(object sender, MouseEventArgs e) => global.MoveForm(e, Handle);
+
+
     }
 }

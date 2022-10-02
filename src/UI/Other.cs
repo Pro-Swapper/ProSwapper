@@ -38,7 +38,7 @@ namespace Pro_Swapper
                         string filedata = File.ReadAllText(o.FileName);
                         api.Item pluginitem = JsonConvert.DeserializeObject<api.Item>(filedata);
 
-                        new OodleSwap(pluginitem).ShowDialog();
+                        new SwapForm(pluginitem).ShowDialog();
                     }
                     catch
                     {

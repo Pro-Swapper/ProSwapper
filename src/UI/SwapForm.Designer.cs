@@ -1,6 +1,6 @@
 ﻿namespace Pro_Swapper
 {
-    partial class OodleSwap
+    partial class SwapForm
     {
         /// <summary>
         /// Required designer variable.
@@ -87,35 +87,33 @@
             // 
             this.ConvertB.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(139)))), ((int)(((byte)(87)))));
             this.ConvertB.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ConvertB.Text = "Convert";
             this.ConvertB.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ConvertB.Font = new System.Drawing.Font("Segoe UI Semibold", 9.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.ConvertB.ForeColor = System.Drawing.Color.White;
             this.ConvertB.Location = new System.Drawing.Point(12, 172);
             this.ConvertB.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ConvertB.Name = "ConvertB";
             this.ConvertB.Size = new System.Drawing.Size(344, 39);
             this.ConvertB.TabIndex = 11;
             this.ConvertB.Text = "Convert";
-            this.ConvertB.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.ConvertB.ForeColor = System.Drawing.Color.White;
-            this.ConvertB.Font = new System.Drawing.Font("Segoe UI Semibold", 9.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.ConvertB.Click += new System.EventHandler(this.SwapButton_Click);
+            this.ConvertB.UseVisualStyleBackColor = false;
+            this.ConvertB.Click += new System.EventHandler(this.ConvertB_Click);
             // 
             // RevertB
             // 
             this.RevertB.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(139)))), ((int)(((byte)(87)))));
             this.RevertB.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.RevertB.Text = "Revert";
             this.RevertB.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.RevertB.Font = new System.Drawing.Font("Segoe UI Semibold", 9.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.RevertB.ForeColor = System.Drawing.Color.White;
             this.RevertB.Location = new System.Drawing.Point(12, 217);
             this.RevertB.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.RevertB.Name = "RevertB";
             this.RevertB.Size = new System.Drawing.Size(344, 39);
             this.RevertB.TabIndex = 12;
             this.RevertB.Text = "Revert";
-            this.RevertB.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.RevertB.ForeColor = System.Drawing.Color.White;
-            this.RevertB.Font = new System.Drawing.Font("Segoe UI Semibold", 9.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.RevertB.Click += new System.EventHandler(this.SwapButton_Click);
+            this.RevertB.UseVisualStyleBackColor = false;
+            this.RevertB.Click += new System.EventHandler(this.RevertB_Click);
             // 
             // ExitButton
             // 
@@ -186,7 +184,7 @@
             this.label2.Text = "-->";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // OodleSwap
+            // SwapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -207,7 +205,7 @@
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
-            this.Name = "OodleSwap";
+            this.Name = "SwapForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.swap_MouseDown);
             ((System.ComponentModel.ISupportInitialize)(this.image)).EndInit();

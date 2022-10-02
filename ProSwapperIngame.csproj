@@ -107,7 +107,7 @@ https://proswapper.xyz</Description>
     <Compile Update="src\UI\SwapOption.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="src\UI\OodleSwap.cs">
+    <Compile Update="src\UI\SwapForm.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

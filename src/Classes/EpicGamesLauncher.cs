@@ -30,7 +30,6 @@ namespace Pro_Swapper
             {
                 if (File.Exists(LauncherJson))
                 {
-
                     Root launcherdata = JsonConvert.DeserializeObject<Root>(File.ReadAllText(LauncherJson));
                     string InstallLocation = launcherdata.InstallationList.First(x => x.AppName == "Fortnite").InstallLocation;
                     global.CurrentConfig.Paks = InstallLocation + @"\FortniteGame\Content\Paks";
@@ -40,6 +39,26 @@ namespace Pro_Swapper
             }
             catch { }
             return false;
+        }
+
+        public static string GetCurrentInstalledFortniteVersion()
+        {
+            try
+            {
+                if (File.Exists(LauncherJson))
+                {
+                    Root launcherdata = JsonConvert.DeserializeObject<Root>(File.ReadAllText(LauncherJson));
+                    if (launcherdata.InstallationList.Count > 0)
+                    {
+                        string fortniteVersion = launcherdata.InstallationList.First(x => x.AppName == "Fortnite").AppVersion;
+                        global.CurrentConfig.FortniteVersion = fortniteVersion;
+                        global.SaveConfig();
+                        return fortniteVersion;
+                    }
+                }
+            }
+            catch { }
+            return null;
         }
 
 

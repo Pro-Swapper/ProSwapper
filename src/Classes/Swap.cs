@@ -11,6 +11,7 @@ using File = System.IO.File;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.Compression;
 using Ionic.Zlib;
+using Pro_Swapper.src.Classes;
 
 namespace Pro_Swapper
 {
@@ -62,12 +63,13 @@ namespace Pro_Swapper
         //    }
         //}
         #endregion
+        public static DefaultFileProvider Provider;
         public static bool SwapItem(api.Item item, bool Converting)
         {
-            var Provider = new DefaultFileProvider($"{PaksLocation}", SearchOption.TopDirectoryOnly, false, new CUE4Parse.UE4.Versions.VersionContainer(CUE4Parse.UE4.Versions.EGame.GAME_UE5_LATEST));
-            
+            Provider = new DefaultFileProvider($"{PaksLocation}", SearchOption.TopDirectoryOnly, false, new CUE4Parse.UE4.Versions.VersionContainer(CUE4Parse.UE4.Versions.EGame.GAME_UE5_LATEST));
+
             Provider.Initialize();
-            
+
 
 
             //Load all aes keys for required files
@@ -79,10 +81,9 @@ namespace Pro_Swapper
                 }
             }
 
-
             List<FinalPastes> finalPastes = new List<FinalPastes>();
             foreach (api.Asset asset in item.Asset)
-            {       
+            {
                 byte[] exportasset = Fortnite.FortniteExport.ExportAsset(Provider, asset.AssetPath);
                 // Directory.CreateDirectory("Exports");
                 //IF DuplicateFile
@@ -117,13 +118,14 @@ namespace Pro_Swapper
                     File.SetAttributes(ucasfile, global.RemoveAttribute(File.GetAttributes(ucasfile), FileAttributes.ReadOnly));
                     if (exportasset.Length <= exportData.compressedBuffer.Length)
                     {
+                        RevertEngine.CreateRevertItem(new RevertItem(exportData.offset, exportData.compressedBuffer, exportData.fileName, smallname));
                         finalPastes.Add(new FinalPastes(ucasfile, exportasset, exportData.offset));
                     }
                     else
                     {
                         MessageBox.Show("The edited asset is larger than the original one");
-                    } 
-                    
+                    }
+
                 }
             }
             Provider.Dispose();
@@ -146,7 +148,7 @@ namespace Pro_Swapper
                 Offset = offset;
             }
         }
-        
+
         public static bool EditAsset(ref byte[] file, api.Asset Asset, bool Converting)
         {
             if (Asset.Search.Length != Asset.Replace.Length)
@@ -157,7 +159,7 @@ namespace Pro_Swapper
                 {
                     byte[] searchB = ParseByteArray(Asset.Search[i]);
                     byte[] replaceB = ParseByteArray(Asset.Replace[i]);
-                    FillEnd(ref replaceB,searchB.Length);
+                    FillEnd(ref replaceB, searchB.Length);
                     if (Converting)
                     {
                         int SearchOffset = IndexOfSequence(file, searchB);
@@ -176,8 +178,8 @@ namespace Pro_Swapper
                 return true;
             }
         }
-        
-        public static void FillEnd(ref byte[] buffer, int len)=> Array.Resize(ref buffer, len);
+
+        public static void FillEnd(ref byte[] buffer, int len) => Array.Resize(ref buffer, len);
         public static void PasteInLocationBytes(FinalPastes finalpaste)
         {
             using (FileStream PakEditor = File.Open(finalpaste.ucasfile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))

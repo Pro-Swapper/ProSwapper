@@ -104,7 +104,6 @@ namespace Pro_Swapper
 
         private void Main_MouseDown(object sender, MouseEventArgs e) => global.MoveForm(e, Handle);
 
-        public static List<string> itemTabs = new();
         public static List<ItemTab> tabs = new();
         public static OtherTab otherTab = new OtherTab();
         private void NewPanel(string tab)
@@ -112,10 +111,10 @@ namespace Pro_Swapper
             RPC.SetState(tab, true);
             panelContainer.Controls.Clear();
 
-            if (!itemTabs.Contains(tab))
+            if (!tabs.Any(x => x.Tab.Contains(tab)))//Uses the 'Tab' value in each ItemTab to check if this tab has been added or not.
             {
-                itemTabs.Add(tab);
-                tabs.Add(new ItemTab(tab));
+                if (tab != "Other")
+                    tabs.Add(new ItemTab(tab));
             }
 
 

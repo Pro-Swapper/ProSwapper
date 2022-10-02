@@ -154,6 +154,7 @@ namespace Pro_Swapper
 
         public class ConfigObj
         {
+            public string FortniteVersion { get; set; } = "";
             public string Paks { get; set; } = "";
             public string ConfigIni { get; set; } = "";
             public Color[] theme { get; set; } = new Color[4] { Color.FromArgb(0, 33, 113), Color.FromArgb(64, 85, 170), Color.FromArgb(65, 105, 255), Color.FromArgb(255, 255, 255) };//0,33,113;    64,85,170;    65,105,255;   255,255,255
