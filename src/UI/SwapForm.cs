@@ -72,13 +72,18 @@ namespace Pro_Swapper
                     //Converting
 
                     //Try to revert the item before converting incase the user has the item already swapped
-                    RevertEngine.RevertItem(ThisItem);
-
+                    Program.logger.Log($"(SwapForm.cs)  Trying to revert {this.Text} incase the user has the item already swapped");
+                    if (RevertEngine.RevertItem(ThisItem))
+                    {
+                        Program.logger.Log($"(SwapForm.cs) Reverted {ThisItem.SwapsFrom} to it's original state");
+                    }
+                    Program.logger.Log($"(SwapForm.cs) Starting to convert {this.Text}");
                     Swapped = Task.Run(() => Swap.SwapItem(ThisItem, Converting)).Result;
                 }
                 else
                 {
                     //Reverting
+                    Program.logger.Log($"(SwapForm.cs) Starting to revert {this.Text}");
                     Swapped = RevertEngine.RevertItem(ThisItem);
                 }
 
