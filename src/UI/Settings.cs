@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Drawing.Drawing2D;
+using Pro_Swapper.src.Classes;
 
 namespace Pro_Swapper
 {
@@ -147,11 +148,12 @@ namespace Pro_Swapper
         private static void KillEpic() => Process.GetProcessesByName("EpicGamesLauncher").All(x => { x.Kill(); return true; });
         private void button7_Click(object sender, EventArgs e)
         {
+            RevertEngine.RevertAll();
             RevertAllSwaps();
             global.CurrentConfig.swaplogs = "";
             global.SaveConfig();
-            global.OpenUrl($"{epicfnpath}verify");
-            Main.Cleanup();
+            //global.OpenUrl($"{epicfnpath}verify");
+            //Main.Cleanup();
         }
         private void button10_Click(object sender, EventArgs e) => new ThemeCreator().ShowDialog();
         private void button5_Click(object sender, EventArgs e) => new UI.About().ShowDialog();

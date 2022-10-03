@@ -19,16 +19,11 @@ namespace Pro_Swapper.src.Classes
         }
         public static void RevertAll()
         {
-            if (Swap.Provider.MountedVfs.Count > 0)
-                Swap.Provider.Dispose();
-
-
             string[] files = Directory.GetFiles(RevertFolderDirectory);
             foreach (string file in files)
             {
                 RevertItem(file);
             }
-
         }
 
         public static bool RevertItem(API.api.Item item)

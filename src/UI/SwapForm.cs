@@ -69,6 +69,10 @@ namespace Pro_Swapper
                 if (Converting)
                 {
                     //Converting
+
+                    //Try to revert the item before converting incase the user has the item already swapped
+                    RevertEngine.RevertItem(ThisItem);
+
                     Swapped = Task.Run(() => Swap.SwapItem(ThisItem, Converting)).Result;
                 }
                 else

@@ -73,8 +73,7 @@ namespace Pro_Swapper
                 Provider.Initialize();
 
             }
-
-
+            
             return Provider;
         }
 
