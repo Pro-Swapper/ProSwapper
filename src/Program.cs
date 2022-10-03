@@ -54,7 +54,7 @@ namespace Pro_Swapper
 
                 if (!File.Exists(Oodledll))
                 {
-                    File.WriteAllBytes(Oodledll, new WebClient().DownloadData("https://cdn.proswapper.xyz/oo2core_9_win64.dll"));
+                    File.WriteAllBytes(Oodledll, new WebClient().DownloadData("https://cdn.proswapper.xyz/oo2core_5_win64.dll"));
                     logger.Log($"Downloaded {Oodledll} from Pro Swapper cdn. ??? Not found in user's game files");
                 }
                 else

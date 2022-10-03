@@ -69,9 +69,11 @@ namespace Pro_Swapper
         {
             if (Provider == null)
             {
+                Program.logger.Log($"(Swap.cs) Creating new DefaultFileProvider");
                 Provider = new DefaultFileProvider($"{PaksLocation}", SearchOption.TopDirectoryOnly, false, new CUE4Parse.UE4.Versions.VersionContainer(CUE4Parse.UE4.Versions.EGame.GAME_UE5_LATEST));
                 Provider.Initialize();
                 //Load all aes keys for required files
+                Program.logger.Log($"(Swap.cs) Loading AES keys");
                 foreach (var vfs in Provider.UnloadedVfs)
                 {
                     if (!vfs.Name.Contains("optional"))
@@ -86,66 +88,83 @@ namespace Pro_Swapper
 
         public static bool SwapItem(api.Item item, bool Converting)
         {
-            DefaultFileProvider Provider = GetProvider();
-
-
-
-
-            List<FinalPastes> finalPastes = new List<FinalPastes>();
-            foreach (api.Asset asset in item.Asset)
+            try
             {
-                byte[] exportasset = Fortnite.FortniteExport.ExportAsset(Provider, asset.AssetPath);
-                // Directory.CreateDirectory("Exports");
-                //IF DuplicateFile
 
-                //string ucasfile = $"{PaksLocation}\\{ProSwapperPakFolder}\\{exportData.fileName}";
-                //ENDIF
-                string ucasfile = exportData.filePath;
-                string smallname = Path.GetFileName(asset.AssetPath);
-#if DEBUG
-                Directory.CreateDirectory("Exports");
-                File.WriteAllBytes($"Exports\\{smallname}_Raw.pak", exportData.compressedBuffer);//Just simple export
-                File.WriteAllBytes($"Exports\\{smallname}_Decompressed.pak", exportasset);//Just simple export
-#endif
-                if (EditAsset(ref exportasset, asset, Converting))
+                Program.logger.Log($"(Swap.cs) Swapping {item.SwapsFrom} to {item.SwapsTo}");
+
+                DefaultFileProvider Provider = GetProvider();
+
+                List<FinalPastes> finalPastes = new List<FinalPastes>();
+                foreach (api.Asset asset in item.Asset)
                 {
-#if DEBUG
-                    File.WriteAllBytes($"Exports\\{smallname}_Edited.pak", exportasset);//Edited export
-#endif
+                    Program.logger.Log($"Trying to export {asset.AssetPath}");
+                    byte[] exportasset = Fortnite.FortniteExport.ExportAsset(Provider, asset.AssetPath);
+                    if (exportasset != null && exportasset.Length > 0)
+                        Program.logger.Log($"Successfully exported {asset.AssetPath}");
+                    // Directory.CreateDirectory("Exports");
+                    //IF DuplicateFile
 
-                    switch (exportData.compressionMethod)
-                    {
-                        case CompressionMethod.None:
-                            break;
-                        case CompressionMethod.Oodle:
-                            exportasset = Oodle.Compress(exportasset);
-                            break;
-                        case CompressionMethod.Zlib:
-                            ByteCompression.Compress(exportasset);
-                            break;
-                    }
-#if DEBUG
-                    File.WriteAllBytes($"Exports\\{smallname}_Compress_Edited_{exportData.compressionMethod}.pak", exportasset);//Compressed edited export
-#endif
-                    //DuplicateFile(ucasfile);
-                    File.SetAttributes(ucasfile, global.RemoveAttribute(File.GetAttributes(ucasfile), FileAttributes.ReadOnly));
-                    if (exportasset.Length <= exportData.compressedBuffer.Length)
-                    {
-                        RevertEngine.CreateRevertItem(new RevertItem(exportData.offset, exportData.compressedBuffer, exportData.fileName, smallname));
-                        finalPastes.Add(new FinalPastes(ucasfile, exportasset, exportData.offset));
-                    }
-                    else
-                    {
-                        MessageBox.Show("The edited asset is larger than the original one");
-                    }
 
+                    //string ucasfile = $"{PaksLocation}\\{ProSwapperPakFolder}\\{exportData.fileName}";
+                    //ENDIF
+                    string ucasfile = exportData.filePath;
+                    string smallname = Path.GetFileName(asset.AssetPath);
+#if DEBUG
+                    Directory.CreateDirectory("Exports");
+                    File.WriteAllBytes($"Exports\\{smallname}_Raw.pak", exportData.compressedBuffer);//Just simple export
+                    File.WriteAllBytes($"Exports\\{smallname}_Decompressed.pak", exportasset);//Just simple export
+#endif
+                    Program.logger.Log($"Trying to edit asset {asset.AssetPath}");
+                    if (EditAsset(ref exportasset, asset, Converting))
+                    {
+#if DEBUG
+                        File.WriteAllBytes($"Exports\\{smallname}_Edited.pak", exportasset);//Edited export
+#endif
+                        Program.logger.Log($"Successfully edited asset {asset.AssetPath}");
+                        Program.logger.Log($"Trying to compress asset with {exportData.compressionMethod}");
+                        switch (exportData.compressionMethod)
+                        {
+                            case CompressionMethod.None:
+                                break;
+                            case CompressionMethod.Oodle:
+                                exportasset = Oodle.Compress(exportasset);
+                                break;
+                            case CompressionMethod.Zlib:
+                                ByteCompression.Compress(exportasset);
+                                break;
+                        }
+                        Program.logger.Log($"Compressed asset with {exportData.compressionMethod}");
+#if DEBUG
+                        File.WriteAllBytes($"Exports\\{smallname}_Compress_Edited_{exportData.compressionMethod}.pak", exportasset);//Compressed edited export
+#endif
+                        //DuplicateFile(ucasfile);
+                        Program.logger.Log($"Trying to set file attributes to {ucasfile}");
+                        File.SetAttributes(ucasfile, global.RemoveAttribute(File.GetAttributes(ucasfile), FileAttributes.ReadOnly));
+                        Program.logger.Log($"Successfully edited file attributes to {ucasfile}");
+                        if (exportasset.Length <= exportData.compressedBuffer.Length)
+                        {
+                            RevertEngine.CreateRevertItem(new RevertItem(exportData.offset, exportData.compressedBuffer, exportData.fileName, smallname));
+                            finalPastes.Add(new FinalPastes(ucasfile, exportasset, exportData.offset));
+                        }
+                        else
+                        {
+                            MessageBox.Show("The edited asset is larger than the original one");
+                        }
+
+                    }
                 }
-            }
-            //Provider.Dispose();, we don't need to dispose it anymore because CUE4Parse is modified with FileShare.ReadWrite
-            foreach (FinalPastes pastes in finalPastes)
-                PasteInLocationBytes(pastes);
+                //Provider.Dispose();, we don't need to dispose it anymore because CUE4Parse is modified with FileShare.ReadWrite
+                foreach (FinalPastes pastes in finalPastes)
+                    PasteInLocationBytes(pastes);
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
         }
 
 
