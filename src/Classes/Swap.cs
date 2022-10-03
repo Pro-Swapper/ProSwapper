@@ -71,9 +71,16 @@ namespace Pro_Swapper
             {
                 Provider = new DefaultFileProvider($"{PaksLocation}", SearchOption.TopDirectoryOnly, false, new CUE4Parse.UE4.Versions.VersionContainer(CUE4Parse.UE4.Versions.EGame.GAME_UE5_LATEST));
                 Provider.Initialize();
-
+                //Load all aes keys for required files
+                foreach (var vfs in Provider.UnloadedVfs)
+                {
+                    if (!vfs.Name.Contains("optional"))
+                    {
+                        Provider.SubmitKey(vfs.EncryptionKeyGuid, api.AESKey);
+                    }
+                }
             }
-            
+
             return Provider;
         }
 
@@ -82,14 +89,7 @@ namespace Pro_Swapper
             DefaultFileProvider Provider = GetProvider();
 
 
-            //Load all aes keys for required files
-            foreach (var vfs in Provider.UnloadedVfs)
-            {
-                if (!vfs.Name.Contains("optional"))
-                {
-                    Provider.SubmitKey(vfs.EncryptionKeyGuid, api.AESKey);
-                }
-            }
+
 
             List<FinalPastes> finalPastes = new List<FinalPastes>();
             foreach (api.Asset asset in item.Asset)
@@ -165,7 +165,11 @@ namespace Pro_Swapper
         public static bool EditAsset(ref byte[] file, api.Asset Asset, bool Converting)
         {
             if (Asset.Search.Length != Asset.Replace.Length)
+            {
+                MessageBox.Show($"Number of swaps do not match up, 'Search' array size is {Asset.Search.Length} and 'Replace' array size is {Asset.Replace.Length}");
                 return false;
+            }
+
             using (MemoryStream stream = new MemoryStream(file))
             {
                 for (int i = 0; i < Asset.Search.Length; i++)

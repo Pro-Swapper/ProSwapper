@@ -51,9 +51,9 @@
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.OodleCompressBtn = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.anitkickbox = new System.Windows.Forms.CheckBox();
             this.button3 = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.anitkickbox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.folder)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -174,7 +174,7 @@
             this.button7.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button7.FlatAppearance.BorderSize = 0;
             this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button7.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.button7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.button7.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.button7.Image = ((System.Drawing.Image)(resources.GetObject("button7.Image")));
             this.button7.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -202,7 +202,7 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(192, 48);
             this.button4.TabIndex = 99;
-            this.button4.Text = "Get Converted Items";
+            this.button4.Text = "Show Converted Items";
             this.button4.UseVisualStyleBackColor = false;
             this.button4.Click += new System.EventHandler(this.ConvertedItemsList);
             // 
@@ -395,6 +395,19 @@
             this.groupBox1.Text = "Advanced Settings";
             this.groupBox1.Visible = false;
             // 
+            // anitkickbox
+            // 
+            this.anitkickbox.AutoSize = true;
+            this.anitkickbox.ForeColor = System.Drawing.Color.White;
+            this.anitkickbox.Location = new System.Drawing.Point(248, 65);
+            this.anitkickbox.Name = "anitkickbox";
+            this.anitkickbox.Size = new System.Drawing.Size(264, 19);
+            this.anitkickbox.TabIndex = 128;
+            this.anitkickbox.Text = "Limit Number of Pak Swaps (Recommended)";
+            this.anitkickbox.UseVisualStyleBackColor = true;
+            this.anitkickbox.Visible = false;
+            this.anitkickbox.CheckedChanged += new System.EventHandler(this.anitkickbox_CheckedChanged);
+            // 
             // button3
             // 
             this.button3.BackColor = System.Drawing.Color.RoyalBlue;
@@ -425,18 +438,6 @@
             this.checkBox1.Text = "Show Advanced Settings";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // anitkickbox
-            // 
-            this.anitkickbox.AutoSize = true;
-            this.anitkickbox.ForeColor = System.Drawing.Color.White;
-            this.anitkickbox.Location = new System.Drawing.Point(248, 65);
-            this.anitkickbox.Name = "anitkickbox";
-            this.anitkickbox.Size = new System.Drawing.Size(264, 19);
-            this.anitkickbox.TabIndex = 128;
-            this.anitkickbox.Text = "Limit Number of Pak Swaps (Recommended)";
-            this.anitkickbox.UseVisualStyleBackColor = true;
-            this.anitkickbox.CheckedChanged += new System.EventHandler(this.anitkickbox_CheckedChanged);
             // 
             // Settings
             // 

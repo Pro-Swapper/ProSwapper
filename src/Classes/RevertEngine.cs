@@ -17,13 +17,15 @@ namespace Pro_Swapper.src.Classes
             string file = JsonConvert.SerializeObject(item);
             File.WriteAllText($"{RevertFolderDirectory}\\{Path.GetFileNameWithoutExtension(item.AssetPath)}.json", file);
         }
-        public static void RevertAll()
+        public static bool RevertAll()
         {
+            List<bool> Result = new();
             string[] files = Directory.GetFiles(RevertFolderDirectory);
             foreach (string file in files)
             {
-                RevertItem(file);
+                Result.Add(RevertItem(file));
             }
+            return Result.All(x => x == true);
         }
 
         public static bool RevertItem(API.api.Item item)

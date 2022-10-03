@@ -113,6 +113,13 @@ namespace Pro_Swapper
         private const string epicfnpath = "com.epicgames.launcher://apps/Fortnite?action=";
         private void button9_Click(object sender, EventArgs e)
         {
+            if (Swap.Provider != null)
+                Swap.Provider.Dispose();
+
+
+            Swap.Provider = null;
+            //Dispose the provider because we don't want anything accessing the Fortnite files
+
             notifyIcon1.Visible = true;
             notifyIcon1.Icon = Main.appIcon;
             notifyIcon1.Text = "Pro Swapper";
@@ -148,12 +155,24 @@ namespace Pro_Swapper
         private static void KillEpic() => Process.GetProcessesByName("EpicGamesLauncher").All(x => { x.Kill(); return true; });
         private void button7_Click(object sender, EventArgs e)
         {
-            RevertEngine.RevertAll();
+            bool reverted = RevertEngine.RevertAll();
             RevertAllSwaps();
             global.CurrentConfig.swaplogs = "";
             global.SaveConfig();
             //global.OpenUrl($"{epicfnpath}verify");
             //Main.Cleanup();
+            if (reverted)
+            {
+                MessageBox.Show("Fortnite successfully verified.", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Fortnite could not be verified, Try verifying from Epic Games Launcher instead", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+
+
+
         }
         private void button10_Click(object sender, EventArgs e) => new ThemeCreator().ShowDialog();
         private void button5_Click(object sender, EventArgs e) => new UI.About().ShowDialog();

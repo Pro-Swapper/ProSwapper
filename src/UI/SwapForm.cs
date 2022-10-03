@@ -22,8 +22,9 @@ namespace Pro_Swapper
             string swaptext = ThisItem.SwapsFrom + " --> " + ThisItem.SwapsTo;
             Text = swaptext;
             label1.Text = swaptext;
-            image.Image = global.ItemIcon(ThisItem.FromImage);
-            swapsfrom.Image = global.ItemIcon(ThisItem.ToImage);
+
+            Task.Run(() => image.Image = global.ItemIcon(ThisItem.FromImage));
+            Task.Run(() => swapsfrom.Image = global.ItemIcon(ThisItem.ToImage));
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
             Icon = Main.appIcon;
             BackColor = global.MainMenu;
