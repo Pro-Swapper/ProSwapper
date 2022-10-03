@@ -13,7 +13,6 @@ namespace Pro_Swapper.API
         private const string ProSwapperEndpoint = "https://pro-swapper.github.io/api/";
         public static APIRoot apidata = null;
         public const string FNAPIEndpoint = "https://fortnite-api.com/";
-        public const string BenBotEndpoint = "https://benbot.app/api/";
         private static FAesKey tmpAes = null;
         public static FAesKey AESKey
         {
@@ -37,8 +36,8 @@ namespace Pro_Swapper.API
                                 tmpAes = new FAesKey((string)msgpack.MsgPacklz4($"{FNAPIEndpoint}v2/aes?responseFormat=msgpack_lz4").data.mainKey);
                                 break;
 
-                            case AESSource.BenBot:
-                                string json = new WebClient().DownloadString($"{BenBotEndpoint}v1/aes");
+                            case AESSource.FortniteCentral:
+                                string json = new WebClient().DownloadString("https://fortnitecentral.gmatrixgames.ga/api/v1/aes");
                                 tmpAes = new FAesKey((string)((dynamic)JObject.Parse(json)).mainKey);
                                 break;
                             case AESSource.Manual:
@@ -65,7 +64,7 @@ namespace Pro_Swapper.API
         {
             FortniteAPIV1,
             FortniteAPIV2,
-            BenBot,
+            FortniteCentral,
             Manual
         }
 
@@ -144,7 +143,6 @@ namespace Pro_Swapper.API
             public string[] Search { get; set; }
             public string[] Replace { get; set; }
             public string AssetPath { get; set; }
-            public string UcasFile { get; set; }
         }
 
         public class Item
@@ -157,7 +155,6 @@ namespace Pro_Swapper.API
             public Asset[] Asset { get; set; }
             public string Note { get; set; } = null;
             public bool ShowMain { get; set; } = true;
-            public bool Zlib { get; set; } = false;
         }
         public class OptionMenu
         {

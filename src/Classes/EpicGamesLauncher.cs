@@ -30,7 +30,6 @@ namespace Pro_Swapper
             {
                 if (File.Exists(LauncherJson))
                 {
-
                     Root launcherdata = JsonConvert.DeserializeObject<Root>(File.ReadAllText(LauncherJson));
                     string InstallLocation = launcherdata.InstallationList.First(x => x.AppName == "Fortnite").InstallLocation;
                     global.CurrentConfig.Paks = InstallLocation + @"\FortniteGame\Content\Paks";
@@ -42,23 +41,26 @@ namespace Pro_Swapper
             return false;
         }
 
-
-        /// <summary>
-        /// Returns true on successful oodle file found.
-        /// </summary>
-        /// <param name="oodlefile"></param>
-        /// <returns></returns>
-        public static bool GetOodleDll(out string oodlefile)
+        public static string GetCurrentInstalledFortniteVersion()
         {
-            Root launcherdata = JsonConvert.DeserializeObject<Root>(File.ReadAllText(LauncherJson));
-            InstallationList fortnite = launcherdata.InstallationList.Where(x => x.AppName == "Fortnite").First();
-
-            oodlefile = fortnite.InstallLocation + @"\FortniteGame\Binaries\Win64\oo2core_5_win64.dll";
-            if (File.Exists(oodlefile))
-                return true;
-            else
-                return false;
+            try
+            {
+                if (File.Exists(LauncherJson))
+                {
+                    Root launcherdata = JsonConvert.DeserializeObject<Root>(File.ReadAllText(LauncherJson));
+                    if (launcherdata.InstallationList.Count > 0)
+                    {
+                        string fortniteVersion = launcherdata.InstallationList.First(x => x.AppName == "Fortnite").AppVersion;
+                        global.CurrentConfig.FortniteVersion = fortniteVersion;
+                        global.SaveConfig();
+                        return fortniteVersion;
+                    }
+                }
+            }
+            catch { }
+            return null;
         }
+
 
         public static bool CloseFNPrompt()
         {
@@ -66,7 +68,7 @@ namespace Pro_Swapper
             Process[] fnproc = Process.GetProcessesByName("FortniteClient-Win64-Shipping.exe");
             if (fnproc.Length > 0)
             {
-                MessageBox.Show($"Fortnite running! Please close this before swapping anything!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($@"Fortnite running! Please close this before swapping anything!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return false;
             }
             return true;

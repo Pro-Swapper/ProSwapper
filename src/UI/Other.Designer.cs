@@ -39,8 +39,6 @@
             this.Splash = new System.Windows.Forms.PictureBox();
             this.Aimbot = new System.Windows.Forms.PictureBox();
             this.StretchRes = new System.Windows.Forms.PictureBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.Music = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -52,7 +50,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.Splash)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Aimbot)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StretchRes)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Music)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -85,7 +82,7 @@
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label8.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label8.Location = new System.Drawing.Point(807, 151);
+            this.label8.Location = new System.Drawing.Point(465, 145);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(150, 20);
             this.label8.TabIndex = 82;
@@ -146,7 +143,7 @@
             this.Splash.Image = ((System.Drawing.Image)(resources.GetObject("Splash.Image")));
             this.Splash.ImageLocation = "";
             this.Splash.InitialImage = null;
-            this.Splash.Location = new System.Drawing.Point(813, 6);
+            this.Splash.Location = new System.Drawing.Point(471, 0);
             this.Splash.Name = "Splash";
             this.Splash.Size = new System.Drawing.Size(134, 141);
             this.Splash.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -182,31 +179,6 @@
             this.StretchRes.TabIndex = 77;
             this.StretchRes.TabStop = false;
             this.StretchRes.Click += new System.EventHandler(this.pictureBox2_Click);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label5.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label5.Location = new System.Drawing.Point(459, 149);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(155, 21);
-            this.label5.TabIndex = 292;
-            this.label5.Text = "Pro Swapper Music";
-            // 
-            // Music
-            // 
-            this.Music.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.Music.Image = ((System.Drawing.Image)(resources.GetObject("Music.Image")));
-            this.Music.ImageLocation = "";
-            this.Music.InitialImage = null;
-            this.Music.Location = new System.Drawing.Point(409, 6);
-            this.Music.Name = "Music";
-            this.Music.Size = new System.Drawing.Size(258, 141);
-            this.Music.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.Music.TabIndex = 291;
-            this.Music.TabStop = false;
-            this.Music.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // pictureBox1
             // 
@@ -309,8 +281,6 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.Music);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label12);
@@ -328,7 +298,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.Splash)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Aimbot)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.StretchRes)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Music)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
@@ -348,8 +317,6 @@
         private System.Windows.Forms.PictureBox pictureBox8;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.PictureBox Music;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;

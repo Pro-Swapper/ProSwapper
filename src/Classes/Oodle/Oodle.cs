@@ -1,89 +1,76 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
-namespace Pro_Swapper.Oodle
+namespace Pro_Swapper
 {
 
-    //Credit to Tamely https://github.com/Tamely/Oodle-Compressor
-    public class OodleClass
+    //From https://github.com/Tamely/SaturnSwapper/blob/cbe79e66fcbc900f8bb6c45387f01a39fa127b01/Saturn.Backend/Core/Utils/Compression/Oodle.cs
+
+    public static class Oodle
     {
-        public static byte[] Compress(byte[] buffer)
+        [DllImport(Program.Oodledll)]
+        private static extern int OodleLZ_Compress(OodleFormat Format, byte[] Buffer, long BufferSize, byte[] OutputBuffer, OodleCompressionLevel Level, uint a, uint b, uint c);
+        private static uint CompressStream(byte[] Buffer, uint BufferSize, ref byte[] OutputBuffer, uint OutputBufferSize,OodleFormat Format, OodleCompressionLevel Level)
         {
-            uint @uint; // Needs to be outside so it always has a value
-            try
-            {
-                @uint = (uint)OodleStream.OodleLZ_Compress(OodleFormat.Kraken, buffer, // Get decompressed buffer
-                    buffer.Length, // Get decompressed length
-                    new byte[(int)(uint)buffer.Length + 274U *
-                        (((uint)buffer.Length + 262143U) / 262144U)], // Get compressed size
-                    OodleCompressionLevel.Level5, 0U, 0U, 0U, 0);
-            }
-            catch (AccessViolationException)
-            {
-                @uint = 64U; // Just in case there is protected memory
-            }
+            if (Buffer.Length > 0 && BufferSize > 0 && OutputBuffer.Length > 0 && OutputBufferSize > 0)
+                return (uint)OodleLZ_Compress(Format, Buffer, BufferSize, OutputBuffer, Level, 0, 0, 0);
 
-            return OodleStream.OodleCompress(buffer, buffer.Length,OodleFormat.Kraken, OodleCompressionLevel.Level5, @uint); // Writing the data
+            return 0;
         }
-    }
 
-    public class OodleStream
-    {
-        [DllImport(Program.oodledll)]
-        public static extern int OodleLZ_Compress(OodleFormat format, byte[]? decompressedBuffer, long decompressedSize,byte[] compressedBuffer, OodleCompressionLevel compressionLevel, uint a, uint b, uint c,ThreadModule threadModule); // Oodle dll method
-
-        public static byte[] OodleCompress(byte[]? decompressedBuffer, int decompressedSize, OodleFormat format, OodleCompressionLevel compressionLevel, uint a)
+        public static uint GetCompressedBounds(uint BufferSize)
         {
-            var array = new byte[(uint)decompressedSize + 274U * (((uint)decompressedSize + 262143U) / 262144U)]; // Initializes array with compressed array size
-            var compressedBytes = new byte[a + (uint)OodleLZ_Compress(format, decompressedBuffer, // Initializes the array we will be returning
-                decompressedSize, array, compressionLevel, 0U, 0U,
-                0U, 0U) - (int)a];
-            Buffer.BlockCopy(array, 0, compressedBytes, 0, OodleLZ_Compress(format, decompressedBuffer, decompressedSize,
-                array, compressionLevel, 0U, 0U,
-                0U, 0U)); // Combines the two arrays
-            return compressedBytes;
+            return BufferSize + 274 * ((BufferSize + 0x3FFFF) / 0x40000);
         }
-    }
+        
+        public static byte[] Compress(byte[] Buffer, OodleFormat oodleFormat = OodleFormat.Kraken )
+        {
+            var MaxLength = GetCompressedBounds((uint)Buffer.Length);
+            var OutputBuffer = new byte[MaxLength];
 
-    public enum ThreadModule : uint
-    {
+            var CompressedSize = CompressStream(Buffer, (uint)Buffer.Length, ref OutputBuffer, MaxLength,
+                oodleFormat, OodleCompressionLevel.Optimal5);
+            
+            if (CompressedSize < 0)
+                throw new InvalidDataException("Unable to compress buffer.");
+
+            var tempBuffer = new byte[CompressedSize];
+            Array.Copy(OutputBuffer, tempBuffer, CompressedSize);
+
+            return tempBuffer;
+
+        }
     }
 
     public enum OodleFormat : uint
     {
-        Lzh,
-        Lzhlw,
-        Lznib,
-        Lzb,
-        Lzb16,
-        Lzblw,
-        Lza,
-        Lzna,
-        Kraken,
-        Mermaid,
-        BitKnit,
-        Selkie,
-        Akkorokamui,
-        None
+        LZH = 0,
+        LZHLW = 1,
+        LZNIB = 2,
+        None = 3,
+        LZB16 = 4,
+        LZBLW = 5,
+        LZA = 6,
+        LZNA = 7,
+        Kraken = 8,
+        Mermaid = 9,
+        BitKnit = 10,
+        Selkie = 11,
+        Hydra = 12,
+        Leviathan = 13
     }
 
-    public enum OodleCompressionLevel : ulong
+    public enum OodleCompressionLevel : uint
     {
-        None,
-        Fastest,
-        Faster,
-        Fast,
-        Normal,
-        Level1,
-        Level2,
-        Level3,
-        Level4,
-        Level5
-    }
-
-    public enum CompressionType : uint // Used for decompression so not needed here, unless someone wants to add it
-    {
-        Unknown,
-        Oodle,
-        Zlib
+        None = 0,
+        SuperFast = 1,
+        VeryFast = 2,
+        Fast = 3,
+        Normal = 4,
+        Optimal1 = 5,
+        Optimal2 = 6,
+        Optimal3 = 7,
+        Optimal4 = 8,
+        Optimal5 = 9
     }
 }

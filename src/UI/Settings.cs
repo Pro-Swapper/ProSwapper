@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Drawing.Drawing2D;
+using Pro_Swapper.src.Classes;
 
 namespace Pro_Swapper
 {
@@ -20,9 +21,9 @@ namespace Pro_Swapper
             InitializeComponent();
             RPC.SetState("Settings", true);
             Icon = Main.appIcon;
-            #if DEBUG
+#if DEBUG
             OodleCompressBtn.Visible = true;
-            #endif
+#endif
             checkBox1_CheckedChanged(null, new EventArgs());
             this.Paint += (sender, e) =>
             {
@@ -37,7 +38,7 @@ namespace Pro_Swapper
             global.SaveConfig();
             Close();
         }
-        private void SettingsForm_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
+        private void SettingsForm_MouseDown(object sender, MouseEventArgs e) => global.MoveForm(e, Handle);
         private void pictureBox7_Click(object sender, EventArgs e)
         {
             using (FolderBrowserDialog paks = new FolderBrowserDialog())
@@ -95,7 +96,7 @@ namespace Pro_Swapper
             anitkickbox.Checked = global.CurrentConfig.AntiKick;
             if (global.CurrentConfig.AESSource == AESSource.Manual)
             {
-                
+
                 manualAES.Visible = true;
                 manualAESLabel.Visible = true;
                 checkPing.Visible = false;
@@ -112,6 +113,13 @@ namespace Pro_Swapper
         private const string epicfnpath = "com.epicgames.launcher://apps/Fortnite?action=";
         private void button9_Click(object sender, EventArgs e)
         {
+            if (Swap.Provider != null)
+                Swap.Provider.Dispose();
+
+
+            Swap.Provider = null;
+            //Dispose the provider because we don't want anything accessing the Fortnite files
+
             notifyIcon1.Visible = true;
             notifyIcon1.Icon = Main.appIcon;
             notifyIcon1.Text = "Pro Swapper";
@@ -128,7 +136,7 @@ namespace Pro_Swapper
                 Task.Delay(1000);
                 Process[] thisproc = Process.GetProcessesByName("FortniteClient-Win64-Shipping");
                 if (thisproc.Length > 0)
-                        fngame = thisproc[0];
+                    fngame = thisproc[0];
             }
 
             fngame.WaitForExit();
@@ -141,21 +149,33 @@ namespace Pro_Swapper
 
         private void NotifyIcon1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Pro Swapper is currently running while playing Fortnite so it closes Epic Games Launcher when you finish playing. If you want to close Pro Swapper end the process from task manager :'(", "Pro Swapper Notify Icon", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(@"Pro Swapper is currently running while playing Fortnite so it closes Epic Games Launcher when you finish playing. If you want to close Pro Swapper end the process from task manager :'(", "Pro Swapper Notify Icon", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private static void KillEpic()=> Process.GetProcessesByName("EpicGamesLauncher").All(x => { x.Kill(); return true; });
+        private static void KillEpic() => Process.GetProcessesByName("EpicGamesLauncher").All(x => { x.Kill(); return true; });
         private void button7_Click(object sender, EventArgs e)
         {
-                Lobby.RevertAllLobbySwaps(true);
-                RevertAllSwaps();
-                global.CurrentConfig.swaplogs = "";
-                global.SaveConfig();
-                global.OpenUrl($"{epicfnpath}verify");
-                Main.Cleanup();     
+            bool reverted = RevertEngine.RevertAll();
+            RevertAllSwaps();
+            global.CurrentConfig.swaplogs = "";
+            global.SaveConfig();
+            //global.OpenUrl($"{epicfnpath}verify");
+            //Main.Cleanup();
+            if (reverted)
+            {
+                MessageBox.Show("Fortnite successfully verified.", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Fortnite could not be verified, Try verifying from Epic Games Launcher instead", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+
+
+
         }
         private void button10_Click(object sender, EventArgs e) => new ThemeCreator().ShowDialog();
-        private void button5_Click(object sender, EventArgs e)=> new UI.About().ShowDialog();
+        private void button5_Click(object sender, EventArgs e) => new UI.About().ShowDialog();
         private void ConvertedItemsList(object sender, EventArgs e)
         {
             string swaplogs = global.CurrentConfig.swaplogs;
@@ -163,9 +183,9 @@ namespace Pro_Swapper
             if (converteditemno > 0)
                 MessageBox.Show("You currently have " + converteditemno + " item(s) converted. The items you have converted are: " + swaplogs.Remove(swaplogs.Length - 1), "Converted Items List", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
-                MessageBox.Show("You have no items converted!", "Converted Items List", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(@"You have no items converted!", "Converted Items List", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-        
+
         private void button6_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show("Do you want to reset Pro Swapper to it's original settings? This option also deletes any cached images and older settings", "Delete Pro Swapper Settings?", MessageBoxButtons.YesNo);
@@ -218,7 +238,7 @@ namespace Pro_Swapper
                 global.SaveConfig();
             }
         }
-        private void manualAES_TextChanged(object sender, EventArgs e)=> global.CurrentConfig.ManualAESKey = manualAES.Text;
+        private void manualAES_TextChanged(object sender, EventArgs e) => global.CurrentConfig.ManualAESKey = manualAES.Text;
         private void button8_Click(object sender, EventArgs e)
         {
             Ping ping = new Ping();
@@ -230,8 +250,8 @@ namespace Pro_Swapper
                     url = "fortnite-api.com";
                     break;
 
-                case AESSource.BenBot:
-                    url = "benbot.app";
+                case AESSource.FortniteCentral:
+                    url = "fortnitecentral.gmatrixgames.ga";
                     break;
             }
 
@@ -240,26 +260,28 @@ namespace Pro_Swapper
             for (int i = 0; i < 5; i++)
                 listtimes.Add(ping.Send(url, 5000).RoundtripTime);
 
-            MessageBox.Show($"Sent request to {pingreply.Address} ({url})\nStatus: {pingreply.Status}\nPing (Average): {listtimes.Average()} / Min: {listtimes.Min()} / Max: {listtimes.Max()}", "Pro Swapper AES", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($@"Sent request to {pingreply.Address} ({url})
+Status: {pingreply.Status}
+Ping (Average): {listtimes.Average()} / Min: {listtimes.Min()} / Max: {listtimes.Max()}", "Pro Swapper AES", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-    
+
         private void button8_Click_1(object sender, EventArgs e)
         {
-        #if DEBUG//Oodle compressor only in debug mode for dev(s) hehe
+#if DEBUG//Oodle compressor only in debug mode for dev(s) hehe
             using (OpenFileDialog a = new OpenFileDialog())
             {
                 if (a.ShowDialog() == DialogResult.OK)
                 {
                     byte[] file = File.ReadAllBytes(a.FileName);
-                  //  string Path1 = "/Game/Characters/Player/Female/Medium/Bodies/F_MED_Renegade_Skull/Materials/F_MED_Renegade_Skull.F_MED_Renegade_Skull";
-                   // string Path2 = "/Game/Characters/Player/Female/Medium/Heads/F_MED_ASN_Sarah_Head_01/Materials/F_MED_ASN_Sarah_Head_02.F_MED_ASN_Sarah_Head_02";
-                  //  Swap.ReplaceAnyLength(file, System.Text.Encoding.Default.GetBytes(Path1), System.Text.Encoding.Default.GetBytes(Path2));
-                    byte[] newbyte = Oodle.OodleClass.Compress(file);
+                    //  string Path1 = "/Game/Characters/Player/Female/Medium/Bodies/F_MED_Renegade_Skull/Materials/F_MED_Renegade_Skull.F_MED_Renegade_Skull";
+                    // string Path2 = "/Game/Characters/Player/Female/Medium/Heads/F_MED_ASN_Sarah_Head_01/Materials/F_MED_ASN_Sarah_Head_02.F_MED_ASN_Sarah_Head_02";
+                    //  Swap.ReplaceAnyLength(file, System.Text.Encoding.Default.GetBytes(Path1), System.Text.Encoding.Default.GetBytes(Path2));
+                    byte[] newbyte = Oodle.Compress(file, OodleFormat.Leviathan);
                     File.WriteAllBytes(a.FileName + "_compressed.uasset", newbyte);
                 }
             }
-        #endif
+#endif
         }
 
 
