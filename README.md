@@ -5,6 +5,11 @@
 [![GitHub forks](https://img.shields.io/github/forks/Pro-Swapper/ProSwapper)](https://github.com/Pro-Swapper/ProSwapper/network)
 [![GitHub stars](https://img.shields.io/github/stars/Pro-Swapper/ProSwapper)](https://github.com/Pro-Swapper/ProSwapper/stargazers)
 ![](https://img.shields.io/badge/dynamic/json?label=Version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2FPro-Swapper%2Fapi%2Fmain%2Fglobal.json)
+
+**Download Pro Swapper via linkvertise <ins>[here](https://link-target.net/86737/proswapper)</ins>**
+<br>
+<br>
+
 # Discord Server
 <br>
 
@@ -14,22 +19,13 @@ Download Pro Swapper for the latest version of Fortnite [here](https://linkverti
 
 If you have any questions about Pro Swapper, please read our [FAQ](https://docs.proswapper.xyz/pro-swapper/faq)
 
+### Acknowledgements
 
-
-<br>
-Other Links:
-
-Huge thanks to [@Fabian](https://github.com/FabianFG)'s [CUE4Parse](https://github.com/FabianFG/CUE4Parse) which Pro Swapper massively uses.
-
-Thanks to [@Fortnite-API](https://github.com/Fortnite-API)'s api which Pro Swapper uses to fetch AES Key, Fortnite BR News, cosmetic lists & cosmetic icons.
-
-Thanks to [@neuecc](https://github.com/neuecc)'s [MessagePack-CSharp](https://github.com/neuecc/MessagePack-CSharp) for the implementation of [msgpack](https://msgpack.org/) in C# to download Fortnite API's data much easier.
-
-Pro Swapper uses our own [API](https://github.com/Pro-Swapper/api) for fetching cosmetics, news & more.
-
-Pro Swapper uses [Discord Rich Presence](https://github.com/discord/discord-rpc)
-
-Pro Swapper uses [.NET 6](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-6.0.9-windows-x64-installer)
+- [@Fabian](https://github.com/FabianFG)'s [CUE4Parse](https://github.com/FabianFG/CUE4Parse) used to read Fortnite assets.
+- [@Fortnite-API](https://github.com/Fortnite-API)'s api which Pro Swapper uses to fetch AES Key, Fortnite BR News, cosmetic lists & cosmetic icons.
+- [@neuecc](https://github.com/neuecc)'s [MessagePack-CSharp](https://github.com/neuecc/MessagePack-CSharp) for the implementation of [msgpack](https://msgpack.org/) in C#
+- [@lachee](https://github.com/lachee)'s [Discord Rich Presence](https://github.com/Lachee/discord-rpc-csharp)
+- [.NET 6](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-6.0.9-windows-x64-installer)
 <br>
 <br>
 <a href="https://discord.gg/proswapper"><img src="https://i.imgur.com/mEZB9JP.png"></a>
