@@ -111,7 +111,7 @@ namespace Pro_Swapper.Splash
                 string data = string.Empty;
             redo: try
                 {
-                    data = new WebClient().DownloadString(hosturls[url]);
+                    data = Program.httpClient.GetStringAsync(hosturls[url]).Result;
                 }
                 catch
                 {

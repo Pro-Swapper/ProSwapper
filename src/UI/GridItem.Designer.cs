@@ -31,7 +31,6 @@ namespace Pro_Swapper
         {
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -58,9 +57,6 @@ namespace Pro_Swapper
             this.label1.TabIndex = 1;
             this.label1.Text = "label1";
             // 
-            // backgroundWorker1
-            // 
-            // 
             // GridItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -79,6 +75,5 @@ namespace Pro_Swapper
 
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label1;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }

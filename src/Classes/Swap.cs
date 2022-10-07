@@ -149,7 +149,7 @@ namespace Pro_Swapper
                         }
                         else
                         {
-                            MessageBox.Show("The edited asset is larger than the original one");
+                            MessageBox.Show($"The edited asset is larger than the original one ({asset.AssetPath})");
                         }
 
                     }

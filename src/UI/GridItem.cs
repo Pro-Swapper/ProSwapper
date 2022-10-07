@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Threading.Tasks;
+using System.Windows.Forms;
 using Pro_Swapper.API;
 namespace Pro_Swapper
 {
@@ -7,49 +8,25 @@ namespace Pro_Swapper
         public GridItem(api.Item i)
         {
             InitializeComponent();
-            backgroundWorker1.DoWork += delegate
-            {
-                pictureBox1.Image = global.ItemIcon(i.ToImage);
-            };
-            backgroundWorker1.RunWorkerAsync();
+            Task.Run(() => pictureBox1.Image = global.ItemIcon(i.ToImage));
             pictureBox1.Click += delegate
             {
-               new SwapForm(i).Show();
+                new SwapForm(i).Show();
             };
             label1.Text = i.SwapsTo.Split('|')[0];
-            backgroundWorker1.Dispose();
         }
 
 
         public GridItem(api.OptionMenu i)
         {
             InitializeComponent();
-            backgroundWorker1.DoWork += delegate
-            {
-                pictureBox1.Image = global.ItemIcon(i.MainIcon);
-            };
-            backgroundWorker1.RunWorkerAsync();
+            Task.Run(() => pictureBox1.Image = global.ItemIcon(i.MainIcon));
+
             pictureBox1.Click += delegate
             {
                 new SwapOption(i).Show();
             };
             label1.Text = i.Title.Split('|')[0];
-            backgroundWorker1.Dispose();
-        }
-
-        public GridItem(string imageURL, string Text, string ClickURL)
-        {
-            InitializeComponent();
-            backgroundWorker1.DoWork += delegate
-            {
-                pictureBox1.Load(imageURL);
-            };
-            backgroundWorker1.RunWorkerAsync();
-            label1.Text = Text;
-            pictureBox1.Click += delegate
-            {
-                global.OpenUrl(ClickURL);
-            };
         }
     }
 }

@@ -6,6 +6,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/Pro-Swapper/ProSwapper)](https://github.com/Pro-Swapper/ProSwapper/stargazers)
 ![](https://img.shields.io/badge/dynamic/json?label=Version&query=version&url=https%3A%2F%2Fraw.githubusercontent.com%2FPro-Swapper%2Fapi%2Fmain%2Fglobal.json)
 
+
 **Download Pro Swapper via linkvertise <ins>[here](https://link-target.net/86737/proswapper)</ins>**
 <br>
 <br>
@@ -18,6 +19,7 @@
 Download Pro Swapper for the latest version of Fortnite [here](https://linkvertise.com/86737/proswapper)
 
 If you have any questions about Pro Swapper, please read our [FAQ](https://docs.proswapper.xyz/pro-swapper/faq)
+
 
 ### Acknowledgements
 
