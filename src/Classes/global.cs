@@ -27,13 +27,9 @@ namespace Pro_Swapper
                 string path = ProSwapperFolder + @"Images\" + url.Replace("https:", "").Replace("/", "");
                 //Downloads image if doesnt exists
                 if (!File.Exists(path))
-                    return SaveImage(url, path, ImageFormat.Png);
-                else
-                {
-                    return Image.FromFile(path);
-                }
+                    SaveImage(url, path, ImageFormat.Png);
 
-
+                return Image.FromFile(path);
             }
             else
             {
@@ -45,9 +41,9 @@ namespace Pro_Swapper
 
                 //Downloads image if doesnt exists
                 if (!File.Exists(path))
-                    return SaveImage(imageurl, path, ImageFormat.Png);
-                else
-                    return Image.FromFile(path);
+                    SaveImage(imageurl, path, ImageFormat.Png);
+
+                return Image.FromFile(path);
             }
         }
 
@@ -73,19 +69,13 @@ namespace Pro_Swapper
             }
         }
 
-        private static Image SaveImage(string imageUrl, string filename, ImageFormat format)
+        private static void SaveImage(string imageUrl, string filename, ImageFormat format)
         {
-            using (WebClient web = new WebClient())
+            Stream stream = Program.httpClient.GetStreamAsync(imageUrl).Result;
+            using (Bitmap bitmap = new Bitmap(stream))
             {
-                Stream stream = web.OpenRead(imageUrl);
-                Bitmap bitmap = new Bitmap(stream);
-
                 if (bitmap != null)
                     bitmap.Save(filename, format);
-
-                stream.Flush();
-                stream.Close();
-                return bitmap;
             }
         }
 

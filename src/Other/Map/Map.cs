@@ -10,45 +10,38 @@ namespace Pro_Swapper.UI
     public partial class Map : Form
     {
         private const string MapEndpoint = "https://fortnite-api.com/images/";
-        private Image Map1;
-        private Image Map2;
+        private static Image Map1 = null;
+        private static Image Map2 = null;
         public Map()
         {
             InitializeComponent();
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             BackColor = global.MainMenu;
             Icon = Main.appIcon;
-            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 50,50));
+            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 50, 50));
             WindowState = FormWindowState.Normal;
         }
 
-        private void Splash_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
+        private void Splash_MouseDown(object sender, MouseEventArgs e) => global.MoveForm(e, Handle);
 
-        private void Splash_Load(object sender, EventArgs e)
+        private async void Splash_Load(object sender, EventArgs e)
         {
-            Map1 = Task.Run(() => UrlToImage($"{MapEndpoint}map.png")).Result;
-            Map2 = Task.Run(() => UrlToImage($"{MapEndpoint}map_en.png")).Result;
+            if (Map1 == null)
+                Map1 = await UrlToImage($"{MapEndpoint}map.png");
+            if (Map2 == null)
+                Map2 = await UrlToImage($"{MapEndpoint}map_en.png");
+
             pictureBox1.Image = Map1;
         }
 
-        private Image UrlToImage(string url)
+        private static async Task<Image> UrlToImage(string url)
         {
-            using (WebClient web = new WebClient() { Proxy = null })
-            {
-                Task<Stream> stream = Task.Run(() => web.OpenRead(url));
-                return Image.FromStream(stream.Result);
-            }
+            Stream stream = await Program.httpClient.GetStreamAsync(url);
+            var image = await Task.Run(() => Image.FromStream(stream));
+            return image;
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ExitButton_Click(object sender, System.EventArgs e)
-        {
-            Close();
-        }
+        private void ExitButton_Click(object sender, EventArgs e) => Close();
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {

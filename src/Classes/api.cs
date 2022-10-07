@@ -37,7 +37,7 @@ namespace Pro_Swapper.API
                                 break;
 
                             case AESSource.FortniteCentral:
-                                string json = new WebClient().DownloadString("https://fortnitecentral.gmatrixgames.ga/api/v1/aes");
+                                string json = Program.httpClient.GetStringAsync("https://fortnitecentral.gmatrixgames.ga/api/v1/aes").Result;
                                 tmpAes = new FAesKey((string)((dynamic)JObject.Parse(json)).mainKey);
                                 break;
                             case AESSource.Manual:
@@ -88,26 +88,24 @@ namespace Pro_Swapper.API
 
             try
             {
-                download: double TimeNow = global.GetEpochTime();
+            download: double TimeNow = global.GetEpochTime();
                 if (global.CurrentConfig.LastOpenedAPI + 3600 < TimeNow)
                 {
                     //Get api coz it wasnt fetched more than an hour ago
 
 
-                    using (WebClient web = new WebClient())
-                    {
-                        //Download api & global
-                        byte[] rawAPI = web.DownloadData($"{ProSwapperEndpoint}/{global.version}.json");
-                        string rawGlobal = web.DownloadString($"{ProSwapperEndpoint}/global.json");
+                    //Download api & global
+                    byte[] rawAPI = Program.httpClient.GetByteArrayAsync($"{ProSwapperEndpoint}/{global.version}.json").Result;
+                    string rawGlobal = Program.httpClient.GetStringAsync($"{ProSwapperEndpoint}/global.json").Result;
 
-                        //Decompress api & set
-                        apidata = JsonConvert.DeserializeObject<APIRoot>(MessagePackSerializer.ConvertToJson(ByteCompression.Decompress(rawAPI)));
-                        globalapi = JsonConvert.DeserializeObject<GlobalAPI.Root>(rawGlobal);
+                    //Decompress api & set
+                    apidata = JsonConvert.DeserializeObject<APIRoot>(MessagePackSerializer.ConvertToJson(ByteCompression.Decompress(rawAPI)));
+                    globalapi = JsonConvert.DeserializeObject<GlobalAPI.Root>(rawGlobal);
 
 
-                        File.WriteAllBytes(rawAPIFile, rawAPI);
-                        File.WriteAllText(rawGlobalFile, rawGlobal);
-                    }
+                    File.WriteAllBytes(rawAPIFile, rawAPI);
+                    File.WriteAllText(rawGlobalFile, rawGlobal);
+
                     global.CurrentConfig.LastOpenedAPI = TimeNow;
                 }
                 else

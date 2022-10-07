@@ -5,11 +5,14 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
+
 namespace Pro_Swapper
 {
     static class Program
     {
         public static Logger.Logger logger;
+        public static HttpClient httpClient;
         public const string Oodledll = "oo2core_5_win64.dll";
         /// <summary>
         /// The main entry point for the application.
@@ -19,6 +22,12 @@ namespace Pro_Swapper
         {
             try
             {
+                //Init the global httpClient
+                HttpClientHandler clientHandler = new HttpClientHandler();
+                clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+                httpClient = new HttpClient(clientHandler);
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
+
                 //Kill duplicate Pro Swapper's
                 Process CurrentProc = Process.GetCurrentProcess();
                 foreach (Process proc in Process.GetProcessesByName(CurrentProc.ProcessName))
@@ -54,8 +63,8 @@ namespace Pro_Swapper
 
                 if (!File.Exists(Oodledll))
                 {
-                    File.WriteAllBytes(Oodledll, new WebClient().DownloadData("https://cdn.proswapper.xyz/oo2core_5_win64.dll"));
-                    logger.Log($"Downloaded {Oodledll} from Pro Swapper cdn. ??? Not found in user's game files");
+                    File.WriteAllBytes(Oodledll, httpClient.GetByteArrayAsync($"https://cdn.proswapper.xyz/{Oodledll}").Result);
+                    logger.Log($"Downloaded {Oodledll} from Pro Swapper cdn.");
                 }
                 else
                 {

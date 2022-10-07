@@ -1,7 +1,5 @@
 ﻿using MessagePack;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Net;
 
 namespace Pro_Swapper
 {
@@ -13,29 +11,23 @@ namespace Pro_Swapper
         /// <typeparam name="T"></typeparam>
         /// <param name="url"></param>
         /// <returns></returns>
-        public static T MsgPacklz4<T>(string url)
-        {
-            var lz4Options = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray);
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.Proxy = null;
-            using (var response = (HttpWebResponse)request.GetResponse())
-            {
-                var AllCosmeticsLz4 = MessagePackSerializer.Deserialize<dynamic>(response.GetResponseStream(), lz4Options);
-                string json = MessagePackSerializer.SerializeToJson(AllCosmeticsLz4, lz4Options);
-                return JsonConvert.DeserializeObject<T>(json);
-            }
-        }
+        //public static T MsgPacklz4<T>(string url)
+        //{
+        //    var lz4Options = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray);
+        //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+        //    request.Proxy = null;
+        //    using (var response = (HttpWebResponse)request.GetResponse())
+        //    {
+        //        var AllCosmeticsLz4 = MessagePackSerializer.Deserialize<dynamic>(response.GetResponseStream(), lz4Options);
+        //        string json = MessagePackSerializer.SerializeToJson(AllCosmeticsLz4, lz4Options);
+        //        return JsonConvert.DeserializeObject<T>(json);
+        //    }
+        //}
 
-        /// <summary>
-        /// Input a url which responds with msgpack compressed in lz4, responds with json object which is 'T'
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="url"></param>
-        /// <returns></returns>
         public static dynamic MsgPacklz4(string url)
         {
             var lz4Options = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4BlockArray).WithSecurity(MessagePackSecurity.UntrustedData);
-            var allskinslz4 = MessagePackSerializer.Deserialize<dynamic>(new WebClient().DownloadData(url), lz4Options);
+            var allskinslz4 = MessagePackSerializer.Deserialize<dynamic>(Program.httpClient.GetByteArrayAsync(url).Result, lz4Options);
             string json = MessagePackSerializer.SerializeToJson(allskinslz4, lz4Options);
 
             return (dynamic)JObject.Parse(json);

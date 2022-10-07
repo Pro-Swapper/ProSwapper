@@ -21,16 +21,13 @@ namespace Pro_Swapper.UI
             InitializeComponent();
             BackColor = global.MainMenu;
             Icon = Main.appIcon;
-            #if !DEBUG//GitHub's 60 requests per hour for no auth
-            using (WebClient web = new WebClient())
-            {
-                //GitHub requires a user agent in the request so just paste in whatever so i just put this in
-                web.Headers.Add("User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
-                string data = web.DownloadString("https://api.github.com/repos/Pro-Swapper/ProSwapper/contributors");
-                Contributors[] contributors = JsonConvert.DeserializeObject<Contributors[]>(data);
-                flowLayoutPanel1.Controls.AddRange(contributors.Select(x => new GridItem(x.avatar_url, $"{x.login} ({x.contributions} contributions)", x.html_url)).ToArray());
-            }
-            #endif
+#if !DEBUG//GitHub's 60 requests per hour for no auth
+            //GitHub requires a user agent in the request so just paste in whatever so i just put this in
+            string data = Program.httpClient.GetStringAsync("https://api.github.com/repos/Pro-Swapper/ProSwapper/contributors").Result;
+            Contributors[] contributors = JsonConvert.DeserializeObject<Contributors[]>(data);
+            flowLayoutPanel1.Controls.AddRange(contributors.Select(x => new GridItem(x.avatar_url, $"{x.login} ({x.contributions} contributions)", x.html_url)).ToArray());
+
+#endif
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 10, 10));
             this.Paint += (sender, e) =>
             {
@@ -40,9 +37,9 @@ namespace Pro_Swapper.UI
                 GP.AddRectangle(Region.GetBounds(g));
                 g.DrawPath(new Pen(global.ChangeColorBrightness(BackColor, 0.15f)) { Width = 10f }, GP);
             };
-            label1.Text = $"The best FREE Fortnite skin swapper!\nProduct Information:\nLicense: MIT\nCopyright(©) 2019 - { DateTime.Now:yyyy} Pro Swapper\nVersion: { global.version}\nMD5: { global.FileToMd5(Process.GetCurrentProcess().MainModule.FileName)}\nLast Update: { global.CalculateTimeSpan(global.UnixTimeStampToDateTime(API.api.apidata.timestamp))}\nNumber of swappable items: { API.api.apidata.items.Length}";
+            label1.Text = $"The best FREE Fortnite skin swapper!\nProduct Information:\nLicense: MIT\nCopyright(©) 2019 - {DateTime.Now:yyyy} Pro Swapper\nVersion: {global.version}\nMD5: {global.FileToMd5(Process.GetCurrentProcess().MainModule.FileName)}\nLast Update: {global.CalculateTimeSpan(global.UnixTimeStampToDateTime(API.api.apidata.timestamp))}\nNumber of swappable items: {API.api.apidata.items.Length}";
         }
-        private void button1_Click(object sender, EventArgs e)=> Close();
+        private void button1_Click(object sender, EventArgs e) => Close();
 
 
         public class Contributors
@@ -68,7 +65,7 @@ namespace Pro_Swapper.UI
             public int contributions { get; set; }
         }
 
-        private void label13_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
+        private void label13_MouseDown(object sender, MouseEventArgs e) => global.MoveForm(e, Handle);
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
