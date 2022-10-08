@@ -75,6 +75,7 @@ namespace Pro_Swapper
             }
             catch (Exception ex)
             {
+                MessageBox.Show($"Error: {ex.Message}", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 logger.LogError(ex.Message);
             }
 

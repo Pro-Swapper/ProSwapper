@@ -21,7 +21,7 @@ namespace Pro_Swapper.UI
             InitializeComponent();
             BackColor = global.MainMenu;
             Icon = Main.appIcon;
-#if !DEBUG//GitHub's 60 requests per hour for no auth
+#if RELEASE//GitHub's 60 requests per hour for no auth
             //GitHub requires a user agent in the request so just paste in whatever so i just put this in
             string data = Program.httpClient.GetStringAsync("https://api.github.com/repos/Pro-Swapper/ProSwapper/contributors").Result;
             Contributors[] contributors = JsonConvert.DeserializeObject<Contributors[]>(data);
