@@ -96,9 +96,7 @@ namespace Pro_Swapper
             anitkickbox.Checked = global.CurrentConfig.AntiKick;
             if (global.CurrentConfig.AESSource == AESSource.Manual)
             {
-
-                manualAES.Visible = true;
-                manualAESLabel.Visible = true;
+                manualAES.Visible = manualAESLabel.Visible = true;
                 checkPing.Visible = false;
                 manualAES.Text = global.CurrentConfig.ManualAESKey;
             }
@@ -110,7 +108,7 @@ namespace Pro_Swapper
             Process.Start(AppDomain.CurrentDomain.FriendlyName);
             Main.Cleanup();
         }
-        private const string epicfnpath = "com.epicgames.launcher://apps/Fortnite?action=";
+        private const string epicfnpath = "com.epicgames.launcher://apps/fn%3A4fe75bbc5a674f4f9b356b5c90567da5%3AFortnite?action=";
         private void button9_Click(object sender, EventArgs e)
         {
             if (Swap.Provider != null)
@@ -124,10 +122,9 @@ namespace Pro_Swapper
             notifyIcon1.Icon = Main.appIcon;
             notifyIcon1.Text = "Pro Swapper";
             notifyIcon1.Click += NotifyIcon1_Click;
-            global.OpenUrl($"com.epicgames.launcher://apps/fn%3A4fe75bbc5a674f4f9b356b5c90567da5%3AFortnite?action=launch&silent=true");
+            global.OpenUrl($"{epicfnpath}launch&silent=true");
             this.Hide();
-            Action safeClose = delegate { Main.Mainform.Hide(); };
-            Main.Mainform.Invoke(safeClose);
+            Main.Mainform.Invoke(Main.Mainform.Hide);
             Process fngame = null;
 
             //Basically define fngame proc "searcher"
@@ -140,9 +137,8 @@ namespace Pro_Swapper
             }
 
             fngame.WaitForExit();
-            Task.Run(() => KillEpic());
-            Action safeShow = delegate { Main.Mainform.Show(); };
-            Main.Mainform.Invoke(safeShow);
+            Task.Run(KillEpic);
+            Main.Mainform.Invoke(Main.Mainform.Show);
             this.Show();
             this.BringToFront();
         }
@@ -157,10 +153,9 @@ namespace Pro_Swapper
         {
             bool reverted = RevertEngine.RevertAll();
             RevertAllSwaps();
-            global.CurrentConfig.swaplogs = "";
+            global.CurrentConfig.swaplogs = string.Empty;
             global.SaveConfig();
-            //global.OpenUrl($"{epicfnpath}verify");
-            //Main.Cleanup();
+
             if (reverted)
             {
                 MessageBox.Show("Fortnite successfully verified.", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -169,10 +164,6 @@ namespace Pro_Swapper
             {
                 MessageBox.Show("Fortnite could not be verified, Try verifying from Epic Games Launcher instead", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-
-
-
         }
         private void button10_Click(object sender, EventArgs e) => new ThemeCreator().ShowDialog();
         private void button5_Click(object sender, EventArgs e) => new UI.About().ShowDialog();
@@ -301,9 +292,9 @@ Ping (Average): {listtimes.Average()} / Min: {listtimes.Min()} / Max: {listtimes
             bool ShowAdvanced = checkBox1.Checked;
             groupBox1.Visible = ShowAdvanced;
             if (ShowAdvanced)
-                this.Height = 431;
+                this.Height = 479;
             else
-                this.Height = 245;
+                this.Height = 295;
             Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 10, 10));
         }
 
@@ -316,6 +307,12 @@ Ping (Average): {listtimes.Average()} / Min: {listtimes.Min()} / Max: {listtimes
         {
             global.CurrentConfig.AntiKick = anitkickbox.Checked;
             global.SaveConfig();
+        }
+
+        private void button8_Click_2(object sender, EventArgs e)
+        {
+            global.OpenUrl($"{epicfnpath}verify");
+            Main.Cleanup();
         }
     }
 }
