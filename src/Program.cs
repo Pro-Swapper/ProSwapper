@@ -6,6 +6,7 @@ using System.Net;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using Pro_Swapper.API;
 
 namespace Pro_Swapper
 {
@@ -14,6 +15,17 @@ namespace Pro_Swapper
         public static Logger.Logger logger;
         public static HttpClient httpClient;
         public const string Oodledll = "oo2core_5_win64.dll";
+        public const string Oodledll9 = "oo2core_9_win64.dll";
+
+
+        private static void InitializeHttpClient(ref HttpClient httpClient)
+        {
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            httpClient = new HttpClient(clientHandler);
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
+        }
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -22,26 +34,23 @@ namespace Pro_Swapper
         {
             try
             {
-                //Init the global httpClient
-                HttpClientHandler clientHandler = new HttpClientHandler();
-                clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
-                httpClient = new HttpClient(clientHandler);
-                httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
+                Utils.KillDuplicateProcesses();
+                InitializeHttpClient(ref Program.httpClient);
 
-                //Kill duplicate Pro Swapper's
-                Process CurrentProc = Process.GetCurrentProcess();
-                foreach (Process proc in Process.GetProcessesByName(CurrentProc.ProcessName))
-                    if (proc.Id != CurrentProc.Id)
-                        proc.Kill();
 
+
+                Directory.CreateDirectory(global.ProSwapperFolder);
+                Directory.CreateDirectory(global.ProSwapperFolder + "\\Config");
+                Directory.CreateDirectory(global.ProSwapperFolder + "\\Images");
+                Native.SetDllDirectory(global.ProSwapperFolder);
+                global.InitConfig();
+
+                logger = new Logger.Logger(global.ProSwapperFolder + "Pro_Swapper.log");
+                logger.Log($"Pro Swapper Version: {global.version}");
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Directory.CreateDirectory(global.ProSwapperFolder + "\\Config");
-                Directory.CreateDirectory(global.ProSwapperFolder + "\\Images");
-                global.InitConfig();
-                logger = new Logger.Logger(global.ProSwapperFolder + "Pro_Swapper.log");
-                logger.Log($"Pro Swapper Version: {global.version}");
+
                 UI.Splash splash = new UI.Splash();
                 Task.Run(() => Application.Run(splash));
                 logger.Log("Started Splash Screen");
@@ -61,16 +70,57 @@ namespace Pro_Swapper
                 }
                 logger.Log(global.GetPaksList);
 
-                if (!File.Exists(Oodledll))
+                if (!File.Exists(Oodledll) || !File.Exists(Oodledll9))
                 {
-                    File.WriteAllBytes(Oodledll, httpClient.GetByteArrayAsync($"https://cdn.proswapper.xyz/{Oodledll}").Result);
-                    logger.Log($"Downloaded {Oodledll} from Pro Swapper cdn.");
+
+                    string OodlePath = Path.Combine(global.ProSwapperFolder, Oodledll);
+                    File.WriteAllBytes(OodlePath, Properties.Resources.oo2core_5_win64);
+                    logger.Log($"Wrote {Oodledll} to {OodlePath}");
+
+                    string OodlePath9 = Path.Combine(global.ProSwapperFolder, Oodledll9);
+                    File.WriteAllBytes(OodlePath9, Properties.Resources.oo2core_9_win64);
+                    logger.Log($"Wrote {Oodledll9} to {OodlePath9}");
                 }
                 else
                 {
                     logger.Log($"{Oodledll} already exists so no need to fetch it!");
                 }
+
+
+                logger.Log($"Fetching latest data from API");
+                api.UpdateAPI();
+                string apiversion = api.apidata.version;
+                double TimeNow = global.GetEpochTime();
+
+                if (global.CurrentConfig.lastopened + 7200 < TimeNow)
+                {
+                    global.OpenUrl(api.apidata.discordurl);
+                    global.CurrentConfig.lastopened = TimeNow;
+                }
+
+                int thisVer = int.Parse(global.version.Replace(".", ""));
+                int apiVer = int.Parse(api.apidata.version.Replace(".", ""));
+
+                const string NewDownload = "https://linkvertise.com/86737/proswapper";
+
+                if (apiVer > thisVer)
+                {
+                    MessageBox.Show("New Pro Swapper Update found! Redirecting you to the new download!", "Pro Swapper Update", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    global.OpenUrl(NewDownload);
+                    Process.GetCurrentProcess().Kill();
+                }
+
+                if (global.IsNameModified())
+                {
+                    Pro_Swapper.Main.ThrowError($"This Pro Swapper version has been renamed, this means you have not downloaded it from the official source. Please redownload it on the Discord server at {api.apidata.discordurl}");
+                    global.OpenUrl(NewDownload);
+                }
+
+                if (api.apidata.status[0].IsUp == false)
+                    Pro_Swapper.Main.ThrowError(api.apidata.status[0].DownMsg);
+
                 logger.Log("Running main form");
+                RPC.InitializeRPC();
                 Application.Run(new Main(splash));
             }
             catch (Exception ex)

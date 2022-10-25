@@ -12,19 +12,19 @@ namespace Pro_Swapper
             InitializeComponent();
             RPC.SetState(optionmenu.Title.Split('|')[0] + " Swap Option", true);
             Icon = Main.appIcon;
-            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 50, 50));
-            
-                Text = optionmenu.Title;
-                label1.Text = optionmenu.Title;
-                IsSwapOption = optionmenu.IsSwapOption;
-                foreach (int i in optionmenu.ItemIndexs)
-                    AddItem(api.apidata.items[i]);
+            Region = Native.RoundedFormRegion(Width, Height, 50);
+
+            Text = optionmenu.Title;
+            label1.Text = optionmenu.Title;
+            IsSwapOption = optionmenu.IsSwapOption;
+            foreach (int i in optionmenu.ItemIndexs)
+                AddItem(api.apidata.items[i]);
         }
 
         //Either a swap option or style option
         private bool IsSwapOption = false;
 
-        private void ThemeCreator_MouseDown(object sender, MouseEventArgs e)=> global.MoveForm(e, Handle);
+        private void ThemeCreator_MouseDown(object sender, MouseEventArgs e) => global.MoveForm(e, Handle);
         private void ExitButton_Click(object sender, EventArgs e) => Close();
         private void AddItem(api.Item item)
         {
@@ -36,11 +36,11 @@ namespace Pro_Swapper
                 Size = new Size(buttonx, buttony),
                 Cursor = Cursors.Hand
             };
-                picturebox.Click += delegate
-                {
-                    new SwapForm(item).Show();
-                    Close();
-                };
+            picturebox.Click += delegate
+            {
+                new SwapForm(item).Show();
+                Close();
+            };
             Label lbl = new Label
             {
                 ForeColor = global.TextColor,

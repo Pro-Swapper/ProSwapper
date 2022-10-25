@@ -7,7 +7,6 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -71,7 +70,7 @@ namespace Pro_Swapper
 
         private static void SaveImage(string imageUrl, string filename, ImageFormat format)
         {
-            Stream stream = Program.httpClient.GetStreamAsync(imageUrl).Result;
+            Stream stream = Program.httpClient.GetStreamAsync(imageUrl).GetAwaiter().GetResult();
             using (Bitmap bitmap = new Bitmap(stream))
             {
                 if (bitmap != null)
@@ -103,13 +102,7 @@ namespace Pro_Swapper
 
 
         public static long GetEpochTime() => DateTimeOffset.Now.ToUnixTimeSeconds();
-        public static bool IsNameModified()
-        {
-            if (Process.GetCurrentProcess().ProcessName.Contains("Pro_Swapper"))
-                return false;
-            else
-                return true;
-        }
+        public static bool IsNameModified() => !Process.GetCurrentProcess().ProcessName.Contains("Pro_Swapper");
 
         public static Color MainMenu, Button, TextColor, ItemsBG;
 
@@ -149,7 +142,7 @@ namespace Pro_Swapper
             public string ConfigIni { get; set; } = "";
             public Color[] theme { get; set; } = new Color[4] { Color.FromArgb(0, 33, 113), Color.FromArgb(64, 85, 170), Color.FromArgb(65, 105, 255), Color.FromArgb(255, 255, 255) };//0,33,113;    64,85,170;    65,105,255;   255,255,255
             public double lastopened { get; set; }
-            public double LastOpenedAPI { get; set; }
+            public double LastOpenedAPI { get; set; } = 0;
             public double LobbyLastOpened { get; set; }
             public string swaplogs { get; set; } = "";
             public string ManualAESKey { get; set; } = "";
@@ -172,18 +165,7 @@ namespace Pro_Swapper
                 return string.Empty;
         }
 
-        #region FormMoveable
-        private const string User32dll = "user32.dll";
-        [DllImport(User32dll)]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-        [DllImport(User32dll)]
-        public static extern bool ReleaseCapture();
-        public static void FormMove(IntPtr Handle)
-        {
-            ReleaseCapture();
-            SendMessage(Handle, 0xA1, 0x2, 0);
-        }
-        #endregion
+
 
         public static Color ChangeColorBrightness(Color color, float correctionFactor)
         {
@@ -211,7 +193,7 @@ namespace Pro_Swapper
         public static void MoveForm(MouseEventArgs e, IntPtr Handle)
         {
             if (e.Button == MouseButtons.Left)
-                FormMove(Handle);
+                Native.FormMove(Handle);
         }
 
         public static string CalculateTimeSpan(DateTime dt)

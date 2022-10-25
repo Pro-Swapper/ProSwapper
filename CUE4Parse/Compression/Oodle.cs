@@ -36,8 +36,11 @@ namespace CUE4Parse.Compression
 
         public static bool LoadOodleDll(string? path = null)
         {
-            if (File.Exists(OODLE_DLL_NAME)) return true;
-            return DownloadOodleDll(path).GetAwaiter().GetResult();
+            //if (File.Exists(OODLE_DLL_NAME))
+            //Pro Swapper will handle this on it's runtime
+            return true;
+
+            //return DownloadOodleDll(path).GetAwaiter().GetResult();
         }
 
         public static unsafe void Decompress(byte[] compressed, int compressedOffset, int compressedSize,

@@ -18,7 +18,7 @@ namespace Pro_Swapper.Splash
         {
             InitializeComponent();
             Icon = Main.appIcon;
-            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
+            Region = Native.RoundedFormRegion(Width, Height, 20);
 
             Controls.Add(splashSettings1);
             splashSettings1.Size = items.Size;
@@ -104,20 +104,10 @@ namespace Pro_Swapper.Splash
             {
                 public string[] url { get; set; }
             }
-            private static readonly string[] hosturls = { "https://pro-swapper.github.io/api/splashscreen.json", "https://raw.githubusercontent.com/Pro-Swapper/api/main/splashscreen.json" };
             public static string[] GetImgurUrls()
             {
-                int url = 0;
-                string data = string.Empty;
-            redo: try
-                {
-                    data = Program.httpClient.GetStringAsync(hosturls[url]).Result;
-                }
-                catch
-                {
-                    url++;
-                    goto redo;
-                }
+                const string url = "https://pro-swapper.github.io/api/splashscreen.json";
+                string data = Program.httpClient.GetStringAsync(url).GetAwaiter().GetResult();
                 return JsonConvert.DeserializeObject<imgapi>(data).url;
             }
         }

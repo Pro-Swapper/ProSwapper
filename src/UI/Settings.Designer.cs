@@ -51,6 +51,7 @@
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.OodleCompressBtn = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button11 = new System.Windows.Forms.Button();
             this.anitkickbox = new System.Windows.Forms.CheckBox();
             this.button3 = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
@@ -375,6 +376,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.button11);
             this.groupBox1.Controls.Add(this.anitkickbox);
             this.groupBox1.Controls.Add(this.button3);
             this.groupBox1.Controls.Add(this.label2);
@@ -395,6 +397,25 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Advanced Settings";
             this.groupBox1.Visible = false;
+            // 
+            // button11
+            // 
+            this.button11.BackColor = System.Drawing.Color.RoyalBlue;
+            this.button11.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button11.FlatAppearance.BorderSize = 0;
+            this.button11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button11.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.button11.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.button11.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button11.Location = new System.Drawing.Point(446, 116);
+            this.button11.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(132, 47);
+            this.button11.TabIndex = 129;
+            this.button11.Text = "Check Swap Asset Paths";
+            this.button11.UseVisualStyleBackColor = false;
+            this.button11.Visible = false;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // anitkickbox
             // 
@@ -524,5 +545,6 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.CheckBox anitkickbox;
         private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button button11;
     }
 }

@@ -18,7 +18,7 @@ namespace Pro_Swapper.UI
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             BackColor = global.MainMenu;
             Icon = Main.appIcon;
-            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 50, 50));
+            Region = Native.RoundedFormRegion(Width, Height, 50);
             WindowState = FormWindowState.Normal;
         }
 

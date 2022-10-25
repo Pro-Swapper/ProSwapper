@@ -14,7 +14,7 @@ namespace Pro_Swapper
         public ThemeCreator()
         {
             InitializeComponent();
-            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 10, 10));
+            Region = Native.RoundedFormRegion(Width, Height, 10);
             this.Paint += (sender, e) =>
             {
                 Graphics g = e.Graphics;

@@ -23,12 +23,12 @@ namespace Pro_Swapper.UI
             Icon = Main.appIcon;
 #if RELEASE//GitHub's 60 requests per hour for no auth
             //GitHub requires a user agent in the request so just paste in whatever so i just put this in
-            string data = Program.httpClient.GetStringAsync("https://api.github.com/repos/Pro-Swapper/ProSwapper/contributors").Result;
+            string data = Program.httpClient.GetStringAsync("https://api.github.com/repos/Pro-Swapper/ProSwapper/contributors").GetAwaiter().GetResult();
             Contributors[] contributors = JsonConvert.DeserializeObject<Contributors[]>(data);
             flowLayoutPanel1.Controls.AddRange(contributors.Select(x => new GridItem(x.avatar_url, $"{x.login} ({x.contributions} contributions)", x.html_url)).ToArray());
 
 #endif
-            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 10, 10));
+            Region = Native.RoundedFormRegion(Width, Height, 10);
             this.Paint += (sender, e) =>
             {
                 Graphics g = e.Graphics;

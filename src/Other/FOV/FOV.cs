@@ -17,7 +17,7 @@ namespace Pro_Swapper.FOV
         {
             InitializeComponent();
             Icon = Main.appIcon;
-            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
+            Region = Native.RoundedFormRegion(Width, Height, 20);
             if (!File.Exists(global.CurrentConfig.ConfigIni))
                 global.CurrentConfig.ConfigIni = IniEditor.fndir;//Gets default GameUserSettings.ini file location
 
@@ -40,10 +40,10 @@ namespace Pro_Swapper.FOV
         {
             if (e.Button == MouseButtons.Left)
             {
-                global.FormMove(Handle);
+                Native.FormMove(Handle);
                 currentScreen = Screen.FromControl(this).Bounds;
                 label6.Text = "Current Monitor: " + currentScreen.Width + "x" + currentScreen.Height;
-             } 
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -61,7 +61,7 @@ namespace Pro_Swapper.FOV
                 button3.Text = "Show Stretched Resolution";
                 IsShowingFOV = true;
             }
-                
+
         }
     }
 }

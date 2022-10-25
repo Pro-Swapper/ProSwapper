@@ -128,10 +128,11 @@ namespace Pro_Swapper
                             case CompressionMethod.None:
                                 break;
                             case CompressionMethod.Oodle:
-                                exportasset = Oodle.Compress(exportasset);
+                                var settings = Oodle.FindBestCompressionSettings(exportasset);
+                                exportasset = Oodle.Compress(exportasset, settings.Key, settings.Value);
                                 break;
                             case CompressionMethod.Zlib:
-                                ByteCompression.Compress(exportasset);
+                                exportasset = ByteCompression.Compress(exportasset);
                                 break;
                         }
                         Program.logger.Log($"Compressed asset with {exportData.compressionMethod}");

@@ -25,7 +25,7 @@ namespace Pro_Swapper
 
             Task.Run(() => image.Image = global.ItemIcon(ThisItem.FromImage));
             Task.Run(() => swapsfrom.Image = global.ItemIcon(ThisItem.ToImage));
-            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
+            Region = Native.RoundedFormRegion(Width, Height);
             Icon = Main.appIcon;
             BackColor = global.MainMenu;
             logbox.BackColor = global.MainMenu;
@@ -78,7 +78,7 @@ namespace Pro_Swapper
                         Program.logger.Log($"(SwapForm.cs) Reverted {ThisItem.SwapsFrom} to it's original state");
                     }
                     Program.logger.Log($"(SwapForm.cs) Starting to convert {this.Text}");
-                    Swapped = Task.Run(() => Swap.SwapItem(ThisItem, Converting)).Result;
+                    Swapped = Task.Run(() => Swap.SwapItem(ThisItem, Converting)).GetAwaiter().GetResult();
                 }
                 else
                 {

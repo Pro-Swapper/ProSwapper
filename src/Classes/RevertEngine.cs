@@ -74,6 +74,15 @@ namespace Pro_Swapper.src.Classes
                 Directory.CreateDirectory(RevertFolderDirectory);
         }
 
+        public static void DeleteReverts()
+        {
+            string[] files = Directory.GetFiles(RevertFolderDirectory);
+            foreach (string file in files)
+            {
+                global.DeleteFile(file);
+            }
+        }
+
         public static string RevertFolderDirectory
         {
             get

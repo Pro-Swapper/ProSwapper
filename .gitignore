@@ -398,3 +398,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 Properties/PublishProfiles/FolderProfile.pubxml.user
+oo2core_5_win64.dll
+oo2core_9_win64.dll

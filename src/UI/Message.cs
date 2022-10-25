@@ -12,12 +12,12 @@ namespace Pro_Swapper
             Text = title;
             richTextBox1.Text = error;
             Icon = Main.appIcon;
-            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 50, 50));
+            Region = Native.RoundedFormRegion(Width, Height, 50);
             ExitButton.Click += delegate
             {
-                if (close) 
+                if (close)
                     Process.GetCurrentProcess().Kill();
-                else 
+                else
                     Close();
             };
 

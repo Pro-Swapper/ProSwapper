@@ -7,7 +7,6 @@ using System.Net.NetworkInformation;
 using static Pro_Swapper.API.api;
 using System.Linq;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Drawing.Drawing2D;
 using Pro_Swapper.src.Classes;
@@ -23,6 +22,7 @@ namespace Pro_Swapper
             Icon = Main.appIcon;
 #if DEBUG
             OodleCompressBtn.Visible = true;
+            button11.Visible = true;
 #endif
             checkBox1_CheckedChanged(null, new EventArgs());
             this.Paint += (sender, e) =>
@@ -265,10 +265,9 @@ Ping (Average): {listtimes.Average()} / Min: {listtimes.Min()} / Max: {listtimes
                 if (a.ShowDialog() == DialogResult.OK)
                 {
                     byte[] file = File.ReadAllBytes(a.FileName);
-                    //  string Path1 = "/Game/Characters/Player/Female/Medium/Bodies/F_MED_Renegade_Skull/Materials/F_MED_Renegade_Skull.F_MED_Renegade_Skull";
-                    // string Path2 = "/Game/Characters/Player/Female/Medium/Heads/F_MED_ASN_Sarah_Head_01/Materials/F_MED_ASN_Sarah_Head_02.F_MED_ASN_Sarah_Head_02";
-                    //  Swap.ReplaceAnyLength(file, System.Text.Encoding.Default.GetBytes(Path1), System.Text.Encoding.Default.GetBytes(Path2));
-                    byte[] newbyte = Oodle.Compress(file, OodleFormat.Leviathan);
+                    var settings = Oodle.FindBestCompressionSettings(file);
+
+                    byte[] newbyte = Oodle.Compress(file, settings.Key, settings.Value);
                     File.WriteAllBytes(a.FileName + "_compressed.uasset", newbyte);
                 }
             }
@@ -295,7 +294,7 @@ Ping (Average): {listtimes.Average()} / Min: {listtimes.Min()} / Max: {listtimes
                 this.Height = 479;
             else
                 this.Height = 295;
-            Region = Region.FromHrgn(Main.CreateRoundRectRgn(0, 0, Width, Height, 10, 10));
+            Region = Native.RoundedFormRegion(Width, Height, 10);
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -311,8 +310,28 @@ Ping (Average): {listtimes.Average()} / Min: {listtimes.Min()} / Max: {listtimes
 
         private void button8_Click_2(object sender, EventArgs e)
         {
+            RevertEngine.DeleteReverts();
             global.OpenUrl($"{epicfnpath}verify");
             Main.Cleanup();
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+#if DEBUG
+            var Provider = Swap.GetProvider();
+            List<string> NeedToUpdate = new();
+            foreach (var item in API.api.apidata.items)
+            {
+                foreach (var asset in item.Asset)
+                {
+                    if (!Provider.TryFindGameFile(asset.AssetPath, out var gameFile))
+                    {
+                        NeedToUpdate.Add(asset.AssetPath);
+                    }
+                }
+            }
+            int i = 0;
+#endif
         }
     }
 }

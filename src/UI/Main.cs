@@ -14,59 +14,20 @@ namespace Pro_Swapper
         public static Icon appIcon = Icon.ExtractAssociatedIcon(Process.GetCurrentProcess().MainModule.FileName);
         public static Form Mainform;
 
-        #region RoundedCorners
-        [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
-        public static extern IntPtr CreateRoundRectRgn
-        (
-            int nLeftRect, int nTopRect, int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse
-        );
-        #endregion
         public Main(UI.Splash splash)
         {
             InitializeComponent();
             Mainform = this;
             try
             {
-                api.UpdateAPI();
-                string apiversion = api.apidata.version;
-                double TimeNow = global.GetEpochTime();
-
-                if (global.CurrentConfig.lastopened + 7200 < TimeNow)
-                {
-                    global.OpenUrl(api.apidata.discordurl);
-                    global.CurrentConfig.lastopened = TimeNow;
-                }
-
-                int thisVer = int.Parse(global.version.Replace(".", ""));
-                int apiVer = int.Parse(api.apidata.version.Replace(".", ""));
-
-                const string NewDownload = "https://linkvertise.com/86737/proswapper";
-
-                if (apiVer > thisVer)
-                {
-                    MessageBox.Show("New Pro Swapper Update found! Redirecting you to the new download!", "Pro Swapper Update", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    global.OpenUrl(NewDownload);
-                    Cleanup();
-                }
-
-                if (global.IsNameModified())
-                {
-                    ThrowError($"This Pro Swapper version has been renamed, this means you have not downloaded it from the official source. Please redownload it on the Discord server at {api.apidata.discordurl}");
-                    global.OpenUrl(NewDownload);
-                }
-
-                if (api.apidata.status[0].IsUp == false)
-                    ThrowError(api.apidata.status[0].DownMsg);
-
                 Color[] theme = global.CurrentConfig.theme;
                 global.MainMenu = theme[0];
                 global.ItemsBG = theme[1];
                 global.Button = theme[2];
                 global.TextColor = theme[3];
-                RPC.InitializeRPC();
 
                 Icon = appIcon;
-                Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 30, 30));
+                Region = Native.RoundedFormRegion(Width, Height);
                 versionlabel.Text = global.version;
 
                 panelContainer.Controls.Add(Dashboard.Instance);

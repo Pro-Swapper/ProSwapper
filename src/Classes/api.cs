@@ -37,7 +37,7 @@ namespace Pro_Swapper.API
                                 break;
 
                             case AESSource.FortniteCentral:
-                                string json = Program.httpClient.GetStringAsync("https://fortnitecentral.gmatrixgames.ga/api/v1/aes").Result;
+                                string json = Program.httpClient.GetStringAsync("https://fortnitecentral.gmatrixgames.ga/api/v1/aes").GetAwaiter().GetResult();
                                 tmpAes = new FAesKey((string)((dynamic)JObject.Parse(json)).mainKey);
                                 break;
                             case AESSource.Manual:
@@ -89,14 +89,14 @@ namespace Pro_Swapper.API
             try
             {
             download: double TimeNow = global.GetEpochTime();
-                if (global.CurrentConfig.LastOpenedAPI + 3600 < TimeNow)
+                if (global.CurrentConfig.LastOpenedAPI + 1800 < TimeNow)
                 {
-                    //Get api coz it wasnt fetched more than an hour ago
+                    //Get api coz it wasnt fetched more than 30 mins ago
 
 
                     //Download api & global
-                    byte[] rawAPI = Program.httpClient.GetByteArrayAsync($"{ProSwapperEndpoint}/{global.version}.json").Result;
-                    string rawGlobal = Program.httpClient.GetStringAsync($"{ProSwapperEndpoint}/global.json").Result;
+                    byte[] rawAPI = Program.httpClient.GetByteArrayAsync($"{ProSwapperEndpoint}/{global.version}.json").GetAwaiter().GetResult();
+                    string rawGlobal = Program.httpClient.GetStringAsync($"{ProSwapperEndpoint}/global.json").GetAwaiter().GetResult();
 
                     //Decompress api & set
                     apidata = JsonConvert.DeserializeObject<APIRoot>(MessagePackSerializer.ConvertToJson(ByteCompression.Decompress(rawAPI)));
