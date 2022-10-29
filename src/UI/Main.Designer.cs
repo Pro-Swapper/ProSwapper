@@ -28,18 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button8 = new System.Windows.Forms.Button();
+            this.versionlabel = new System.Windows.Forms.Label();
+            this.button7 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.versionlabel = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.panelContainer = new System.Windows.Forms.Panel();
             this.ExitButton = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -47,6 +49,8 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(33)))), ((int)(((byte)(113)))));
+            this.panel1.Controls.Add(this.button8);
+            this.panel1.Controls.Add(this.versionlabel);
             this.panel1.Controls.Add(this.button7);
             this.panel1.Controls.Add(this.button6);
             this.panel1.Controls.Add(this.button5);
@@ -60,6 +64,46 @@
             this.panel1.Size = new System.Drawing.Size(211, 650);
             this.panel1.TabIndex = 0;
             this.panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Main_MouseDown);
+            // 
+            // button8
+            // 
+            this.button8.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.button8.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(59)))), ((int)(((byte)(200)))));
+            this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button8.ForeColor = System.Drawing.Color.White;
+            this.button8.Image = ((System.Drawing.Image)(resources.GetObject("button8.Image")));
+            this.button8.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.button8.Location = new System.Drawing.Point(111, 608);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(92, 33);
+            this.button8.TabIndex = 20;
+            this.button8.Tag = "";
+            this.button8.Text = "Donate";
+            this.button8.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
+            // versionlabel
+            // 
+            this.versionlabel.AutoSize = true;
+            this.versionlabel.Font = new System.Drawing.Font("Century Gothic", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.versionlabel.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.versionlabel.Location = new System.Drawing.Point(7, 622);
+            this.versionlabel.Name = "versionlabel";
+            this.versionlabel.Size = new System.Drawing.Size(41, 19);
+            this.versionlabel.TabIndex = 19;
+            this.versionlabel.Text = "0.0.0";
+            // 
+            // button7
+            // 
+            this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button7.Location = new System.Drawing.Point(7, 441);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(196, 59);
+            this.button7.TabIndex = 18;
+            this.button7.Tag = "TabButton";
+            this.button7.Text = "Other";
+            this.button7.UseVisualStyleBackColor = true;
             // 
             // button6
             // 
@@ -130,18 +174,6 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
-            // versionlabel
-            // 
-            this.versionlabel.AutoSize = true;
-            this.versionlabel.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.versionlabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.versionlabel.Location = new System.Drawing.Point(12, 616);
-            this.versionlabel.Name = "versionlabel";
-            this.versionlabel.Size = new System.Drawing.Size(41, 20);
-            this.versionlabel.TabIndex = 1;
-            this.versionlabel.Text = "0.0.0";
-            this.versionlabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Main_MouseDown);
-            // 
             // button2
             // 
             this.button2.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -180,17 +212,6 @@
             this.ExitButton.UseVisualStyleBackColor = true;
             this.ExitButton.Click += new System.EventHandler(this.ExitButton_Click);
             // 
-            // button7
-            // 
-            this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button7.Location = new System.Drawing.Point(7, 441);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(196, 59);
-            this.button7.TabIndex = 18;
-            this.button7.Tag = "TabButton";
-            this.button7.Text = "Other";
-            this.button7.UseVisualStyleBackColor = true;
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -211,6 +232,7 @@
             this.Load += new System.EventHandler(this.Main_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Main_MouseDown);
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
@@ -220,7 +242,6 @@
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Label versionlabel;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Panel panelContainer;
         private System.Windows.Forms.Button ExitButton;
@@ -230,5 +251,7 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Label versionlabel;
+        private System.Windows.Forms.Button button8;
     }
 }

@@ -108,5 +108,10 @@ namespace Pro_Swapper
         private void Main_FormClosing(object sender, FormClosingEventArgs e) => Cleanup();
         private void button2_Click(object sender, EventArgs e) => WindowState = FormWindowState.Minimized;
         private void button6_Click(object sender, EventArgs e) => new Settings().Show();
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            global.OpenUrl("https://ko-fi.com/kye5000");
+        }
     }
 }

@@ -88,7 +88,12 @@ namespace Pro_Swapper
 
 
                 logger.Log($"Fetching latest data from API");
-                api.UpdateAPI();
+                if (!api.UpdateAPI())
+                {
+                    logger.Log($"ERROR -> Could not fetch latest data from API");
+                    MessageBox.Show("Could not fetch latest data from API! Please try again later!", "Pro Swapper", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Process.GetCurrentProcess().Kill();
+                }
                 string apiversion = api.apidata.version;
                 double TimeNow = global.GetEpochTime();
 

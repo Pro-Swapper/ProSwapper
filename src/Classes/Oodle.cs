@@ -47,7 +47,7 @@ namespace Pro_Swapper
         public static KeyValuePair<OodleFormat, OodleCompressionLevel> FindBestCompressionSettings(byte[] buffer)
         {
             var bestSize = int.MaxValue;
-            var bestFormat = OodleFormat.OodleLZ_Compressor_Selkie;
+            var bestFormat = OodleFormat.OodleLZ_Compressor_Kraken;
             var bestLevel = OodleCompressionLevel.OodleLZ_CompressionLevel_Fast;
 
             foreach (OodleFormat format in Enum.GetValues(typeof(OodleFormat)))
@@ -77,11 +77,15 @@ public enum OodleFormat
 
     // NEW COMPRESSORS :
     OodleLZ_Compressor_Kraken = 8, // Fast decompression and high compression ratios, amazing!
-    OodleLZ_Compressor_Leviathan = 13, // Leviathan = Kraken's big brother with higher compression, slightly slower decompression.
-    OodleLZ_Compressor_Mermaid = 9, // Mermaid is between Kraken & Selkie - crazy fast, still decent compression.
-    OodleLZ_Compressor_Selkie = 11, // Selkie is a super-fast relative of Mermaid.  For maximum decode speed.
-    OodleLZ_Compressor_Hydra = 12, // Hydra, the many-headed beast = Leviathan, Kraken, Mermaid, or Selkie (see $OodleLZ_About_Hydra)
-    OodleLZ_Compressor_LZB16 = 4, //still supported
+                                   //OodleLZ_Compressor_Leviathan = 13, // Leviathan = Kraken's big brother with higher compression, slightly slower decompression.
+                                   //OodleLZ_Compressor_Mermaid = 9, // Mermaid is between Kraken & Selkie - crazy fast, still decent compression.
+                                   //OodleLZ_Compressor_Selkie = 11, // Selkie is a super-fast relative of Mermaid.  For maximum decode speed.
+                                   //OodleLZ_Compressor_Hydra = 12, // Hydra, the many-headed beast = Leviathan, Kraken, Mermaid, or Selkie (see $OodleLZ_About_Hydra)
+                                   //OodleLZ_Compressor_LZB16 = 4, //still supported
+
+
+
+
     /* Deprecated compressors
     OodleLZ_Compressor_BitKnit = 10, // no longer supported as of Oodle 2.9.0
     OodleLZ_Compressor_LZB16 = 4, // DEPRECATED but still supported

@@ -68,7 +68,7 @@ namespace Pro_Swapper.API
             Manual
         }
 
-        public static void UpdateAPI()
+        public static bool UpdateAPI()
         {
             string rawAPIFile = global.ProSwapperFolder + "api.ProSwapper";
             string rawGlobalFile = global.ProSwapperFolder + "global.ProSwapper";
@@ -83,7 +83,10 @@ namespace Pro_Swapper.API
             });
             byte[] compressedapi = MessagePackSerializer.ConvertFromJson(json, MessagePackSerializerOptions.Standard);
             File.WriteAllBytes($"{global.version}.json", ByteCompression.Compress(compressedapi));
-
+            apidata.discordurl = globalapi.discordurl;
+            apidata.version = globalapi.version;
+            apidata.status[0] = globalapi.status[0];
+            return true;
 #else
 
             try
@@ -124,16 +127,19 @@ namespace Pro_Swapper.API
                     apidata = JsonConvert.DeserializeObject<APIRoot>(MessagePackSerializer.ConvertToJson(ByteCompression.Decompress(rawAPI)));
                     globalapi = JsonConvert.DeserializeObject<GlobalAPI.Root>(rawGlobal);
                 }
+                apidata.discordurl = globalapi.discordurl;
+                apidata.version = globalapi.version;
+                apidata.status[0] = globalapi.status[0];
+                return true;
             }
             catch (Exception ex)
             {
+                System.Windows.Forms.MessageBox.Show($"Pro Swapper needs an Internet connection to run, if you are already connected to the Internet Pro Swapper's API may be blocked in your country, please use a VPN or try disabling your firewall, if you are already doing this please refer to this error: \n\n{ex.Message}");
                 Program.logger.LogError(ex.Message);
-                Main.ThrowError($"Pro Swapper needs an Internet connection to run, if you are already connected to the Internet Pro Swapper's API may be blocked in your country, please use a VPN or try disabling your firewall, if you are already doing this please refer to this error: \n\n{ex.Message}", true);
+                return false;
             }
 #endif
-            apidata.discordurl = globalapi.discordurl;
-            apidata.version = globalapi.version;
-            apidata.status[0] = globalapi.status[0];
+
         }
 
         public class Asset
