@@ -46,7 +46,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Texture
                 PackedData = Ar.Read<int>();
             }
 
-            PixelFormat = Ar.ReadFString();
+            PixelFormat = Ar.Game == EGame.GAME_GearsOfWar4 ? Ar.ReadFName().Text : Ar.ReadFString();
 
             if ((PackedData & BitMask_HasOptData) == BitMask_HasOptData)
             {
@@ -56,7 +56,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Texture
             FirstMipToSerialize = Ar.Read<int>(); // only for cooked, but we don't read FTexturePlatformData for non-cooked textures
 
             var mipCount = Ar.Read<int>();
-            if (mipCount != 1 && Ar.Platform == ETexturePlatform.Playstation) mipCount /= 3; // TODO: Some mips are corrupted, so this doesn't work 100% of the time.
+            if (Ar.Platform == ETexturePlatform.Playstation && mipCount != 1) mipCount /= 3; // TODO: Some mips are corrupted, so this doesn't work 100% of the time.
 
             Mips = new FTexture2DMipMap[mipCount];
             for (var i = 0; i < Mips.Length; i++)

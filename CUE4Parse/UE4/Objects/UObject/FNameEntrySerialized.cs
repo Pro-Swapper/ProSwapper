@@ -15,9 +15,9 @@ namespace CUE4Parse.UE4.Objects.UObject
 #endif
         public FNameEntrySerialized(FArchive Ar)
         {
-            var bHasNameHashes = Ar.Ver >= EUnrealEngineObjectUE4Version.NAME_HASHES_SERIALIZED;
+            var bHasNameHashes = Ar.Ver >= EUnrealEngineObjectUE4Version.NAME_HASHES_SERIALIZED || Ar.Game == EGame.GAME_GearsOfWar4;
 
-            Name = Ar.ReadFString();
+            Name = Ar.ReadFString().Trim();
             if (bHasNameHashes)
             {
 #if NAME_HASHES
@@ -65,7 +65,7 @@ namespace CUE4Parse.UE4.Objects.UObject
             {
                 var header = headers[i];
                 var length = (int) header.Length;
-                string s = header.IsUtf16 ? new string(Ar.ReadArray<char>(length)) : Encoding.UTF8.GetString(Ar.ReadBytes(length));
+                var s = header.IsUtf16 ? new string(Ar.ReadArray<char>(length)) : Encoding.UTF8.GetString(Ar.ReadBytes(length));
                 entries[i] = new FNameEntrySerialized(s);
             }
 

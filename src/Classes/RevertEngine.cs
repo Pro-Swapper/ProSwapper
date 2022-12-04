@@ -19,13 +19,18 @@ namespace Pro_Swapper.src.Classes
         }
         public static bool RevertAll()
         {
-            List<bool> Result = new();
-            string[] files = Directory.GetFiles(RevertFolderDirectory);
-            foreach (string file in files)
+            if (Directory.Exists(RevertFolderDirectory))
             {
-                Result.Add(RevertItem(file));
+                List<bool> Result = new();
+                string[] files = Directory.GetFiles(RevertFolderDirectory);
+                foreach (string file in files)
+                {
+                    Result.Add(RevertItem(file));
+                }
+                return Result.All(x => x == true);
             }
-            return Result.All(x => x == true);
+            else
+                return false;
         }
 
         public static bool RevertItem(API.api.Item item)
@@ -76,10 +81,13 @@ namespace Pro_Swapper.src.Classes
 
         public static void DeleteReverts()
         {
-            string[] files = Directory.GetFiles(RevertFolderDirectory);
-            foreach (string file in files)
+            if (Directory.Exists(RevertEngine.RevertFolderDirectory))
             {
-                global.DeleteFile(file);
+                string[] files = Directory.GetFiles(RevertFolderDirectory);
+                foreach (string file in files)
+                {
+                    global.DeleteFile(file);
+                }
             }
         }
 

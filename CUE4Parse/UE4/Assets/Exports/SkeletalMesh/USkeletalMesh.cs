@@ -1,4 +1,5 @@
-﻿using CUE4Parse.UE4.Assets.Exports.Animation;
+﻿using System;
+using CUE4Parse.UE4.Assets.Exports.Animation;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Engine;
@@ -11,23 +12,37 @@ namespace CUE4Parse.UE4.Assets.Exports.SkeletalMesh
     public class USkeletalMesh : UObject
     {
         public FBoxSphereBounds ImportedBounds { get; private set; }
-        public FSkeletalMaterial[] Materials { get; private set; }
+        public FSkeletalMaterial[] SkeletalMaterials { get; private set; }
         public FReferenceSkeleton ReferenceSkeleton { get; private set; }
         public FStaticLODModel[]? LODModels { get; private set; }
         public bool bHasVertexColors { get; private set; }
         public byte NumVertexColorChannels { get; private set; }
         public FPackageIndex[] MorphTargets { get; private set; }
+        public FPackageIndex[] Sockets { get; private set; }
+        public FPackageIndex Skeleton { get; private set; }
+        public ResolvedObject?[] Materials { get; private set; } // UMaterialInterface[]
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
             base.Deserialize(Ar, validPos);
+            Materials = Array.Empty<ResolvedObject>();
+
             bHasVertexColors = GetOrDefault<bool>(nameof(bHasVertexColors));
             NumVertexColorChannels = GetOrDefault<byte>(nameof(NumVertexColorChannels));
             MorphTargets = GetOrDefault<FPackageIndex[]>(nameof(MorphTargets));
+            Sockets = GetOrDefault(nameof(Sockets), Array.Empty<FPackageIndex>());
+            Skeleton = GetOrDefault<FPackageIndex>(nameof(Skeleton));
 
             var stripDataFlags = Ar.Read<FStripDataFlags>();
-            ImportedBounds = Ar.Read<FBoxSphereBounds>();
-            Materials = Ar.ReadArray(() => new FSkeletalMaterial(Ar));
+            ImportedBounds = new FBoxSphereBounds(Ar);
+
+            SkeletalMaterials = Ar.ReadArray(() => new FSkeletalMaterial(Ar));
+            Materials = new ResolvedObject?[SkeletalMaterials.Length];
+            for (var i = 0; i < Materials.Length; i++)
+            {
+                Materials[i] = SkeletalMaterials[i].Material;
+            }
+
             ReferenceSkeleton = new FReferenceSkeleton(Ar);
 
             if (FSkeletalMeshCustomVersion.Get(Ar) < FSkeletalMeshCustomVersion.Type.SplitModelAndRenderData)

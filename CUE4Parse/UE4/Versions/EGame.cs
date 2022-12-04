@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 
 namespace CUE4Parse.UE4.Versions
 {
@@ -11,6 +11,7 @@ namespace CUE4Parse.UE4.Versions
         GAME_UE4_3 = GameUtils.GameUe4Base + 3 << 4,
         GAME_UE4_4 = GameUtils.GameUe4Base + 4 << 4,
         GAME_UE4_5 = GameUtils.GameUe4Base + 5 << 4,
+            GAME_ArkSurvivalEvolved = GAME_UE4_5 + 1,
         GAME_UE4_6 = GameUtils.GameUe4Base + 6 << 4,
         GAME_UE4_7 = GameUtils.GameUe4Base + 7 << 4,
         GAME_UE4_8 = GameUtils.GameUe4Base + 8 << 4,
@@ -18,6 +19,7 @@ namespace CUE4Parse.UE4.Versions
         GAME_UE4_10 = GameUtils.GameUe4Base + 10 << 4,
             GAME_SeaOfThieves = GAME_UE4_10 + 1,
         GAME_UE4_11 = GameUtils.GameUe4Base + 11 << 4,
+            GAME_GearsOfWar4 = GAME_UE4_11 + 1,
         GAME_UE4_12 = GameUtils.GameUe4Base + 12 << 4,
         GAME_UE4_13 = GameUtils.GameUe4Base + 13 << 4,
             GAME_StateOfDecay2 = GAME_UE4_13 + 1,
@@ -27,13 +29,16 @@ namespace CUE4Parse.UE4.Versions
             GAME_PlayerUnknownsBattlegrounds = GAME_UE4_16 + 1,
         GAME_UE4_17 = GameUtils.GameUe4Base + 17 << 4,
         GAME_UE4_18 = GameUtils.GameUe4Base + 18 << 4,
+            GAME_KingdomHearts3 = GAME_UE4_18 + 1,
         GAME_UE4_19 = GameUtils.GameUe4Base + 19 << 4,
+            GAME_Paragon = GAME_UE4_19 + 1,
         GAME_UE4_20 = GameUtils.GameUe4Base + 20 << 4,
             GAME_Borderlands3 = GAME_UE4_20 + 1,
         GAME_UE4_21 = GameUtils.GameUe4Base + 21 << 4,
             GAME_StarWarsJediFallenOrder = GAME_UE4_21 + 1,
         GAME_UE4_22 = GameUtils.GameUe4Base + 22 << 4,
         GAME_UE4_23 = GameUtils.GameUe4Base + 23 << 4,
+            GAME_ApexLegendsMobile = GAME_UE4_23 + 1,
         GAME_UE4_24 = GameUtils.GameUe4Base + 24 << 4,
         GAME_UE4_25 = GameUtils.GameUe4Base + 25 << 4,
             GAME_RogueCompany = GAME_UE4_25 + 1,
@@ -44,9 +49,11 @@ namespace CUE4Parse.UE4.Versions
             GAME_ReadyOrNot = GAME_UE4_26 + 2,
             GAME_Valorant = GAME_UE4_26 + 3,
             GAME_TowerOfFantasy = GAME_UE4_26 + 4,
+            GAME_Dauntless = GAME_UE4_26 + 5,
 
         GAME_UE4_27 = GameUtils.GameUe4Base + 27 << 4,
             GAME_Splitgate = GAME_UE4_27 + 1,
+            GAME_MeetYourMaker = GAME_UE4_27 + 2,
 
         GAME_UE4_LATEST = GAME_UE4_27,
 
@@ -55,8 +62,9 @@ namespace CUE4Parse.UE4.Versions
         // changed the IoStore and its packages format which breaks backward compatibility with 5.0.0-16433597+++UE5+Release-5.0-EarlyAccess
         GAME_UE5_0 = GameUtils.GameUe5Base + 0 << 4,
         GAME_UE5_1 = GameUtils.GameUe5Base + 1 << 4,
+        GAME_UE5_2 = GameUtils.GameUe5Base + 2 << 4,
 
-        GAME_UE5_LATEST = GAME_UE5_1
+        GAME_UE5_LATEST = GAME_UE5_2
     }
 
     public static class GameUtils
@@ -81,8 +89,9 @@ namespace CUE4Parse.UE4.Versions
             {
                 return game switch
                 {
-                    EGame.GAME_UE5_0 => new(522, 1002),
-                    _ => new((int) EUnrealEngineObjectUE4Version.AUTOMATIC_VERSION, (int) EUnrealEngineObjectUE5Version.AUTOMATIC_VERSION)
+                    EGame.GAME_UE5_0 => new FPackageFileVersion(522, 1004),
+                    EGame.GAME_UE5_1 => new FPackageFileVersion(522, 1006),
+                    _ => new FPackageFileVersion((int) EUnrealEngineObjectUE4Version.AUTOMATIC_VERSION, (int) EUnrealEngineObjectUE5Version.AUTOMATIC_VERSION)
                 };
             }
 

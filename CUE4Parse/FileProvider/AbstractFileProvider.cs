@@ -37,7 +37,7 @@ namespace CUE4Parse.FileProvider
         public virtual bool IsCaseInsensitive { get; } // fabian? is this reversed?
         public bool ReadScriptData { get; set; } = false;
         public virtual bool UseLazySerialization { get; set; } = true;
-        
+
         protected AbstractFileProvider(bool isCaseInsensitive = false, VersionContainer? versions = null)
         {
             IsCaseInsensitive = isCaseInsensitive;
@@ -477,7 +477,7 @@ namespace CUE4Parse.FileProvider
             var ubulk = ubulkTask != null ? await ubulkTask : null;
             var uptnl = uptnlTask != null ? await uptnlTask : null;
 
-            if (file is FPakEntry)
+            if (file is FPakEntry || file is OsGameFile)
             {
                 return new Package(uasset, uexp, ubulk, uptnl, this, MappingsForGame, UseLazySerialization);
             }

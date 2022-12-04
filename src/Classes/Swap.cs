@@ -12,6 +12,8 @@ using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.Compression;
 using Ionic.Zlib;
 using Pro_Swapper.src.Classes;
+using static Pro_Swapper.API.api;
+using System.Diagnostics.Metrics;
 
 namespace Pro_Swapper
 {
@@ -182,6 +184,29 @@ namespace Pro_Swapper
             }
         }
 
+        //   Makes /Game/Animation/Game/MainPlayer/Emotes/Boogie_Down/Emote_Boogie_Down_CMM.Emote_Boogie_Down_CMM 
+        // into
+        // /Game/Animation/Game/MainPlayer/Emotes/Boogie_Down/Emote_Boogie_Down_CMMEmote_Boogie_Down_CMM
+        public static string TailFixer(string buffer)
+        {
+
+            int period = buffer.IndexOf('.');
+            int slash = buffer.LastIndexOf('/') + 1;
+            if (period > 0 && slash > 0)
+            {
+
+                buffer = buffer.Substring(0, period); //Get the text only up to before the period
+                string assetName = buffer.Substring(slash, buffer.Length - slash);
+
+                return buffer + assetName;
+
+            }
+            else
+            {
+                return buffer;
+            }
+        }
+
         public static bool EditAsset(ref byte[] file, api.Asset Asset, bool Converting)
         {
             if (Asset.Search.Length != Asset.Replace.Length)
@@ -194,8 +219,8 @@ namespace Pro_Swapper
             {
                 for (int i = 0; i < Asset.Search.Length; i++)
                 {
-                    byte[] searchB = ParseByteArray(Asset.Search[i]);
-                    byte[] replaceB = ParseByteArray(Asset.Replace[i]);
+                    byte[] searchB = ParseByteArray(TailFixer(Asset.Search[i]));
+                    byte[] replaceB = ParseByteArray(TailFixer(Asset.Replace[i]));
                     FillEnd(ref replaceB, searchB.Length);
                     if (Converting)
                     {

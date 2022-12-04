@@ -36,10 +36,12 @@ namespace CUE4Parse.UE4.IO
             : this(new FileInfo(tocPath), readOptions, versions) { }
         public IoStoreReader(FileInfo utocFile, EIoStoreTocReadOptions readOptions = EIoStoreTocReadOptions.ReadDirectoryIndex, VersionContainer? versions = null)
             : this(new FByteArchive(utocFile.FullName, File.ReadAllBytes(utocFile.FullName), versions),
-                it => new FStreamArchive(it, File.Open(it, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), versions), readOptions) { }
+                it => new FStreamArchive(it, File.Open(it, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), versions), readOptions)
+        { }
         public IoStoreReader(string tocPath, Stream tocStream, Stream casStream, EIoStoreTocReadOptions readOptions = EIoStoreTocReadOptions.ReadDirectoryIndex, VersionContainer? versions = null)
             : this(new FStreamArchive(tocPath, tocStream, versions),
-                it => new FStreamArchive(it, casStream, versions), readOptions) { }
+                it => new FStreamArchive(it, casStream, versions), readOptions)
+        { }
         public IoStoreReader(string tocPath, Stream tocStream, Func<string, FArchive> openContainerStreamFunc, EIoStoreTocReadOptions readOptions = EIoStoreTocReadOptions.ReadDirectoryIndex, VersionContainer? versions = null)
             : this(new FStreamArchive(tocPath, tocStream, versions), openContainerStreamFunc, readOptions) { }
 
@@ -64,7 +66,7 @@ namespace CUE4Parse.UE4.IO
             }
             else
             {
-                containerStreams = new List<FArchive>((int) TocResource.Header.PartitionCount);
+                containerStreams = new List<FArchive>((int)TocResource.Header.PartitionCount);
                 var environmentPath = tocStream.Name.SubstringBeforeLast('.');
                 for (int i = 0; i < TocResource.Header.PartitionCount; i++)
                 {
@@ -106,7 +108,7 @@ namespace CUE4Parse.UE4.IO
             Info = TocResource.Header;
             if (TocResource.Header.Version > EIoStoreTocVersion.Latest)
             {
-                log.Warning("Io Store \"{0}\" has unsupported version {1}", Path, (int) Info.Version);
+                log.Warning("Io Store \"{0}\" has unsupported version {1}", Path, (int)Info.Version);
             }
         }
 
@@ -134,8 +136,8 @@ namespace CUE4Parse.UE4.IO
                     outOffsetLength = default;
                     return false;
                 }
-                var seedCount = (uint) TocResource.ChunkPerfectHashSeeds.Length;
-                var seedIndex = (uint) (chunkId.HashWithSeed(0) % seedCount);
+                var seedCount = (uint)TocResource.ChunkPerfectHashSeeds.Length;
+                var seedIndex = (uint)(chunkId.HashWithSeed(0) % seedCount);
                 var seed = TocResource.ChunkPerfectHashSeeds[seedIndex];
                 if (seed == 0)
                 {
@@ -145,7 +147,7 @@ namespace CUE4Parse.UE4.IO
                 uint slot;
                 if (seed < 0)
                 {
-                    var seedAsIndex = (uint) (-seed - 1);
+                    var seedAsIndex = (uint)(-seed - 1);
                     if (seedAsIndex < chunkCount)
                     {
                         slot = seedAsIndex;
@@ -158,7 +160,7 @@ namespace CUE4Parse.UE4.IO
                 }
                 else
                 {
-                    slot = (uint) (chunkId.HashWithSeed(seed) % chunkCount);
+                    slot = (uint)(chunkId.HashWithSeed(seed) % chunkCount);
                 }
                 if (TocResource.ChunkIds[slot].GetHashCode() == chunkId.GetHashCode())
                 {
@@ -195,7 +197,7 @@ namespace CUE4Parse.UE4.IO
         {
             if (TryResolve(chunkId, out var offsetLength))
             {
-                return Read((long) offsetLength.Offset, (long) offsetLength.Length);
+                return Read((long)offsetLength.Offset, (long)offsetLength.Length);
             }
 
             throw new KeyNotFoundException($"Couldn't find chunk {chunkId} in IoStore {Name}");
@@ -205,8 +207,8 @@ namespace CUE4Parse.UE4.IO
         {
             var compressionBlockSize = TocResource.Header.CompressionBlockSize;
             var dst = new byte[length];
-            var firstBlockIndex = (int) (offset / compressionBlockSize);
-            var lastBlockIndex = (int) (((offset + dst.Length).Align((int) compressionBlockSize) - 1) / compressionBlockSize);
+            var firstBlockIndex = (int)(offset / compressionBlockSize);
+            var lastBlockIndex = (int)(((offset + dst.Length).Align((int)compressionBlockSize) - 1) / compressionBlockSize);
             var offsetInBlock = offset % compressionBlockSize;
             var remainingSize = length;
             var dstOffset = 0;
@@ -234,20 +236,20 @@ namespace CUE4Parse.UE4.IO
                     uncompressedBuffer = new byte[uncompressedSize];
                 }
 
-                var partitionIndex = (int) ((ulong) compressionBlock.Offset / TocResource.Header.PartitionSize);
-                var partitionOffset = (long) ((ulong) compressionBlock.Offset % TocResource.Header.PartitionSize);
+                var partitionIndex = (int)((ulong)compressionBlock.Offset / TocResource.Header.PartitionSize);
+                var partitionOffset = (long)((ulong)compressionBlock.Offset % TocResource.Header.PartitionSize);
                 FArchive reader;
                 if (IsConcurrent)
                 {
                     ref var clone = ref clonedReaders[partitionIndex];
-                    clone ??= (FArchive) ContainerStreams[partitionIndex].Clone();
+                    clone ??= (FArchive)ContainerStreams[partitionIndex].Clone();
                     reader = clone;
                 }
                 else reader = ContainerStreams[partitionIndex];
 
                 reader.Position = partitionOffset;
-                reader.Read(compressedBuffer, 0, (int) rawSize);
-                compressedBuffer = DecryptIfEncrypted(compressedBuffer, 0, (int) rawSize);
+                reader.Read(compressedBuffer, 0, (int)rawSize);
+                compressedBuffer = DecryptIfEncrypted(compressedBuffer, 0, (int)rawSize);
 
                 byte[] src;
                 if (compressionBlock.CompressionMethodIndex == 0)
@@ -257,13 +259,13 @@ namespace CUE4Parse.UE4.IO
                 else
                 {
                     var compressionMethod = TocResource.CompressionMethods[compressionBlock.CompressionMethodIndex];
-                    Compression.Compression.Decompress(compressedBuffer, 0, (int) rawSize, uncompressedBuffer, 0,
-                        (int) uncompressedSize, compressionMethod, reader);
+                    Compression.Compression.Decompress(compressedBuffer, 0, (int)rawSize, uncompressedBuffer, 0,
+                        (int)uncompressedSize, compressionMethod, reader);
                     src = uncompressedBuffer;
                 }
 
-                var sizeInBlock = (int) Math.Min(compressionBlockSize - offsetInBlock, remainingSize);
-                Buffer.BlockCopy(src, (int) offsetInBlock, dst, dstOffset, sizeInBlock);
+                var sizeInBlock = (int)Math.Min(compressionBlockSize - offsetInBlock, remainingSize);
+                Buffer.BlockCopy(src, (int)offsetInBlock, dst, dstOffset, sizeInBlock);
                 offsetInBlock = 0;
                 remainingSize -= sizeInBlock;
                 dstOffset += sizeInBlock;
@@ -272,7 +274,7 @@ namespace CUE4Parse.UE4.IO
                 //https://github.com/Tamely/SaturnSwapper/blob/cbe79e66fcbc900f8bb6c45387f01a39fa127b01/CUE4Parse/CUE4Parse/UE4/IO/IoStoreReader.cs#L275
                 //Thanks Tamely
                 if (Pro_Swapper.Swap.IsExporting)
-                    Pro_Swapper.Swap.exportData = new Pro_Swapper.Swap.ExportData(partitionOffset, reader.Name, TocResource.CompressionMethods[compressionBlock.CompressionMethodIndex]) { compressedBuffer = compressedBuffer};
+                    Pro_Swapper.Swap.exportData = new Pro_Swapper.Swap.ExportData(partitionOffset, reader.Name, TocResource.CompressionMethods[compressionBlock.CompressionMethodIndex]) { compressedBuffer = compressedBuffer };
             }
 
             return dst;
@@ -297,7 +299,7 @@ namespace CUE4Parse.UE4.IO
                     sb.Append($" ({EncryptedFileCount} encrypted)");
                 if (MountPoint.Contains("/"))
                     sb.Append($", mount point: \"{MountPoint}\"");
-                sb.Append($", version {(int) Info.Version} in {elapsed}");
+                sb.Append($", version {(int)Info.Version} in {elapsed}");
                 log.Information(sb.ToString());
             }
 
@@ -365,7 +367,7 @@ namespace CUE4Parse.UE4.IO
 
         public FIoContainerHeader ReadContainerHeader()
         {
-            var headerChunkId = new FIoChunkId(TocResource.Header.ContainerId.Id, 0, Game >= EGame.GAME_UE5_0 ? (byte) EIoChunkType5.ContainerHeader : (byte) EIoChunkType.ContainerHeader);
+            var headerChunkId = new FIoChunkId(TocResource.Header.ContainerId.Id, 0, Game >= EGame.GAME_UE5_0 ? (byte)EIoChunkType5.ContainerHeader : (byte)EIoChunkType.ContainerHeader);
             var Ar = new FByteArchive("ContainerHeader", Read(headerChunkId), Versions);
             return new FIoContainerHeader(Ar);
         }

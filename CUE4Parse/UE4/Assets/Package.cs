@@ -8,6 +8,7 @@ using CUE4Parse.MappingsProvider;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Assets.Utils;
+using CUE4Parse.UE4.Exceptions;
 using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
@@ -75,6 +76,9 @@ namespace CUE4Parse.UE4.Assets
                 var offset = Summary.BulkDataStartOffset;
                 uexpAr.AddPayload(PayloadType.UPTNL, offset, uptnl);
             }
+
+            if (HasFlags(EPackageFlags.PKG_UnversionedProperties) && mappings == null)
+                throw new ParserException("Package has unversioned properties but mapping file is missing, can't serialize");
 
             if (useLazySerialization)
             {
@@ -176,7 +180,9 @@ namespace CUE4Parse.UE4.Assets
                 importPackage = package as Package;
             if (importPackage == null)
             {
+#if DEBUG
                 Log.Error("Missing native package ({0}) for import of {1} in {2}.", outerMostImport.ObjectName, import.ObjectName, Name);
+#endif
                 return new ResolvedImportObject(import, this);
             }
 
@@ -187,7 +193,9 @@ namespace CUE4Parse.UE4.Assets
                 outer = ResolveImport(import.OuterIndex)?.GetPathName();
                 if (outer == null)
                 {
+#if DEBUG
                     Log.Fatal("Missing outer for import of ({0}): {1} in {2} was not found, but the package exists.", Name, outerImport.ObjectName, importPackage.GetFullName());
+#endif
                     return new ResolvedImportObject(import, this);
                 }
             }
@@ -202,7 +210,9 @@ namespace CUE4Parse.UE4.Assets
                     return new ResolvedExportObject(i, importPackage);
             }
 
+#if DEBUG
             Log.Fatal("Missing import of ({0}): {1} in {2} was not found, but the package exists.", Name, import.ObjectName, importPackage.GetFullName());
+#endif
             return new ResolvedImportObject(import, this);
         }
 

@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
+using CUE4Parse.UE4.Readers;
+using CUE4Parse.UE4.Versions;
 using CUE4Parse.UE4.Writers;
 using CUE4Parse.Utils;
 using static System.MathF;
@@ -15,6 +18,9 @@ namespace CUE4Parse.UE4.Objects.Core.Math
         ForceInitToZero
     }
 
+    /// <summary>
+    /// USE Ar.Read<FQuat> FOR FLOATS AND new FQuat(Ar) FOR DOUBLES
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct FQuat : IUStruct
     {
@@ -43,6 +49,24 @@ namespace CUE4Parse.UE4.Objects.Core.Math
             W = w;
         }
 
+        public FQuat(FArchive Ar)
+        {
+            if (Ar.Ver >= EUnrealEngineObjectUE5Version.LARGE_WORLD_COORDINATES)
+            {
+                X = (float) Ar.Read<double>();
+                Y = (float) Ar.Read<double>();
+                Z = (float) Ar.Read<double>();
+                W = (float) Ar.Read<double>();
+            }
+            else
+            {
+                X = Ar.Read<float>();
+                Y = Ar.Read<float>();
+                Z = Ar.Read<float>();
+                W = Ar.Read<float>();
+            }
+        }
+
         private static int[] matrixNxt = {1, 2, 0};
         public FQuat(FMatrix m)
         {
@@ -51,7 +75,11 @@ namespace CUE4Parse.UE4.Objects.Core.Math
             // for now, if you convert to matrix from 0 scale and convert back, you'll lose rotation. Don't do that.
             if (m.GetScaledAxis(EAxis.X).IsNearlyZero() || m.GetScaledAxis(EAxis.Y).IsNearlyZero() || m.GetScaledAxis(EAxis.Z).IsNearlyZero())
             {
-                this = Identity;
+                var id = Identity;
+                X = id.X;
+                Y = id.Y;
+                Z = id.Z;
+                W = id.W;
                 return;
             }
 
@@ -107,7 +135,11 @@ namespace CUE4Parse.UE4.Objects.Core.Math
 
         public FQuat(FRotator rotator)
         {
-            this = rotator.Quaternion();
+            var quat = rotator.Quaternion();
+            X = quat.X;
+            Y = quat.Y;
+            Z = quat.Z;
+            W = quat.W;
         }
 
         public FQuat(FVector axis, float angleRad)
@@ -183,7 +215,11 @@ namespace CUE4Parse.UE4.Objects.Core.Math
             }
             else
             {
-                this = Identity;
+                var id = Identity;
+                X = id.X;
+                Y = id.Y;
+                Z = id.Z;
+                W = id.W;
             }
         }
 
@@ -331,14 +367,13 @@ namespace CUE4Parse.UE4.Objects.Core.Math
             // In keeping with our flipped cosom:
             scale1 = MathUtils.FloatSelect(rawCosom, scale1, -scale1);
 
-            FQuat result;
-
-            result.X = scale0 * quat1.X + scale1 * quat2.X;
-            result.Y = scale0 * quat1.Y + scale1 * quat2.Y;
-            result.Z = scale0 * quat1.Z + scale1 * quat2.Z;
-            result.W = scale0 * quat1.W + scale1 * quat2.W;
-
-            return result;
+            return new FQuat
+            {
+                X = scale0 * quat1.X + scale1 * quat2.X,
+                Y = scale0 * quat1.Y + scale1 * quat2.Y,
+                Z = scale0 * quat1.Z + scale1 * quat2.Z,
+                W = scale0 * quat1.W + scale1 * quat2.W
+            };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -347,5 +382,7 @@ namespace CUE4Parse.UE4.Objects.Core.Math
         public static float operator |(FQuat a, FQuat b) => a.X * b.X + a.Y * b.Y + a.Z * b.Z + a.W * b.W;
         public static FQuat operator *(FQuat a, float scale) => new FQuat(scale * a.X, scale * a.Y, scale * a.Z, scale * a.W);
         public static FQuat operator +(FQuat a, FQuat b) => new FQuat(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
+
+        public static implicit operator Quaternion(FQuat v) => new(v.X, v.Y, v.Z, v.W);
     }
 }

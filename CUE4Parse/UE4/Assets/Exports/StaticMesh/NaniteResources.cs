@@ -3,12 +3,13 @@ using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Engine;
 using CUE4Parse.UE4.Readers;
+using CUE4Parse.UE4.Versions;
 
 namespace CUE4Parse.UE4.Assets.Exports.StaticMesh
 {
     public class FPackedHierarchyNode
     {
-        public const int MAX_BVH_NODE_FANOUT_BITS = 3;
+        public const int MAX_BVH_NODE_FANOUT_BITS = 2;
         public const int MAX_BVH_NODE_FANOUT = 1 << MAX_BVH_NODE_FANOUT_BITS;
 
         public FVector4[] LODBounds;
@@ -55,18 +56,20 @@ namespace CUE4Parse.UE4.Assets.Exports.StaticMesh
     public class FNaniteResources
     {
         // Persistent State
-        public byte[] RootClusterPage; // Root page is loaded on resource load, so we always have something to draw.
+        public byte[] RootData; // Root page is loaded on resource load, so we always have something to draw.
         public FByteBulkData StreamableClusterPages; // Remaining pages are streamed on demand.
         public ushort[] ImposterAtlas;
         public FPackedHierarchyNode[] HierarchyNodes;
         public uint[] HierarchyRootOffsets;
         public FPageStreamingState[] PageStreamingStates;
         public uint[] PageDependencies;
+        public int NumRootPages = 0;
         public int PositionPrecision = 0;
         public uint NumInputTriangles = 0;
         public uint NumInputVertices = 0;
         public ushort NumInputMeshes = 0;
         public ushort NumInputTexCoords = 0;
+        public uint NumClusters = 0;
         public uint ResourceFlags = 0;
 
         public FNaniteResources(FAssetArchive Ar)
@@ -75,19 +78,21 @@ namespace CUE4Parse.UE4.Assets.Exports.StaticMesh
             if (!stripFlags.IsDataStrippedForServer())
             {
                 ResourceFlags = Ar.Read<uint>();
-                RootClusterPage = Ar.ReadArray<byte>();
                 StreamableClusterPages = new FByteBulkData(Ar);
+                RootData = Ar.ReadArray<byte>();
                 PageStreamingStates = Ar.ReadArray<FPageStreamingState>();
 
                 HierarchyNodes = Ar.ReadArray(() => new FPackedHierarchyNode(Ar));
                 HierarchyRootOffsets = Ar.ReadArray<uint>();
                 PageDependencies = Ar.ReadArray<uint>();
                 ImposterAtlas = Ar.ReadArray<ushort>();
+                NumRootPages = Ar.Read<int>();
                 PositionPrecision = Ar.Read<int>();
                 NumInputTriangles = Ar.Read<uint>();
                 NumInputVertices = Ar.Read<uint>();
                 NumInputMeshes = Ar.Read<ushort>();
                 NumInputTexCoords = Ar.Read<ushort>();
+                if (Ar.Game >= EGame.GAME_UE5_1) NumClusters = Ar.Read<uint>();
             }
         }
     }

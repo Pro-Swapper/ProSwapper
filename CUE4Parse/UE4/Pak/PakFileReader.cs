@@ -38,7 +38,7 @@ namespace CUE4Parse.UE4.Pak
             this.Ar = Ar;
             Length = Ar.Length;
             Info = FPakInfo.ReadFPakInfo(Ar);
-            if (Info.Version > PakFile_Version_Latest)
+            if (Info.Version > PakFile_Version_Latest && Ar.Game != EGame.GAME_TowerOfFantasy && Ar.Game != EGame.GAME_MeetYourMaker) // ToF 2.2 and MyM uses version >= 12 to indicate its custom format
             {
                 log.Warning($"Pak file \"{Name}\" has unsupported version {(int) Info.Version}");
             }
@@ -118,7 +118,7 @@ namespace CUE4Parse.UE4.Pak
         private IReadOnlyDictionary<string, GameFile> ReadIndexLegacy(bool caseInsensitive)
         {
             Ar.Position = Info.IndexOffset;
-            var index = new FByteArchive($"{Name} - Index", ReadAndDecrypt((int) Info.IndexSize));
+            var index = new FByteArchive($"{Name} - Index", ReadAndDecrypt((int) Info.IndexSize), Versions);
 
             string mountPoint;
             try

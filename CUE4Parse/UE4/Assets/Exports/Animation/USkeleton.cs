@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Objects.Engine;
@@ -18,6 +19,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
         public Dictionary<FName, FReferencePose> AnimRetargetSources { get; private set; }
         public Dictionary<FName, FSmartNameMapping> NameMappings { get; private set; }
         public FName[] ExistingMarkerNames { get; private set; }
+        public FPackageIndex[] Sockets { get; private set; }
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
@@ -25,6 +27,7 @@ namespace CUE4Parse.UE4.Assets.Exports.Animation
             // UObject Properties
             BoneTree = GetOrDefault<FBoneNode[]>(nameof(BoneTree));
             VirtualBoneGuid = GetOrDefault<FGuid>(nameof(VirtualBoneGuid));
+            Sockets = GetOrDefault(nameof(Sockets), Array.Empty<FPackageIndex>());
 
             if (Ar.Ver >= EUnrealEngineObjectUE4Version.REFERENCE_SKELETON_REFACTOR)
             {

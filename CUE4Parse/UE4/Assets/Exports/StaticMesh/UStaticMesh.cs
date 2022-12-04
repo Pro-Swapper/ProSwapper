@@ -1,3 +1,4 @@
+using System;
 using CUE4Parse.UE4.Assets.Readers;
 using CUE4Parse.UE4.Objects.Core.Math;
 using CUE4Parse.UE4.Objects.Core.Misc;
@@ -18,16 +19,18 @@ namespace CUE4Parse.UE4.Assets.Exports.StaticMesh
         public FPackageIndex[] Sockets { get; private set; } // UStaticMeshSocket[]
         public FStaticMeshRenderData? RenderData { get; private set; }
         public FStaticMaterial[]? StaticMaterials { get; private set; }
-        public ResolvedObject[]? Materials { get; private set; } // UMaterialInterface[]
+        public ResolvedObject?[] Materials { get; private set; } // UMaterialInterface[]
 
         public override void Deserialize(FAssetArchive Ar, long validPos)
         {
             base.Deserialize(Ar, validPos);
+            Materials = Array.Empty<ResolvedObject>();
 
             var stripDataFlags = Ar.Read<FStripDataFlags>();
             bCooked = Ar.ReadBoolean();
             BodySetup = new FPackageIndex(Ar);
-            if (Ar.Ver >= EUnrealEngineObjectUE4Version.STATIC_MESH_STORE_NAV_COLLISION)
+
+            if (Ar.Game != EGame.GAME_GearsOfWar4 && Ar.Ver >= EUnrealEngineObjectUE4Version.STATIC_MESH_STORE_NAV_COLLISION)
                 NavCollision = new FPackageIndex(Ar);
 
             if (!stripDataFlags.IsEditorDataStripped())
@@ -35,11 +38,12 @@ namespace CUE4Parse.UE4.Assets.Exports.StaticMesh
                 Log.Warning("Static Mesh with Editor Data not implemented yet");
                 Ar.Position = validPos;
                 return;
-                // if (Ar.Ver < UE4Version.VER_UE4_DEPRECATED_STATIC_MESH_THUMBNAIL_PROPERTIES_REMOVED)
+                // if (Ar.Ver < EUnrealEngineObjectUE4Version.DEPRECATED_STATIC_MESH_THUMBNAIL_PROPERTIES_REMOVED)
                 // {
-                //     var dummyThumbnailAngle = Ar.Read<FRotator>();
+                //     var dummyThumbnailAngle = new FRotator(Ar);
                 //     var dummyThumbnailDistance = Ar.Read<float>();
                 // }
+                //
                 // var highResSourceMeshName = Ar.ReadFString();
                 // var highResSourceMeshCRC = Ar.Read<uint>();
             }
@@ -71,24 +75,19 @@ namespace CUE4Parse.UE4.Assets.Exports.StaticMesh
                 {
                     // UE4.14+ - "Materials" are deprecated, added StaticMaterials
                     StaticMaterials = Ar.ReadArray(() => new FStaticMaterial(Ar));
+                    Materials = new ResolvedObject[StaticMaterials.Length];
+                    for (var i = 0; i < Materials.Length; i++)
+                    {
+                        Materials[i] = StaticMaterials[i].MaterialInterface;
+                    }
                 }
             }
-
-            if (StaticMaterials is { Length: > 0 })
+            else if (TryGetValue(out FPackageIndex[] materials, "Materials"))
             {
-                Materials = new ResolvedObject[StaticMaterials.Length];
-                for (var i = 0; i < Materials.Length; i++)
+                Materials = new ResolvedObject[materials.Length];
+                for (int i = 0; i < materials.Length; i++)
                 {
-                    Materials[i] = StaticMaterials[i].MaterialInterface;
-                }
-            }
-
-            if (Materials is null && TryGetValue(out FPackageIndex[] mats, "Materials"))
-            {
-                Materials = new ResolvedObject[mats.Length];
-                for (int i = 0; i < mats.Length; i++)
-                {
-                    Materials[i] = mats[i].ResolvedObject!;
+                    Materials[i] = materials[i].ResolvedObject!;
                 }
             }
         }
